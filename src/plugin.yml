@@ -1,0 +1,11 @@
+name: JediPack
+version: 1.0
+author: i_Jedi
+main: "me.ijedi.jedipack.JediPackMain"
+description: "Description here."
+
+
+commands:
+  ping:
+    description: A test command that returns "Pong!"
+    usage: /ping
