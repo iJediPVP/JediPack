@@ -9,3 +9,6 @@ commands:
   ping:
     description: A test command that returns "Pong!"
     usage: /ping
+  pingEnable:
+    description: This does nothing besides toggling the pingCommandEnabled configuration.
+    usage: /pingEnable
