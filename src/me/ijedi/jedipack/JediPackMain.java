@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.initialize.CommandInitializer;
+import me.ijedi.jedipack.parkour.ParkourConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class JediPackMain extends JavaPlugin {
@@ -16,6 +17,10 @@ public class JediPackMain extends JavaPlugin {
         // Initialize commands
         CommandInitializer.RegisterCommands(this);
         this.saveDefaultConfig();
+
+        ParkourConfiguration config = new ParkourConfiguration();
+        config.LoadConfiguration(this);
+        System.out.println(config.getConfigurationName());
 
         this.getLogger().info("JediPack is enabled!");
     }
