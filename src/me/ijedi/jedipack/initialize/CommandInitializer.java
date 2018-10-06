@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.initialize;
 
+import me.ijedi.jedipack.parkour.ParkourCommand;
 import me.ijedi.jedipack.test.PingCommand;
 import me.ijedi.jedipack.test.PingEnableCommand;
 import me.ijedi.jedipack.test.TestMenuCommand;
@@ -21,6 +22,7 @@ public class CommandInitializer {
 
         plugin.getCommand("testMenu").setExecutor(new TestMenuCommand());
         plugin.getCommand("testStand").setExecutor(new TestStandCommand());
+        plugin.getCommand("jppk").setExecutor(new ParkourCommand());
     }
 
 }

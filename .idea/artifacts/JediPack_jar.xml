@@ -5,7 +5,6 @@
       <element id="module-output" name="JediPack" />
       <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
       <element id="file-copy" path="$PROJECT_DIR$/src/config.yml" />
-      <element id="file-copy" path="$PROJECT_DIR$/src/parkourConfig.yml" />
     </root>
   </artifact>
 </component>

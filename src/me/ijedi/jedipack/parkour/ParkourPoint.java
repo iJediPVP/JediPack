@@ -31,5 +31,7 @@ public class ParkourPoint {
         // Spawn the corresponding armor stand.
         ParkourStand stand = new ParkourStand();
         stand.SpawnStand(pointLocation, PointName);
+
+        // TODO: Write block info to config file.
     }
 }
