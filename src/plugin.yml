@@ -12,3 +12,6 @@ commands:
   pingEnable:
     description: This does nothing besides toggling the pingCommandEnabled configuration.
     usage: /pingEnable
+  testMenu:
+    description: /testMenu command.
+    usage: /testMenu
