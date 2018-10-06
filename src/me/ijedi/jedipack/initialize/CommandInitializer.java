@@ -3,6 +3,7 @@ package me.ijedi.jedipack.initialize;
 import me.ijedi.jedipack.test.PingCommand;
 import me.ijedi.jedipack.test.PingEnableCommand;
 import me.ijedi.jedipack.test.TestMenuCommand;
+import me.ijedi.jedipack.test.TestStandCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +20,7 @@ public class CommandInitializer {
         plugin.getCommand("pingEnable").setExecutor(new PingEnableCommand());
 
         plugin.getCommand("testMenu").setExecutor(new TestMenuCommand());
+        plugin.getCommand("testStand").setExecutor(new TestStandCommand());
     }
 
 }
