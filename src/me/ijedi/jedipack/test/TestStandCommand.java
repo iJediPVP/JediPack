@@ -1,10 +1,9 @@
 package me.ijedi.jedipack.test;
 
-import me.ijedi.jedipack.parkour.ParkourStand;
+import me.ijedi.jedipack.parkour.ParkourPoint;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class TestStandCommand implements CommandExecutor {
@@ -15,12 +14,10 @@ public class TestStandCommand implements CommandExecutor {
         // Only players can run this..
         if(commandSender instanceof Player){
 
-            // Spawn simple entity
+            // Spawn a ParkourPoint object
             Player player = (Player)commandSender;
-            //player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
-
-            ParkourStand stand = new ParkourStand();
-            stand.SpawnStand(player.getLocation(), "Armor Stand");
+            ParkourPoint point = new ParkourPoint(true, false, 0, "First Point");
+            point.Spawn(player.getLocation());
 
         }
         else{

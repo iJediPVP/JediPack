@@ -6,8 +6,6 @@ import org.bukkit.entity.ArmorStand;
 
 public class ParkourStand {
 
-
-
     public void SpawnStand(Location location, String standName){
 
         World world = location.getWorld();
@@ -21,7 +19,10 @@ public class ParkourStand {
         double newZ = origZ - (origZ % 1); // Get the whole number
         newZ = origZ < 0 ? newZ - .5 : newZ + .5; // Add or subtract .5
 
-        Location centeredLocation = new Location(world, newX, location.getY(), newZ);
+        // Raise up the stand so it doesn't interfere with the pressure plate below it.
+        double newY = location.getY() + .25;
+
+        Location centeredLocation = new Location(world, newX, newY, newZ);
 
         // Spawn the armor stand
         ArmorStand armorStand = world.spawn(centeredLocation, ArmorStand.class);
