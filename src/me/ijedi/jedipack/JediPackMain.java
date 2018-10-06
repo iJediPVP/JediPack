@@ -1,16 +1,11 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.initialize.CommandInitializer;
-import me.ijedi.jedipack.parkour.ParkourConfiguration;
-import me.ijedi.jedipack.parkour.ParkourManager;
-import me.ijedi.jedipack.parkour.PlayerInfo;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class JediPackMain extends JavaPlugin {
 
     private static JavaPlugin thisPlugin;
-    private static ParkourConfiguration parkourConfiguration;
 
     @Override
     public void onEnable(){
@@ -22,12 +17,6 @@ public class JediPackMain extends JavaPlugin {
         CommandInitializer.RegisterCommands(this);
         this.saveDefaultConfig();
 
-        // Parkour
-        parkourConfiguration = new ParkourConfiguration();
-        parkourConfiguration.LoadConfiguration();
-        ParkourManager.initializeParkour();
-
-        PlayerInfo.InitializePlayerInfos(Bukkit.getOnlinePlayers(), this);
 
         this.getLogger().info("JediPack is enabled!");
     }
@@ -44,7 +33,4 @@ public class JediPackMain extends JavaPlugin {
         return thisPlugin;
     }
 
-    public static ParkourConfiguration getParkourConfiguration(){
-        return parkourConfiguration;
-    }
 }
