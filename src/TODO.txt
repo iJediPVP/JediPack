@@ -1,0 +1,21 @@
+TODO LIST:
+- Actual parkour:
+    - Hitting start/end points
+    - Hitting checkpoints
+        - Warn users that they hit a checkpoint without starting the course.
+    - Restart course command
+    - Back to last checkpoint command
+
+- Parkour misc:
+    - UI to edit the parkour course
+        - Delete course, Delete checkpoints
+    - Allow sign placements to execute parkour commands
+    - Reload the parkour course pressure plates and armor stands when during onEnable()
+    - Make pressure plates unbreakable (probably block break event and check if it's our stored block location)
+    - Colored armor stand names
+    - Instead of adding checkpoints by having the user enter 1,2,3, etc.. Auto increment them
+        - Whe a point is removed we need to reset the number of all of the checkpoints > than the deleted one
+    - Enable/disable parkour module in the main plugin config.
+    - Colored parkour messages back to the user
+    - Parkour command help text
+
