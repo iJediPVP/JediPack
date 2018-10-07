@@ -111,9 +111,10 @@ public class ParkourManager {
         return String.format("Course '%s' does not exist!", courseId);
     }
 
-    public static String setPoint(String courseId, Location location, int pointNumber){
+    public static String setPoint(String courseId, Location location){
         if(doesCourseExist(courseId)){
             ParkourCourse course = ParkourCourses.get(courseId);
+            int pointNumber = course.getNextCheckpointNumber();
             String output = course.setPointLocation(location, false, false, pointNumber);
 
             return output;
@@ -159,7 +160,7 @@ public class ParkourManager {
         if(!ParkourFile.exists()){
             ParkourFile.getParentFile().mkdirs();
             FileConfiguration config = YamlConfiguration.loadConfiguration(ParkourFile);
-            config.set(COURSE_PATH, "");
+            config.set(COURSE_PATH, new String[0]);
             try{
                 config.save(ParkourFile);
             }catch(IOException e){

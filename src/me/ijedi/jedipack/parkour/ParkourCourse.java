@@ -283,6 +283,29 @@ public class ParkourCourse {
         }
     }
 
+    /* Adds the next checkpoint sequence to the course.
+    public void addNextCheckpoint(Location location){
+        int nextCheckpointInt = getNextCheckpointNumber();
+        setPointLocation(location, false, false, nextCheckpointInt);
+    }
+    */
+
+    // Return the next checkpoint number that will be added to this course.
+    public int getNextCheckpointNumber(){
+        ArrayList<Integer> pointList = new ArrayList<>();
+        for(String key : PointLocations.keySet()){
+            if(Util.IsInteger(key)){
+                pointList.add(Integer.parseInt(key));
+            }
+        }
+
+        int maxInt = 1;
+        if(pointList.size() > 0){
+            maxInt = Collections.max(pointList) + 1;
+        }
+        return maxInt;
+    }
+
 
     // Save the ParkourCourse configuration file.
     private void saveConfiguration(){
