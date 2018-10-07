@@ -1,12 +1,11 @@
 package me.ijedi.jedipack.parkour;
 
-import com.sun.corba.se.spi.activation.POANameHelper;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -199,8 +198,8 @@ public class ParkourCourse {
     // Remove the start location
     public void removeStart(){
         if(StartLocation != null){
-            CourseConfiguration.set(START, null);
             removeArmorStandEntity(START, StartLocation);
+            CourseConfiguration.set(START, null);
             saveConfiguration();
             StartLocation = null;
         }
@@ -209,30 +208,39 @@ public class ParkourCourse {
     // Remove the finish location
     public void removeFinish(){
         if(FinishLocation != null){
-            CourseConfiguration.set(FINISH, null);
             removeArmorStandEntity(FINISH, FinishLocation);
+            CourseConfiguration.set(FINISH, null);
             saveConfiguration();
             FinishLocation = null;
         }
     }
 
     // Remove a single point
-    public void removePoint(int pointNumber){
-        if(PointLocations.containsKey(pointNumber)){
+    public void removePoint(int pointNumber, boolean removeFromMap){
+
+        String pointStr = Integer.toString(pointNumber);
+        if(PointLocations.containsKey(pointStr)){
             String pointPath = POINT + "." + pointNumber;
+            removeArmorStandEntity(pointPath, PointLocations.get(pointStr));
             CourseConfiguration.set(pointPath, null);
-            removeArmorStandEntity(pointPath, PointLocations.get(pointNumber));
             saveConfiguration();
-            PointLocations.remove(pointNumber);
+            if(removeFromMap){
+                PointLocations.remove(pointStr);
+            }
         }
     }
 
     // Remove all points for this course
     public void removeAllPoints(){
-        for(String key: PointLocations.keySet()){
-            if(Util.IsInteger(key)){
-                int keyInt = Integer.parseInt(key);
-                removePoint(keyInt);
+
+        Iterator<String> keys = PointLocations.keySet().iterator();
+        while(keys.hasNext()){
+            String nextKeyStr = keys.next();
+            if(Util.IsInteger(nextKeyStr)){
+                int keyInt = Integer.parseInt(nextKeyStr);
+                removePoint(keyInt, false);
+                //PointLocations.keySet().remove(nextKeyStr);
+                keys.remove();
             }
         }
     }
@@ -256,19 +264,21 @@ public class ParkourCourse {
     // Remove the armor stand
     private void removeArmorStandEntity(String configPath, Location location){
         ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(configPath);
+
         if(configSection != null){
             String entityIdStr = configSection.getString(ENTITY_ID);
             UUID entityId = UUID.fromString(entityIdStr);
-            //Bukkit.getEntity(entityId).remove();
+
             Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(location, 3, 3, 3);
             for(Entity e : nearbyEntities){
-                if(e.getUniqueId() == entityId){
+                if(e.getUniqueId().equals(entityId)){
+
+                    // Remove the entity and replace the pressure plate with air
                     e.remove();
+                    location.getBlock().setType(Material.AIR);
                     break;
                 }
             }
-            configSection.set(ENTITY_ID, null);
-            saveConfiguration();
 
         }
     }
