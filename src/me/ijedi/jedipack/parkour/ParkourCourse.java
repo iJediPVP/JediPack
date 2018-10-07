@@ -187,6 +187,58 @@ public class ParkourCourse {
         }
     }
 
+    // Remove the start location
+    public void removeStart(){
+        if(StartLocation != null){
+            CourseConfiguration.set(START, null);
+            saveConfiguration();
+            StartLocation = null;
+        }
+    }
+
+    // Remove the finish location
+    public void removeFinish(){
+        if(FinishLocation != null){
+            CourseConfiguration.set(FINISH, null);
+            saveConfiguration();
+            FinishLocation = null;
+        }
+    }
+
+    // Remove a single point
+    public void removePoint(int pointNumber){
+        if(PointLocations.containsKey(pointNumber)){
+            CourseConfiguration.set(POINT + "." + pointNumber, null);
+            saveConfiguration();
+            PointLocations.remove(pointNumber);
+        }
+    }
+
+    // Remove all points for this course
+    public void removeAllPoints(){
+        for(String key: PointLocations.keySet()){
+            if(Util.IsInteger(key)){
+                int keyInt = Integer.parseInt(key);
+                removePoint(keyInt);
+            }
+        }
+    }
+
+    // Delete the configuration file.
+    public void removeConfigFile(){
+        if(CourseFile.exists()){
+            CourseConfiguration = null;
+            CourseFile.delete();
+        }
+    }
+
+    // Totally remove this course from the disk.
+    public void removeEntireCourse(){
+        removeStart();
+        removeFinish();
+        removeAllPoints();
+        removeConfigFile();
+    }
 
 
     // Save the ParkourCourse configuration file.

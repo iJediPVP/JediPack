@@ -1,7 +1,6 @@
 package me.ijedi.jedipack.common;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Util {
 
@@ -37,7 +36,7 @@ public class Util {
         }
     }
 
-    public static String[] HashSetToKeyArray(HashMap<String,?> hashSet){
+    public static String[] HashMapToKeyArray(HashMap<String,?> hashSet){
         String[] returnArray = new String[hashSet.size()];
         int x = 0;
         for (String str : hashSet.keySet()){

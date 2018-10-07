@@ -33,8 +33,10 @@ public class ParkourCommand implements CommandExecutor {
 
         // Modify a course
         /jppk 123 start // place the starting point of the course
-        /jppk 123 1     // place the first point of the course
-        /jppk 123 2     // place the second point of the course
+        /jppk 123 1     // place the 'point 1' of the course
+        /jppk 123 2     // place the 'point 2' of the course
+        /jppk 123 1 remove // remove the 'point 1' from the course
+        /jppk 123 1 replace // override existing 'point 1' with a new one
         /jppk 123 end   // place the ending point of the course
 
         // Interact with the course
@@ -59,16 +61,15 @@ public class ParkourCommand implements CommandExecutor {
                     // Handle create
                     if(secondArg.equals(CREATE)) {
 
-                        if(ParkourManager.createCourse(firstArg)){
-                            commandSender.sendMessage(String.format("Course '%s' created!", firstArg));
-                            return true;
-                        }
-                        else{
-                            commandSender.sendMessage(String.format("Course not created. A course with name '%s' already exists!", firstArg));
-                            return true;
-                        }
+                        String output = ParkourManager.createCourse(firstArg);
+                        commandSender.sendMessage(output);
+                        return true;
 
                     }else if(secondArg.equals(DELETE)){ // Handle delete
+
+                        String output = ParkourManager.removeCourse(firstArg);
+                        commandSender.sendMessage(output);
+                        return true;
 
                     }else if(secondArg.equals(START)){ // Handle start
 

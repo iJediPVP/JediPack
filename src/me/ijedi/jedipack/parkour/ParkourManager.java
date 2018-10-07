@@ -49,20 +49,41 @@ public class ParkourManager {
     }
 
     // Create a new course if one doesn't exist already.
-    public static boolean createCourse(String courseId){
+    public static String createCourse(String courseId){
         if(!doesCourseExist(courseId)){
             // Crate course in a configuration file..
             ParkourCourse newCourse = new ParkourCourse(courseId);
 
             ParkourCourses.put(courseId, newCourse);
-            String[] courseKeys = Util.HashSetToKeyArray(ParkourCourses);
+            String[] courseKeys = Util.HashMapToKeyArray(ParkourCourses);
 
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
-            return true;
+            return String.format("Created course '%s'!", courseId);
         }
-        return false;
+        return String.format("Course '%s' already exists.", courseId);
+    }
+
+    public static String removeCourse(String courseId){
+        if(doesCourseExist(courseId)){
+
+            // TODO: Save armor stand entity ids to config and remove those as well..
+
+            // Remove start, finish and all points from the course.
+            ParkourCourse course = ParkourCourses.get(courseId);
+            course.removeEntireCourse();
+
+            // Remove it from the manager
+            ParkourCourses.remove(courseId);
+            String[] courseKeys = Util.HashMapToKeyArray(ParkourCourses);
+            ParkourConfiguration.set(COURSE_PATH, courseKeys);
+            saveConfiguration();
+
+            return String.format("Course '%s' has been removed!", courseId);
+        }
+
+        return String.format("Course '%s' does not exist.", courseId);
     }
 
 
