@@ -106,22 +106,30 @@ public class ParkourCourse {
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();
+        Location saveLocation = new Location(location.getWorld(), x, y, z);
 
         // Determine config path
         String baseConfigPath = "";
         String output = "";
+        String pointName = "";
         if (isStart) {
             baseConfigPath = START + ".";
             output = String.format("The starting point for course '%s' has been set!", CourseId);
+            StartLocation = saveLocation;
+            pointName = "Parkour Start";
 
         } else if (isFinish) {
             baseConfigPath = FINISH + ".";
             output = String.format("The finishing point for course '%s' has been set!", CourseId);
+            FinishLocation = saveLocation;
+            pointName = "Parkour Finish";
 
         } else if (pointNumber > 0) {
             baseConfigPath = pointNumber + ".";
             output = String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId);
+            pointName = "Checkpoint #" + pointNumber;
 
+            // TODO: Store point location in memory..
         }
 
         // If the config path did not get set, return false
@@ -134,7 +142,8 @@ public class ParkourCourse {
             CourseConfiguration.set(baseConfigPath + Z, z);
             saveConfiguration();
 
-            StartLocation = location;
+            ParkourPoint point = new ParkourPoint(isStart, isFinish, pointNumber, pointName);
+            point.Spawn(saveLocation);
             return output;
         } else {
             return String.format("Invalid arguments were given to set this point for course '%s'!", CourseId);
