@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ParkourCourse {
@@ -18,6 +19,7 @@ public class ParkourCourse {
     private String CourseId;
     private Location StartLocation;
     private Location FinishLocation;
+    private HashMap<String, Location> PointLocations = new HashMap<>();
 
     private final String WORLDID = "worldId";
     private final String START = "start";
@@ -40,8 +42,8 @@ public class ParkourCourse {
         x:
         y:
         z:
-    checkpoints:
-    - 1:
+    //checkpoints:
+    1:
         worldId:
         x:
         y:
@@ -129,7 +131,13 @@ public class ParkourCourse {
             output = String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId);
             pointName = "Checkpoint #" + pointNumber;
 
-            // TODO: Store point location in memory..
+            // If we don't already have this point, add it.
+            String pointStr = Integer.toString(pointNumber);
+            if(PointLocations.containsKey(pointStr)){ // TODO: Add a way to overwrite points
+                output = String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId);
+                return output;
+            }
+            PointLocations.put(pointStr, saveLocation);
         }
 
         // If the config path did not get set, return false
@@ -143,7 +151,7 @@ public class ParkourCourse {
             saveConfiguration();
 
             ParkourPoint point = new ParkourPoint(isStart, isFinish, pointNumber, pointName);
-            point.Spawn(saveLocation);
+            point.Spawn(location); // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
             return output;
         } else {
             return String.format("Invalid arguments were given to set this point for course '%s'!", CourseId);

@@ -64,7 +64,7 @@ public class ParkourCommand implements CommandExecutor {
                             return true;
                         }
                         else{
-                            commandSender.sendMessage(String.format("Course not created. A course with name'%s' already exists!", firstArg));
+                            commandSender.sendMessage(String.format("Course not created. A course with name '%s' already exists!", firstArg));
                             return true;
                         }
 
@@ -92,7 +92,7 @@ public class ParkourCommand implements CommandExecutor {
                         // Only allow this to be executed by a player
                         if(commandSender instanceof Player){
 
-                            // Get the player's location and try to set the starting point for this course.
+                            // Get the player's location and try to set the finishing point for this course.
                             Player player = (Player)commandSender;
                             Location location =  player.getLocation();
                             String output = ParkourManager.setFinish(firstArg, location);
@@ -104,8 +104,23 @@ public class ParkourCommand implements CommandExecutor {
                             return true;
                         }
 
-                    } else if(Util.IsInteger(secondArg)) { // Handle point number.
+                    } else if(Util.IsInteger(secondArg)) { // Handle point numbers.
 
+                        // Only allow this to be executed by a player
+                        if(commandSender instanceof Player){
+
+                            // Get the player's location and try to set the starting point for this course.
+                            int pointNumber = Integer.parseInt(secondArg);
+                            Player player = (Player)commandSender;
+                            Location location =  player.getLocation();
+                            String output = ParkourManager.setPoint(firstArg, location, pointNumber);
+                            commandSender.sendMessage(output);
+                            return true;
+
+                        }else{
+                            commandSender.sendMessage("This command can only be executed by a player!");
+                            return true;
+                        }
 
                     } // TODO: Else, handle invalid second argument.
 

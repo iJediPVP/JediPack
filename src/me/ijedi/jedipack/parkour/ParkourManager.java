@@ -90,6 +90,16 @@ public class ParkourManager {
         return String.format("Course '%s' does not exist!", courseId);
     }
 
+    public static String setPoint(String courseId, Location location, int pointNumber){
+        if(doesCourseExist(courseId)){
+            ParkourCourse course = ParkourCourses.get(courseId);
+            String output = course.setPointLocation(location, false, false, pointNumber);
+
+            return output;
+        }
+        return String.format("Course '%s' does not exist!", courseId);
+    }
+
 
     // Save the ParkourManager configuration file.
     private static void saveConfiguration(){
