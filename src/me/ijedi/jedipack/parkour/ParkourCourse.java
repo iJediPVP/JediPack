@@ -24,6 +24,7 @@ public class ParkourCourse {
     private final String WORLDID = "worldId";
     private final String START = "start";
     private final String FINISH = "finish";
+    private final String POINT = "point";
     private final String X = "X";
     private final String Y = "Y";
     private final String Z = "Z";
@@ -90,6 +91,34 @@ public class ParkourCourse {
 
             FinishLocation = new Location(world, x, y, z);
         }
+
+        // Points
+        ConfigurationSection pointsSection = CourseConfiguration.getConfigurationSection(POINT);
+        if(finishSection != null){
+
+            for(String pointKey : pointsSection.getKeys(false)){
+
+                ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(FINISH);
+                if(finishSection != null){
+
+                    // TODO: I should probably handle this in case it fails to parse..
+                    String worldIdStr = configSection.getString(WORLDID);
+                    UUID worldId = UUID.fromString(worldIdStr);
+                    World world = Bukkit.getWorld(worldId);
+
+                    int x = configSection.getInt(X);
+                    int y = configSection.getInt(Y);
+                    int z = configSection.getInt(Z);
+
+                    if(PointLocations.containsKey(pointKey)){
+                        continue;
+                    }
+                    Location location = new Location(world, x, y, z);
+                    PointLocations.put(pointKey, location);
+                }
+
+            }
+        }
     }
 
     // Set the location of a specified point for this ParkourCourse.
@@ -127,7 +156,7 @@ public class ParkourCourse {
             pointName = "Parkour Finish";
 
         } else if (pointNumber > 0) {
-            baseConfigPath = pointNumber + ".";
+            baseConfigPath = POINT + "." + pointNumber + ".";
             output = String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId);
             pointName = "Checkpoint #" + pointNumber;
 
