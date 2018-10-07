@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,6 +18,7 @@ public class ParkourManager {
     private static final String CONFIG_NAME = "parkourConfig.yml";
     private static FileConfiguration FileConfiguration;
 
+    // Load the parkour courses from the configuratoin files.
     public static void initializeCourses(){
 
         // Get the config section
@@ -64,6 +64,7 @@ public class ParkourManager {
         return false;
     }
 
+    // Get the File object for the ParkourManager.
     private static File getFile(){
         String folder = JediPackMain.getThisPlugin().getDataFolder() + "/parkour";
         String fileName = CONFIG_NAME;
@@ -72,6 +73,7 @@ public class ParkourManager {
         return configFile;
     }
 
+    // Get the FileConfiguration object for the ParkourManager.
     private static FileConfiguration getFileConfiguration(){
         File configFile = getFile();
 
@@ -94,6 +96,7 @@ public class ParkourManager {
         return config;
     }
 
+    // Save the ParkourManager configuration file.
     private static void saveConfiguration(){
         try{
             File file = getFile();
