@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import java.util.UUID;
+
 public class ParkourPoint {
 
     public boolean IsStartingPoint = false;
@@ -19,19 +21,18 @@ public class ParkourPoint {
         PointName = pointName;
     }
 
-    public void Spawn(Location location)
+    public UUID Spawn(Location location)
     {
         // Get the location's block to a pressure plate.
         World world = Bukkit.getWorld(location.getWorld().getUID());
         Location pointLocation = new Location(world, location.getX(), location.getY(), location.getZ());
         pointLocation.getBlock().setType(IsStartingPoint || IsFinishingPoint ? Material.GOLD_PLATE : Material.IRON_PLATE);
 
-        // TODO: Make block unbreakable. Maybe event driven? Maybe propertyh driven?
+        // TODO: Make block unbreakable. Maybe event driven? Maybe property driven?
 
         // Spawn the corresponding armor stand.
         ParkourStand stand = new ParkourStand();
-        stand.SpawnStand(pointLocation, PointName);
-
-        // TODO: Write block info to config file.
+        UUID standId = stand.SpawnStand(pointLocation, PointName);
+        return standId;
     }
 }

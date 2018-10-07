@@ -4,9 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 
+import java.util.UUID;
+
 public class ParkourStand {
 
-    public void SpawnStand(Location location, String standName){
+    public UUID SpawnStand(Location location, String standName){
 
         World world = location.getWorld();
 
@@ -30,6 +32,7 @@ public class ParkourStand {
         armorStand.setCustomNameVisible(true);
         armorStand.setGravity(false);
         armorStand.setVisible(false);
+        return armorStand.getUniqueId();
     }
 
 }

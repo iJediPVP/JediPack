@@ -1,18 +1,20 @@
 package me.ijedi.jedipack.parkour;
 
+import com.sun.corba.se.spi.activation.POANameHelper;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class ParkourCourse {
 
@@ -25,9 +27,10 @@ public class ParkourCourse {
     private final String START = "start";
     private final String FINISH = "finish";
     private final String POINT = "point";
-    private final String X = "X";
-    private final String Y = "Y";
-    private final String Z = "Z";
+    private final String X = "x";
+    private final String Y = "y";
+    private final String Z = "z";
+    private final String ENTITY_ID = "entityId";
 
     private File CourseFile;
     private FileConfiguration CourseConfiguration;
@@ -35,17 +38,20 @@ public class ParkourCourse {
     /* Config file: 123.yml
     start:
         worldId:
+        id:
         x:
         y:
         z:
     finish:
         worldId:
+        id:
         x:
         y:
         z:
     //checkpoints:
     1:
         worldId:
+        id:
         x:
         y:
         z:
@@ -177,10 +183,13 @@ public class ParkourCourse {
             CourseConfiguration.set(baseConfigPath + X, x);
             CourseConfiguration.set(baseConfigPath + Y, y);
             CourseConfiguration.set(baseConfigPath + Z, z);
-            saveConfiguration();
 
             ParkourPoint point = new ParkourPoint(isStart, isFinish, pointNumber, pointName);
-            point.Spawn(location); // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
+            UUID entityId = point.Spawn(location); // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
+
+            CourseConfiguration.set(baseConfigPath + ENTITY_ID, entityId.toString());
+            saveConfiguration();
+
             return output;
         } else {
             return String.format("Invalid arguments were given to set this point for course '%s'!", CourseId);
@@ -191,6 +200,7 @@ public class ParkourCourse {
     public void removeStart(){
         if(StartLocation != null){
             CourseConfiguration.set(START, null);
+            removeArmorStandEntity(START, StartLocation);
             saveConfiguration();
             StartLocation = null;
         }
@@ -200,6 +210,7 @@ public class ParkourCourse {
     public void removeFinish(){
         if(FinishLocation != null){
             CourseConfiguration.set(FINISH, null);
+            removeArmorStandEntity(FINISH, FinishLocation);
             saveConfiguration();
             FinishLocation = null;
         }
@@ -208,7 +219,9 @@ public class ParkourCourse {
     // Remove a single point
     public void removePoint(int pointNumber){
         if(PointLocations.containsKey(pointNumber)){
-            CourseConfiguration.set(POINT + "." + pointNumber, null);
+            String pointPath = POINT + "." + pointNumber;
+            CourseConfiguration.set(pointPath, null);
+            removeArmorStandEntity(pointPath, PointLocations.get(pointNumber));
             saveConfiguration();
             PointLocations.remove(pointNumber);
         }
@@ -238,6 +251,26 @@ public class ParkourCourse {
         removeFinish();
         removeAllPoints();
         removeConfigFile();
+    }
+
+    // Remove the armor stand
+    private void removeArmorStandEntity(String configPath, Location location){
+        ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(configPath);
+        if(configSection != null){
+            String entityIdStr = configSection.getString(ENTITY_ID);
+            UUID entityId = UUID.fromString(entityIdStr);
+            //Bukkit.getEntity(entityId).remove();
+            Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(location, 3, 3, 3);
+            for(Entity e : nearbyEntities){
+                if(e.getUniqueId() == entityId){
+                    e.remove();
+                    break;
+                }
+            }
+            configSection.set(ENTITY_ID, null);
+            saveConfiguration();
+
+        }
     }
 
 
