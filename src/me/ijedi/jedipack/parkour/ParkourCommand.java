@@ -2,9 +2,11 @@ package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.common.Util;
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class ParkourCommand implements CommandExecutor {
 
@@ -63,13 +65,44 @@ public class ParkourCommand implements CommandExecutor {
                         }
                         else{
                             commandSender.sendMessage(String.format("Course not created. A course with name'%s' already exists!", firstArg));
+                            return true;
                         }
 
                     }else if(secondArg.equals(DELETE)){ // Handle delete
 
                     }else if(secondArg.equals(START)){ // Handle start
 
+                        // Only allow this to be executed by a player
+                        if(commandSender instanceof Player){
+
+                            // Get the player's location and try to set the starting point for this course.
+                            Player player = (Player)commandSender;
+                            Location location =  player.getLocation();
+                            String output = ParkourManager.setStart(firstArg, location);
+                            commandSender.sendMessage(output);
+                            return true;
+
+                        }else{
+                            commandSender.sendMessage("This command can only be executed by a player!");
+                            return true;
+                        }
+
                     }else if(secondArg.equals(END)){ // Handle end
+
+                        // Only allow this to be executed by a player
+                        if(commandSender instanceof Player){
+
+                            // Get the player's location and try to set the starting point for this course.
+                            Player player = (Player)commandSender;
+                            Location location =  player.getLocation();
+                            String output = ParkourManager.setFinish(firstArg, location);
+                            commandSender.sendMessage(output);
+                            return true;
+
+                        }else{
+                            commandSender.sendMessage("This command can only be executed by a player!");
+                            return true;
+                        }
 
                     } else if(Util.IsInteger(secondArg)) { // Handle point number.
 
