@@ -16,6 +16,9 @@ TODO LIST:
     X Instead of adding checkpoints by having the user enter 1,2,3, etc.. Auto increment them
         X Whe a point is removed we need to reset the number of all of the checkpoints > than the deleted one
     - Enable/disable parkour module in the main plugin config.
-    - Colored parkour messages back to the user
+    X Colored parkour messages back to the user
     - Parkour command help text
+    - Add a second armor stand:
+        - "Parkour"
+        - "Checkpoint #1"
 

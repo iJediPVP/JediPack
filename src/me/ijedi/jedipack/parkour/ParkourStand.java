@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -28,11 +29,21 @@ public class ParkourStand {
 
         // Spawn the armor stand
         ArmorStand armorStand = world.spawn(centeredLocation, ArmorStand.class);
-        armorStand.setCustomName(standName);
+        armorStand.setCustomName(formatString(standName, true));
         armorStand.setCustomNameVisible(true);
         armorStand.setGravity(false);
         armorStand.setVisible(false);
         return armorStand.getUniqueId();
+    }
+
+    public static String formatString(String str, boolean isHeader){
+        if(isHeader){
+            str = ChatColor.GOLD + "" + ChatColor.BOLD + str;
+        }
+        else{
+            str = ChatColor.AQUA + "" + ChatColor.BOLD + str;
+        }
+        return str;
     }
 
 }

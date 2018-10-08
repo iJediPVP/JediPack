@@ -91,7 +91,7 @@ public class ParkourCommand implements CommandExecutor {
                             return true;
 
                         }else{
-                            commandSender.sendMessage("This command can only be executed by a player!");
+                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
                             return true;
                         }
 
@@ -108,7 +108,7 @@ public class ParkourCommand implements CommandExecutor {
                             return true;
 
                         } else {
-                            commandSender.sendMessage("This command can only be executed by a player!");
+                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
                             return true;
                         }
 
@@ -133,7 +133,7 @@ public class ParkourCommand implements CommandExecutor {
                                         return true;
                                     }
                                     else{
-                                        commandSender.sendMessage("This command can only be executed by a player!");
+                                        commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
                                         return true;
                                     }
 
@@ -155,17 +155,17 @@ public class ParkourCommand implements CommandExecutor {
                                                 return true;
 
                                             } else {
-                                                commandSender.sendMessage("A point number must be an integer.");
+                                                commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
                                                 return true;
                                             }
 
                                         } else {
-                                            commandSender.sendMessage("A point number must be specified.");
+                                            commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
                                             return true;
                                         }
                                     }
                                     else{
-                                        commandSender.sendMessage("This command can only be executed by a player!");
+                                        commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
                                         return true;
                                     }
 

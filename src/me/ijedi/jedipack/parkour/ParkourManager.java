@@ -2,6 +2,7 @@ package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -186,6 +187,18 @@ public class ParkourManager {
             return config;
         }
     }
+
+
+    public static String formatParkourString(String str, boolean isError){
+        String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[Parkour] ";
+        if(isError){
+            finalString += ChatColor.RED;
+        }
+        finalString += str;
+        return finalString;
+    }
+
+
 
 
 

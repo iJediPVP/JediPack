@@ -130,11 +130,11 @@ public class ParkourCourse {
     public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber) {
 
         if(isStart && StartLocation != null){
-            return String.format("A starting point for course '%s' has already been set!", CourseId);
+            return ParkourManager.formatParkourString(String.format("A starting point for course '%s' has already been set!", CourseId), true);
         } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
 
         if(isFinish && FinishLocation != null){
-            return String.format("A finishing point for course '%s' has already been set!", CourseId);
+            return ParkourManager.formatParkourString(String.format("A finishing point for course '%s' has already been set!", CourseId), true);
         } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
 
         // Get location info
@@ -150,25 +150,25 @@ public class ParkourCourse {
         String pointName = "";
         if (isStart) {
             baseConfigPath = START + ".";
-            output = String.format("The starting point for course '%s' has been set!", CourseId);
+            output = ParkourManager.formatParkourString(String.format("The starting point for course '%s' has been set!", CourseId), false);
             StartLocation = saveLocation;
             pointName = "Parkour Start";
 
         } else if (isFinish) {
             baseConfigPath = FINISH + ".";
-            output = String.format("The finishing point for course '%s' has been set!", CourseId);
+            output = ParkourManager.formatParkourString(String.format("The finishing point for course '%s' has been set!", CourseId), false);
             FinishLocation = saveLocation;
             pointName = "Parkour Finish";
 
         } else if (pointNumber > 0) {
             baseConfigPath = POINT + "." + pointNumber + ".";
-            output = String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId);
+            output = ParkourManager.formatParkourString(String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId), false);
             pointName = "Checkpoint #" + pointNumber;
 
             // If we don't already have this point, add it.
             String pointStr = Integer.toString(pointNumber);
-            if(PointLocations.containsKey(pointStr)){ // TODO: Add a way to overwrite points
-                output = String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId);
+            if(PointLocations.containsKey(pointStr)){
+                output = ParkourManager.formatParkourString(String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId), true);
                 return output;
             }
             PointLocations.put(pointStr, saveLocation);
@@ -191,7 +191,7 @@ public class ParkourCourse {
 
             return output;
         } else {
-            return String.format("Invalid arguments were given to set this point for course '%s'!", CourseId);
+            return ParkourManager.formatParkourString(String.format("Invalid arguments were given to set this point for course '%s'!", CourseId), false);
         }
     }
 
@@ -227,10 +227,10 @@ public class ParkourCourse {
             if(removeFromMap){
                 PointLocations.remove(pointStr);
             }
-            return String.format("Point '#%s' was removed from course '%s'!", pointNumber, CourseId);
+            return ParkourManager.formatParkourString(String.format("Point '#%s' was removed from course '%s'!", pointNumber, CourseId), true);
         }
 
-        return String.format("Course '%s' does not contain point '#%s'.", CourseId, pointNumber);
+        return ParkourManager.formatParkourString(String.format("Course '%s' does not contain point '#%s'.", CourseId, pointNumber), true);
     }
 
     // Remove all points for this course
@@ -242,7 +242,6 @@ public class ParkourCourse {
             if(Util.IsInteger(nextKeyStr)){
                 int keyInt = Integer.parseInt(nextKeyStr);
                 removePoint(keyInt, false);
-                //PointLocations.keySet().remove(nextKeyStr);
                 keys.remove();
             }
         }
@@ -348,7 +347,7 @@ public class ParkourCourse {
                     Collection<Entity> nearbyEntities = pointLocation.getWorld().getNearbyEntities(pointLocation, 3, 3, 3);
                     for(Entity e : nearbyEntities){
                         if(e.getUniqueId().equals(entityId)){
-                            e.setCustomName("Checkpoint #" + previousPoint);
+                            e.setCustomName(ParkourStand.formatString("Checkpoint #" + previousPoint, true));
                             break;
                         }
                     }
@@ -367,7 +366,9 @@ public class ParkourCourse {
             CourseConfiguration.save(file);
 
         }catch(IOException e){
-            JediPackMain.getThisPlugin().getLogger().info("JediPack Parkour - Error saving configuration file for " + CourseId + ".");
+            String errorMessage = ParkourManager.formatParkourString("JediPack Parkour - Error saving configuration file for " + CourseId + ".", true);
+            JediPackMain.getThisPlugin().getLogger().info(errorMessage);
+            JediPackMain.getThisPlugin().getLogger().info(e.toString());
         }
     }
 
@@ -401,7 +402,9 @@ public class ParkourCourse {
             try{
                 config.save(CourseFile);
             }catch(IOException e){
-                JediPackMain.getThisPlugin().getLogger().info(String.format("JediPack Parkour - Error saving configuration file for course '%s'.", CourseId));
+                String errorMessage = ParkourManager.formatParkourString(String.format("JediPack Parkour - Error saving configuration file for course '%s'.", CourseId), true);
+                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
+                JediPackMain.getThisPlugin().getLogger().info(e.toString());
             }
             return config;
 
