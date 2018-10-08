@@ -216,7 +216,7 @@ public class ParkourCourse {
     }
 
     // Remove a single point
-    public void removePoint(int pointNumber, boolean removeFromMap){
+    public String removePoint(int pointNumber, boolean removeFromMap){
 
         String pointStr = Integer.toString(pointNumber);
         if(PointLocations.containsKey(pointStr)){
@@ -227,7 +227,10 @@ public class ParkourCourse {
             if(removeFromMap){
                 PointLocations.remove(pointStr);
             }
+            return String.format("Point '#%s' was removed from course '%s'!", pointNumber, CourseId);
         }
+
+        return String.format("Course '%s' does not contain point '#%s'.", CourseId, pointNumber);
     }
 
     // Remove all points for this course
@@ -279,16 +282,8 @@ public class ParkourCourse {
                     break;
                 }
             }
-
         }
     }
-
-    /* Adds the next checkpoint sequence to the course.
-    public void addNextCheckpoint(Location location){
-        int nextCheckpointInt = getNextCheckpointNumber();
-        setPointLocation(location, false, false, nextCheckpointInt);
-    }
-    */
 
     // Return the next checkpoint number that will be added to this course.
     public int getNextCheckpointNumber(){
@@ -306,6 +301,65 @@ public class ParkourCourse {
         return maxInt;
     }
 
+    // Reorder the checkpoints. IE: move #2 to #1, #3 to #2, etc.
+    public void reorderCheckPoints(){
+
+        // Make an arraylist so we can sort it
+        ArrayList<Integer> pointIntList = new ArrayList<>();
+        for(String pointKey : PointLocations.keySet()){
+            if(Util.IsInteger(pointKey)){
+                pointIntList.add(Integer.parseInt(pointKey));
+            }
+        }
+
+        Collections.sort(pointIntList);
+
+        // Loop through and reassign the point numbers
+        for(int pointInt : pointIntList){
+
+            // Skip 1, else we could end up with 0.
+            if(pointInt > 1){
+                // See if we have a point less than this one
+                String previousPoint = Integer.toString(pointInt - 1);
+                if(!PointLocations.containsKey(previousPoint)){
+
+                    // Wipe out the old config for this point
+                    String originalPointPath = POINT + "." + pointInt;
+                    Location pointLocation = PointLocations.get(Integer.toString(pointInt));
+                    JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(pointLocation == null));
+                    String entityIdStr = CourseConfiguration.getString(originalPointPath + "." + ENTITY_ID);
+
+                    UUID entityId = UUID.fromString(entityIdStr);
+                    CourseConfiguration.set(originalPointPath, null);
+
+                    // Write the new config for this point
+                    String newPointPath = POINT + "." + previousPoint;
+                    CourseConfiguration.set(newPointPath + "." + WORLDID, pointLocation.getWorld().getUID().toString());
+                    CourseConfiguration.set(newPointPath + "." + X, pointLocation.getBlock().getX());
+                    CourseConfiguration.set(newPointPath + "." + Y, pointLocation.getBlock().getY());
+                    CourseConfiguration.set(newPointPath + "." + Z, pointLocation.getBlock().getZ());
+                    CourseConfiguration.set(newPointPath + "." + ENTITY_ID, entityId);
+
+                    // Update stored list
+                    PointLocations.remove(Integer.toString(pointInt));
+                    PointLocations.put(previousPoint, pointLocation);
+
+                    // Update the armor stand
+                    Collection<Entity> nearbyEntities = pointLocation.getWorld().getNearbyEntities(pointLocation, 3, 3, 3);
+                    for(Entity e : nearbyEntities){
+                        if(e.getUniqueId().equals(entityId)){
+                            e.setCustomName("Checkpoint #" + previousPoint);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            saveConfiguration();
+        }
+
+
+    }
 
     // Save the ParkourCourse configuration file.
     private void saveConfiguration(){

@@ -111,11 +111,24 @@ public class ParkourManager {
         return String.format("Course '%s' does not exist!", courseId);
     }
 
+    // Create a new checkpoint for the specified parkour course.
     public static String setPoint(String courseId, Location location){
         if(doesCourseExist(courseId)){
             ParkourCourse course = ParkourCourses.get(courseId);
             int pointNumber = course.getNextCheckpointNumber();
             String output = course.setPointLocation(location, false, false, pointNumber);
+
+            return output;
+        }
+        return String.format("Course '%s' does not exist!", courseId);
+    }
+
+    // Remove the specified checkpoint from the specified parkour course.
+    public static String removePoint(String courseId, int pointNumber){
+        if(doesCourseExist(courseId)){
+            ParkourCourse course = ParkourCourses.get(courseId);
+            String output = course.removePoint(pointNumber, true);
+            course.reorderCheckPoints();
 
             return output;
         }

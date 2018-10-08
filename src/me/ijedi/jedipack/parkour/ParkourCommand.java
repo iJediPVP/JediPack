@@ -139,6 +139,35 @@ public class ParkourCommand implements CommandExecutor {
 
                                 } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
 
+                                    // Only allow players to execute
+                                    if(commandSender instanceof Player){
+
+                                        // See if a point number was given.
+                                        if(args.length > 3){
+
+                                            String pointStr = args[3];
+                                            if(Util.IsInteger(pointStr)){
+
+                                                // Remove the point
+                                                int pointInt = Integer.parseInt(pointStr);
+                                                String output = ParkourManager.removePoint(firstArg, pointInt);
+                                                commandSender.sendMessage(output);
+                                                return true;
+
+                                            } else {
+                                                commandSender.sendMessage("A point number must be an integer.");
+                                                return true;
+                                            }
+
+                                        } else {
+                                            commandSender.sendMessage("A point number must be specified.");
+                                            return true;
+                                        }
+                                    }
+                                    else{
+                                        commandSender.sendMessage("This command can only be executed by a player!");
+                                        return true;
+                                    }
 
                                 } else if(thirdArg.equals(MOVE)){ // Move a checkpoint
 
