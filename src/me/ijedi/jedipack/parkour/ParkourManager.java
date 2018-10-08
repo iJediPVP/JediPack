@@ -35,6 +35,9 @@ public class ParkourManager {
         // Initialize parkour commands
         plugin.getCommand("jppk").setExecutor(new ParkourCommand());
 
+        // Initialize events
+        plugin.getServer().getPluginManager().registerEvents(new ParkourBlockBreakEvent(), plugin);
+
         // Get the config section
         ParkourFile = getFile();
         ParkourConfiguration = getFileConfiguration();
@@ -214,7 +217,37 @@ public class ParkourManager {
         return finalString;
     }
 
+    public static Boolean isParkourBlockLocation(Location location){
 
+        // Loop through the courses
+        for(ParkourCourse course : ParkourCourses.values()){
+
+            // Start
+            Location startLoc = course.getStartLocation();
+            if(startLoc != null){
+                if(startLoc.getX() == location.getX() && startLoc.getY() == location.getY() && startLoc.getZ() == location.getZ()){
+                    return true;
+                }
+            }
+
+            // Finish
+            Location finishLoc = course.getFinishLocation();
+            if(finishLoc != null){
+                if(finishLoc.getX() == location.getX() && finishLoc.getY() == location.getY() && finishLoc.getZ() == location.getZ()){
+                    return true;
+                }
+            }
+
+            // Checkpoints
+            for(Location pointLoc : course.getPointLocations().values()){
+                if(pointLoc.getX() == location.getX() && pointLoc.getY() == location.getY() && pointLoc.getZ() == location.getZ()){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 
 

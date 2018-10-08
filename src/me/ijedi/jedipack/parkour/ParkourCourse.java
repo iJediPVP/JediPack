@@ -47,13 +47,13 @@ public class ParkourCourse {
         x:
         y:
         z:
-    //checkpoints:
-    1:
-        worldId:
-        id:
-        x:
-        y:
-        z:
+    points:
+        1:
+            worldId:
+            id:
+            x:
+            y:
+            z:
     *
     * */
 
@@ -355,8 +355,21 @@ public class ParkourCourse {
                 }
             }
         }
+    }
 
+    // Returns the start location for this course.
+    public Location getStartLocation(){
+        return StartLocation;
+    }
 
+    // Returns the finish location for this course.
+    public Location getFinishLocation(){
+        return FinishLocation;
+    }
+
+    // Returns the checkpoint locations for this course.
+    public HashMap<String, Location> getPointLocations(){
+        return PointLocations;
     }
 
     // Save the ParkourCourse configuration file.
