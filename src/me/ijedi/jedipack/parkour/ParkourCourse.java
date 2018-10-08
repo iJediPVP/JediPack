@@ -99,12 +99,12 @@ public class ParkourCourse {
 
         // Points
         ConfigurationSection pointsSection = CourseConfiguration.getConfigurationSection(POINT);
-        if(finishSection != null){
+        if(pointsSection != null){
 
             for(String pointKey : pointsSection.getKeys(false)){
 
-                ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(FINISH);
-                if(finishSection != null){
+                ConfigurationSection configSection = pointsSection.getConfigurationSection(pointKey);
+                if(configSection != null){
 
                     // TODO: I should probably handle this in case it fails to parse..
                     String worldIdStr = configSection.getString(WORLDID);
@@ -338,7 +338,7 @@ public class ParkourCourse {
                     CourseConfiguration.set(newPointPath + "." + X, pointLocation.getBlock().getX());
                     CourseConfiguration.set(newPointPath + "." + Y, pointLocation.getBlock().getY());
                     CourseConfiguration.set(newPointPath + "." + Z, pointLocation.getBlock().getZ());
-                    CourseConfiguration.set(newPointPath + "." + ENTITY_ID, entityId);
+                    CourseConfiguration.set(newPointPath + "." + ENTITY_ID, entityId.toString());
 
                     // Update stored list
                     PointLocations.remove(Integer.toString(pointInt));
@@ -352,10 +352,9 @@ public class ParkourCourse {
                             break;
                         }
                     }
+                    saveConfiguration();
                 }
             }
-
-            saveConfiguration();
         }
 
 
