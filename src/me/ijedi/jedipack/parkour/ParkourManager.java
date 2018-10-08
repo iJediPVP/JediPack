@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,17 @@ public class ParkourManager {
     // Load the parkour courses from the configuratoin files.
     public static void initializeCourses(){
 
+        // See if parkour is enabled
+        JavaPlugin plugin = JediPackMain.getThisPlugin();
+        FileConfiguration pluginConfig = plugin.getConfig();
+        if(!pluginConfig.getBoolean(JediPackMain.PARKOUR_ENABLED)){
+            plugin.getLogger().info(formatParkourString("Parkour is not enabled!", false));
+            return;
+        }
+
+        // Initialize parkour commands
+        plugin.getCommand("jppk").setExecutor(new ParkourCommand());
+
         // Get the config section
         ParkourFile = getFile();
         ParkourConfiguration = getFileConfiguration();
@@ -33,7 +45,7 @@ public class ParkourManager {
             // Loop through the course names and initialize each ParkourCourse object
             for (String courseName : courseList) {
                 if(!doesCourseExist(courseName)){
-                    JediPackMain.getThisPlugin().getLogger().info("Loading course: " + courseName);
+                    plugin.getLogger().info(formatParkourString("Loading course: " + courseName, false));
                     ParkourCourse course = new ParkourCourse(courseName);
                     ParkourCourses.put(courseName, course);
                 }
@@ -61,9 +73,9 @@ public class ParkourManager {
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
-            return String.format("Created course '%s'!", courseId);
+            return formatParkourString(String.format("Created course '%s'!", courseId), false);
         }
-        return String.format("Course '%s' already exists.", courseId);
+        return formatParkourString(String.format("Course '%s' already exists.", courseId), true);
     }
 
     public static String removeCourse(String courseId){
@@ -81,10 +93,10 @@ public class ParkourManager {
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
-            return String.format("Course '%s' has been removed!", courseId);
+            return formatParkourString(String.format("Course '%s' has been removed!", courseId), false);
         }
 
-        return String.format("Course '%s' does not exist.", courseId);
+        return formatParkourString(String.format("Course '%s' does not exist.", courseId), true);
     }
 
 
@@ -97,7 +109,7 @@ public class ParkourManager {
 
             return output;
         }
-        return String.format("Course '%s' does not exist!", courseId);
+        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
     }
 
     // Set the finishing point for the specified parkour course.
@@ -109,7 +121,7 @@ public class ParkourManager {
 
             return output;
         }
-        return String.format("Course '%s' does not exist!", courseId);
+        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
     }
 
     // Create a new checkpoint for the specified parkour course.
@@ -121,7 +133,7 @@ public class ParkourManager {
 
             return output;
         }
-        return String.format("Course '%s' does not exist!", courseId);
+        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
     }
 
     // Remove the specified checkpoint from the specified parkour course.
@@ -133,7 +145,7 @@ public class ParkourManager {
 
             return output;
         }
-        return String.format("Course '%s' does not exist!", courseId);
+        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
     }
 
 
@@ -144,7 +156,9 @@ public class ParkourManager {
             ParkourConfiguration.save(file);
 
         }catch(IOException e){
-            JediPackMain.getThisPlugin().getLogger().info("JediPack Parkour - Error saving configuration file.");
+            String errorMessage = formatParkourString("JediPack Parkour - Error saving configuration file.", true);
+            JediPackMain.getThisPlugin().getLogger().info(errorMessage);
+            JediPackMain.getThisPlugin().getLogger().info(e.toString());
         }
     }
 
@@ -178,7 +192,9 @@ public class ParkourManager {
             try{
                 config.save(ParkourFile);
             }catch(IOException e){
-                JediPackMain.getThisPlugin().getLogger().info("JediPack Parkour - Error saving configuration file.");
+                String errorMessage = formatParkourString("JediPack Parkour - Error saving configuration file.", true);
+                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
+                JediPackMain.getThisPlugin().getLogger().info(e.toString());
             }
             return config;
 

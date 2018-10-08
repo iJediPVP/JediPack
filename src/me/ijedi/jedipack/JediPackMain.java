@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class JediPackMain extends JavaPlugin {
 
     private static JavaPlugin thisPlugin;
+    public static final String PARKOUR_ENABLED = "parkourEnabled";
 
     @Override
     public void onEnable(){
