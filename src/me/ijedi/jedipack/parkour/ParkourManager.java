@@ -225,7 +225,10 @@ public class ParkourManager {
             // Start
             Location startLoc = course.getStartLocation();
             if(startLoc != null){
-                if(startLoc.getX() == location.getX() && startLoc.getY() == location.getY() && startLoc.getZ() == location.getZ()){
+                if(Util.DoLocationsEqual(startLoc, location, false)){
+                    return true;
+                }
+                if(Util.DoLocationsEqual(startLoc, location, true)){
                     return true;
                 }
             }
@@ -233,14 +236,20 @@ public class ParkourManager {
             // Finish
             Location finishLoc = course.getFinishLocation();
             if(finishLoc != null){
-                if(finishLoc.getX() == location.getX() && finishLoc.getY() == location.getY() && finishLoc.getZ() == location.getZ()){
+                if(Util.DoLocationsEqual(finishLoc, location, false)){
+                    return true;
+                }
+                if(Util.DoLocationsEqual(finishLoc, location, true)){
                     return true;
                 }
             }
 
             // Checkpoints
             for(Location pointLoc : course.getPointLocations().values()){
-                if(pointLoc.getX() == location.getX() && pointLoc.getY() == location.getY() && pointLoc.getZ() == location.getZ()){
+                if(Util.DoLocationsEqual(pointLoc, location, false)){
+                    return true;
+                }
+                if(Util.DoLocationsEqual(pointLoc, location, true)){
                     return true;
                 }
             }
