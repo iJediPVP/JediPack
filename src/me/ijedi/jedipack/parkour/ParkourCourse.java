@@ -6,10 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.material.Stairs;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,6 +130,18 @@ public class ParkourCourse {
 
     // Set the location of a specified point for this ParkourCourse.
     public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber) {
+
+        // Make sure the block the player's feet is in is AIR.
+        if(!location.getBlock().getType().equals(Material.AIR)){
+            return ParkourManager.formatParkourString("A parkour point cannot be placed here!", true);
+        }
+
+        // Verify that the block under the point is a solid.
+        Location belowLocation = new Location(location.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+        if(!belowLocation.getBlock().getType().isSolid()){
+            return ParkourManager.formatParkourString("A parkour point must be placed on a solid block!", true);
+        }
+
 
         if(isStart && StartLocation != null){
             return ParkourManager.formatParkourString(String.format("A starting point for course '%s' has already been set!", CourseId), true);
@@ -426,8 +440,5 @@ public class ParkourCourse {
             return config;
         }
     }
-
-
-
 
 }
