@@ -6,12 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.material.Stairs;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +29,8 @@ public class ParkourCourse {
     private final String X = "x";
     private final String Y = "y";
     private final String Z = "z";
-    private final String ENTITY_ID = "entityId";
+    private final String FOOTER_ID = "footerId";
+    private final String HEADER_ID = "headerId";
 
     private File CourseFile;
     private FileConfiguration CourseConfiguration;
@@ -131,6 +130,15 @@ public class ParkourCourse {
     // Set the location of a specified point for this ParkourCourse.
     public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber) {
 
+        if(isStart && StartLocation != null){
+            return ParkourManager.formatParkourString(String.format("A starting point for course '%s' has already been set!", CourseId), true);
+        } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
+
+        if(isFinish && FinishLocation != null){
+            return ParkourManager.formatParkourString(String.format("A finishing point for course '%s' has already been set!", CourseId), true);
+        } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
+
+
         // Make sure the block the player's feet is in is AIR.
         if(!location.getBlock().getType().equals(Material.AIR)){
             return ParkourManager.formatParkourString("A parkour point cannot be placed here!", true);
@@ -142,14 +150,6 @@ public class ParkourCourse {
             return ParkourManager.formatParkourString("A parkour point must be placed on a solid block!", true);
         }
 
-
-        if(isStart && StartLocation != null){
-            return ParkourManager.formatParkourString(String.format("A starting point for course '%s' has already been set!", CourseId), true);
-        } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
-
-        if(isFinish && FinishLocation != null){
-            return ParkourManager.formatParkourString(String.format("A finishing point for course '%s' has already been set!", CourseId), true);
-        } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
 
         // Get location info
         String worldId = location.getWorld().getUID().toString();
@@ -197,10 +197,13 @@ public class ParkourCourse {
             CourseConfiguration.set(baseConfigPath + Y, y);
             CourseConfiguration.set(baseConfigPath + Z, z);
 
-            ParkourPoint point = new ParkourPoint(isStart, isFinish, pointNumber, pointName);
-            UUID entityId = point.Spawn(location); // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
+            // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
+            ParkourStand stand = ParkourStand.SpawnStand(location, isStart, isFinish, pointNumber);
+            UUID footerId = stand.getFooterStandId();
+            UUID headerId = stand.getHeaderStandId();
 
-            CourseConfiguration.set(baseConfigPath + ENTITY_ID, entityId.toString());
+            CourseConfiguration.set(baseConfigPath + FOOTER_ID, footerId.toString());
+            CourseConfiguration.set(baseConfigPath + HEADER_ID, headerId.toString());
             saveConfiguration();
 
             return output;
@@ -282,17 +285,19 @@ public class ParkourCourse {
         ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(configPath);
 
         if(configSection != null){
-            String entityIdStr = configSection.getString(ENTITY_ID);
-            UUID entityId = UUID.fromString(entityIdStr);
+            String footerIdStr = configSection.getString(FOOTER_ID);
+            UUID footerId = UUID.fromString(footerIdStr);
+
+            String headerIdStr = configSection.getString(HEADER_ID);
+            UUID headerId = UUID.fromString(headerIdStr);
 
             Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(location, 3, 3, 3);
             for(Entity e : nearbyEntities){
-                if(e.getUniqueId().equals(entityId)){
+                if(e.getUniqueId().equals(footerId) || e.getUniqueId().equals(headerId)){
 
                     // Remove the entity and replace the pressure plate with air
                     e.remove();
                     location.getBlock().setType(Material.AIR);
-                    break;
                 }
             }
         }
@@ -340,9 +345,13 @@ public class ParkourCourse {
                     String originalPointPath = POINT + "." + pointInt;
                     Location pointLocation = PointLocations.get(Integer.toString(pointInt));
                     JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(pointLocation == null));
-                    String entityIdStr = CourseConfiguration.getString(originalPointPath + "." + ENTITY_ID);
 
-                    UUID entityId = UUID.fromString(entityIdStr);
+                    String footerIdStr = CourseConfiguration.getString(originalPointPath + "." + FOOTER_ID);
+                    UUID footerId = UUID.fromString(footerIdStr);
+
+                    String headerIdStr = CourseConfiguration.getString(originalPointPath + "." + HEADER_ID);
+                    UUID headerId = UUID.fromString(headerIdStr);
+
                     CourseConfiguration.set(originalPointPath, null);
 
                     // Write the new config for this point
@@ -351,17 +360,18 @@ public class ParkourCourse {
                     CourseConfiguration.set(newPointPath + "." + X, pointLocation.getBlock().getX());
                     CourseConfiguration.set(newPointPath + "." + Y, pointLocation.getBlock().getY());
                     CourseConfiguration.set(newPointPath + "." + Z, pointLocation.getBlock().getZ());
-                    CourseConfiguration.set(newPointPath + "." + ENTITY_ID, entityId.toString());
+                    CourseConfiguration.set(newPointPath + "." + FOOTER_ID, footerId.toString());
+                    CourseConfiguration.set(newPointPath + "." + HEADER_ID, headerId.toString());
 
                     // Update stored list
                     PointLocations.remove(Integer.toString(pointInt));
                     PointLocations.put(previousPoint, pointLocation);
 
-                    // Update the armor stand
+                    // Update the footer armor stand
                     Collection<Entity> nearbyEntities = pointLocation.getWorld().getNearbyEntities(pointLocation, 3, 3, 3);
                     for(Entity e : nearbyEntities){
-                        if(e.getUniqueId().equals(entityId)){
-                            e.setCustomName(ParkourStand.formatString("Checkpoint #" + previousPoint, true));
+                        if(e.getUniqueId().equals(footerId)){
+                            e.setCustomName(ParkourStand.formatString("Checkpoint #" + previousPoint, false));
                             break;
                         }
                     }

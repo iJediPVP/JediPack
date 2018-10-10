@@ -13,14 +13,14 @@ TODO LIST:
     - Reload the parkour course pressure plates and armor stands when during onEnable()
     X Make pressure plates unbreakable (probably block break event and check if it's our stored block location)
     X Prevent the block from under the plates from breaking.
-    - Prevent floating pressure plates from breaking or allowing them to be placed.
+    X Prevent floating pressure plates from breaking or allowing them to be placed.
     X Colored armor stand names
     X Instead of adding checkpoints by having the user enter 1,2,3, etc.. Auto increment them
         X Whe a point is removed we need to reset the number of all of the checkpoints > than the deleted one
     X Enable/disable parkour module in the main plugin config.
     X Colored parkour messages back to the user
     - Parkour command help text
-    - Add a second armor stand:
-        - "Parkour"
-        - "Checkpoint #1"
+    X Add a second armor stand:
+        X "Parkour"
+        X "Checkpoint #1"
 

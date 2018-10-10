@@ -1,6 +1,6 @@
 package me.ijedi.jedipack.test;
 
-import me.ijedi.jedipack.parkour.ParkourPoint;
+import me.ijedi.jedipack.parkour.ParkourStand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,9 +16,7 @@ public class TestStandCommand implements CommandExecutor {
 
             // Spawn a ParkourPoint object
             Player player = (Player)commandSender;
-            ParkourPoint point = new ParkourPoint(true, false, 0, "First Point");
-            point.Spawn(player.getLocation());
-
+            ParkourStand.SpawnStand(player.getLocation(), true, false, 0);
         }
         else{
             commandSender.sendMessage("Only players can run this command!");
