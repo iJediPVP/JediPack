@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.Util;
 import me.ijedi.menulibrary.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -89,6 +90,32 @@ public class ParkourMenuEvent implements Listener {
                                 String message = ParkourManager.formatParkourString(String.format("The finishing point for course '%s' has been removed!", courseId), false);
                                 player.sendMessage(message);
                                 ParkourManager.openCourseMenu(courseId, player);
+                            }
+
+                        } else if(itemName.toUpperCase().startsWith("CHECKPOINT")){
+                            // Checkpoints
+                            // Get the point number
+                            itemName = itemName.replace("#", "");
+                            String[] checkpointArray = itemName.split(" ");
+                            if(checkpointArray.length > 1 && Util.IsInteger(checkpointArray[1])){
+                                int pointNum = Integer.parseInt(checkpointArray[1]);
+
+                                // Make sure course exists
+                                if(!ParkourManager.doesCourseExist(courseId)){
+                                    String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
+                                    player.sendMessage(message);
+                                    player.closeInventory();
+
+                                } else {
+                                    // Remove the point
+                                    String message = ParkourManager.removePoint(courseId, pointNum);
+                                    player.sendMessage(message);
+                                    ParkourManager.openCourseMenu(courseId, player);
+                                }
+                            } else {
+                                String message = ParkourManager.formatParkourString("Invalid checkpoint name.", true);
+                                player.sendMessage(message);
+                                player.closeInventory();
                             }
                         }
                     }
