@@ -1,6 +1,8 @@
 package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.common.Util;
+import me.ijedi.menulibrary.Menu;
+import me.ijedi.menulibrary.MenuManager;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -22,6 +24,7 @@ public class ParkourCommand implements CommandExecutor {
     private final String ADD = "add";
     private final String REMOVE = "remove";
     private final String MOVE = "move";
+    private final String EDIT = "edit";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -46,6 +49,8 @@ public class ParkourCommand implements CommandExecutor {
         /jppk 123 checkpoint remove 1 // remove checkpoint number 1 from the course
         /jppk 123 checkpoint move 1 // move checkpoint 1 to the specified location
 
+        /jppk 123 edit // open the menu for editing the course
+
         // Interact with the course
         /jppk restart       // return to the start of the course
         /jppk checkpoint    // return to the last checkpoint
@@ -59,7 +64,12 @@ public class ParkourCommand implements CommandExecutor {
 
             // Check for a course id. Anything except commands required for this plugin will be allowed.
             if(!ArrayUtils.contains(FIRST_ARG_BLACKLIST, firstArg)){
-                // At this point "firstArg" is our course id.
+                // At this point "firstArg" is our course id. Make sure the course exists.
+                if(!ParkourManager.doesCourseExist(firstArg)){
+                    String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", firstArg), true);
+                    commandSender.sendMessage(message);
+                    return true;
+                }
 
                 // Check for our second argument.
                 if(args.length > 1 && !Util.IsNullOrEmpty(args[1])){
@@ -176,7 +186,20 @@ public class ParkourCommand implements CommandExecutor {
 
                         }
 
-                    } // TODO: Else, handle invalid second argument.
+                    } else if(secondArg.equals(EDIT)){
+
+                        // Only a player can run this
+                        if(!(commandSender instanceof Player)) {
+                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+                            return true;
+                        }
+
+                        // Open up the menu for this course
+                        Player player = (Player) commandSender;
+                        ParkourManager.openCourseMenu(firstArg, player);
+                        return true;
+
+                    }// TODO: Else, handle invalid second argument.
 
                 } // TODO: Else, handle this..
 

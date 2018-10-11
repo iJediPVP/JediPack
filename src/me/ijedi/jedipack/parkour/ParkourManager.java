@@ -2,10 +2,13 @@ package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
+import me.ijedi.menulibrary.Menu;
+import me.ijedi.menulibrary.MenuManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -37,6 +40,7 @@ public class ParkourManager {
 
         // Initialize events
         plugin.getServer().getPluginManager().registerEvents(new ParkourBlockBreakEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ParkourMenuEvent(), plugin);
 
         // Get the config section
         ParkourFile = getFile();
@@ -102,6 +106,14 @@ public class ParkourManager {
         return formatParkourString(String.format("Course '%s' does not exist.", courseId), true);
     }
 
+    public static ParkourCourse getCourse(String courseId){
+        if(doesCourseExist(courseId)){
+            ParkourCourse course = ParkourCourses.get(courseId);
+            return course;
+        }
+        return null;
+    }
+
 
     // Set the starting point for the specified parkour course.
     public static String setStart(String courseId, Location location){
@@ -150,6 +162,40 @@ public class ParkourManager {
         }
         return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
     }
+
+    // See if a course has a starting point. This assumes that the course exists.
+    public static boolean hasStart(String courseId){
+        ParkourCourse course = getCourse(courseId);
+        JediPackMain.getThisPlugin().getLogger().info(courseId);
+        return course.getStartLocation() != null;
+    }
+
+    // Remove the starting point form the course. This assumes the course exists and has a starting point.
+    public static void removeStart(String courseId){
+        ParkourCourse course = getCourse(courseId);
+        course.removeStart();
+    }
+
+    // See if a course has a finishing point. This assumes that the course exists.
+    public static boolean hasFinish(String courseId){
+        ParkourCourse course = getCourse(courseId);
+        JediPackMain.getThisPlugin().getLogger().info(courseId);
+        return course.getFinishLocation() != null;
+    }
+
+    // Remove the finishing point form the course. This assumes the course exists and has a finishing point.
+    public static void removeFinish(String courseId){
+        ParkourCourse course = getCourse(courseId);
+        course.removeFinish();
+    }
+
+    // Open the course menu for the player
+    public static void openCourseMenu(String courseId, Player player){
+        ParkourCourse course = getCourse(courseId);
+        Menu menu = ParkourMenuEvent.getMenuFromCourse(courseId, course);
+        player.openInventory(new MenuManager().getMenu(menu.getName()));
+    }
+
 
 
     // Save the ParkourManager configuration file.
