@@ -197,7 +197,7 @@ public class ParkourManager {
             player.openInventory(new MenuManager().getMenu(menu.getName()));
         }
         catch (NullPointerException e){
-            String message = ParkourManager.formatParkourString(String.format("Course '%s' does not contain any check points.", courseId), true);
+            String message = ParkourManager.formatParkourString(String.format("Course '%s' is empty.", courseId), true);
             player.sendMessage(message);
             player.closeInventory();
         }
