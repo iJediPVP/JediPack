@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ParkourMenuEvent implements Listener {
@@ -138,8 +139,17 @@ public class ParkourMenuEvent implements Listener {
         }
 
         // Checkpoints
+        // Make an arraylist so we can sort it
+        ArrayList<Integer> pointIntList = new ArrayList<>();
         for(String pointKey : course.getPointLocations().keySet()){
-            Location location = course.getPointLocations().get(pointKey);
+            if(Util.IsInteger(pointKey)){
+                pointIntList.add(Integer.parseInt(pointKey));
+            }
+        }
+
+        Collections.sort(pointIntList);
+        for(int pointKey : pointIntList){
+            Location location = course.getPointLocations().get(Integer.toString(pointKey));
             if(location != null){
                 ItemStack itemStack = new ItemStack(Material.IRON_PLATE);
                 ItemMeta itemMeta = itemStack.getItemMeta();
