@@ -8,8 +8,8 @@ TODO LIST:
 
 - Parkour misc:
     - UI to edit the parkour course
-        - Delete course, Delete checkpoints
-        - Put coords and world info on point lore
+        X Delete course, Delete checkpoints
+        X Put coords and world info on point lore
         - Fix error when trying to edit a course with no points.
     - Allow sign placements to execute parkour commands
     - Reload the parkour course pressure plates and armor stands when during onEnable()

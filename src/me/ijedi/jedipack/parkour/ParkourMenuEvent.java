@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
 import me.ijedi.menulibrary.Menu;
 import org.bukkit.ChatColor;
@@ -39,13 +40,8 @@ public class ParkourMenuEvent implements Listener {
 
                     // See what item was clicked. The menu library will handle next, prev, and exit. All we need to do is handle the removal of points.
                     ItemStack clickedItem = event.getCurrentItem();
-                    if(clickedItem != null){
-                        String itemName = clickedItem.getItemMeta().getDisplayName();
-                        if(itemName.startsWith("Start") || itemName.startsWith("Checkpoint") || itemName.startsWith("Finish")){
-
-
-
-                        }
+                    if(clickedItem != null && clickedItem.hasItemMeta()){
+                        String itemName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
 
                         // Starting point
                         if(itemName.toUpperCase().startsWith("START")){
@@ -135,9 +131,9 @@ public class ParkourMenuEvent implements Listener {
         if(course.getStartLocation() != null){
             ItemStack itemStack = new ItemStack(Material.GOLD_PLATE);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            List<String> itemLore = Arrays.asList(ChatColor.RED + "Click to remove the starting point.");
+            List<String> itemLore = getPointLore(course.getStartLocation(), ChatColor.RED + "Click to remove the starting point."); // Arrays.asList(ChatColor.RED + "Click to remove the starting point.");
             itemMeta.setLore(itemLore);
-            itemMeta.setDisplayName("Start");
+            itemMeta.setDisplayName(ChatColor.AQUA + "Start");
             itemStack.setItemMeta(itemMeta);
             pointItems.add(itemStack);
         }
@@ -148,9 +144,9 @@ public class ParkourMenuEvent implements Listener {
             if(location != null){
                 ItemStack itemStack = new ItemStack(Material.IRON_PLATE);
                 ItemMeta itemMeta = itemStack.getItemMeta();
-                List<String> itemLore = Arrays.asList(String.format(ChatColor.RED + "Click to remove Checkpoint #%s.", pointKey));
+                List<String> itemLore = getPointLore(location, String.format(ChatColor.RED + "Click to remove Checkpoint #%s.", pointKey));
                 itemMeta.setLore(itemLore);
-                itemMeta.setDisplayName("Checkpoint #" + pointKey);
+                itemMeta.setDisplayName(ChatColor.AQUA + "Checkpoint #" + pointKey);
                 itemStack.setItemMeta(itemMeta);
                 pointItems.add(itemStack);
             }
@@ -160,9 +156,9 @@ public class ParkourMenuEvent implements Listener {
         if(course.getFinishLocation() != null){
             ItemStack itemStack = new ItemStack(Material.GOLD_PLATE);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            List<String> itemLore = Arrays.asList(ChatColor.RED + "Click to remove the finishing point.");
+            List<String> itemLore = getPointLore(course.getFinishLocation(),ChatColor.RED + "Click to remove the finishing point.");
             itemMeta.setLore(itemLore);
-            itemMeta.setDisplayName("Finish");
+            itemMeta.setDisplayName(ChatColor.AQUA + "Finish");
             itemStack.setItemMeta(itemMeta);
             pointItems.add(itemStack);
         }
@@ -173,21 +169,21 @@ public class ParkourMenuEvent implements Listener {
         ItemMeta exitMeta = exitButton.getItemMeta();
         List<String> exitLore = Arrays.asList(ChatColor.GREEN + "Click to exit.");
         exitMeta.setLore(exitLore);
-        exitMeta.setDisplayName("Exit");
+        exitMeta.setDisplayName(ChatColor.RED + "Exit");
         exitButton.setItemMeta(exitMeta);
 
         ItemStack nextButton = new ItemStack(Material.ARROW);
         ItemMeta nextMeta = nextButton.getItemMeta();
         List<String> nextLore = Arrays.asList(ChatColor.GREEN + "Click to go to the next page.");
         exitMeta.setLore(nextLore);
-        nextMeta.setDisplayName("Next");
+        nextMeta.setDisplayName(ChatColor.GREEN + "Next");
         nextButton.setItemMeta(nextMeta);
 
         ItemStack prevButton = new ItemStack(Material.ARROW);
         ItemMeta prevMeta = prevButton.getItemMeta();
         List<String> prevLore = Arrays.asList(ChatColor.GREEN + "Click to go to the previous page.");
         exitMeta.setLore(prevLore);
-        prevMeta.setDisplayName("Previous");
+        prevMeta.setDisplayName(ChatColor.GREEN + "Previous");
         prevButton.setItemMeta(prevMeta);
 
         Menu menu = new Menu(String.format("%s %s", MENU_PREFIX, courseId));
@@ -195,5 +191,15 @@ public class ParkourMenuEvent implements Listener {
         menu.setButtons(exitButton, prevButton, nextButton);
 
         return menu;
+    }
+
+    private static List<String> getPointLore(Location location, String firstLine){
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(firstLine);
+        lore.add(ChatColor.GREEN + "World: " + ChatColor.GOLD + location.getWorld().getName());
+        lore.add(ChatColor.GREEN + "X: " + ChatColor.GOLD + location.getX());
+        lore.add(ChatColor.GREEN + "Y: " + ChatColor.GOLD + location.getY());
+        lore.add(ChatColor.GREEN + "Z: " + ChatColor.GOLD + location.getZ());
+        return lore;
     }
 }

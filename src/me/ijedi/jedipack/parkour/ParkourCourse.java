@@ -344,7 +344,6 @@ public class ParkourCourse {
                     // Wipe out the old config for this point
                     String originalPointPath = POINT + "." + pointInt;
                     Location pointLocation = PointLocations.get(Integer.toString(pointInt));
-                    JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(pointLocation == null));
 
                     String footerIdStr = CourseConfiguration.getString(originalPointPath + "." + FOOTER_ID);
                     UUID footerId = UUID.fromString(footerIdStr);
