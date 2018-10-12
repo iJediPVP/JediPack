@@ -58,9 +58,6 @@ public class Util {
             if(loc1.getWorld().getUID().equals(loc2.getWorld().getUID())
             && loc1.getX() == loc2.getX() && loc1.getZ() == loc2.getZ()) {
 
-                JediPackMain.getThisPlugin().getLogger().info("loc 1 Y:" + loc1.getY());
-                JediPackMain.getThisPlugin().getLogger().info("loc 2 Y:" + loc2.getY());
-
                 // See if we should check above location 1.
                 double y1 = loc1.getY();
                 if(checkBelowLoc1){

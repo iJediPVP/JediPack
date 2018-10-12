@@ -41,6 +41,7 @@ public class ParkourManager {
         // Initialize events
         plugin.getServer().getPluginManager().registerEvents(new ParkourBlockBreakEvent(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ParkourMenuEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ParkourPointInteractEvent(), plugin);
 
         // Get the config section
         ParkourFile = getFile();
@@ -261,6 +262,8 @@ public class ParkourManager {
     }
 
 
+
+    // Format the given string for parkour chat messages
     public static String formatParkourString(String str, boolean isError){
         String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[Parkour] ";
         if(isError){
@@ -270,39 +273,45 @@ public class ParkourManager {
         return finalString;
     }
 
+    // Returns if the given location belongs to a parkour course
     public static Boolean isParkourBlockLocation(Location location){
+        // Check start, finish, and checkpoints
+        if(isStartLocation(location, true, null)
+                || isFinishLocation(location, true, null)
+                || isCheckpointLocation(location, true, null) ){
+            return true;
+        }
+        return false;
+    }
 
-        // Loop through the courses
+    // Returns if the given location is a starting point.
+    public static boolean isStartLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
+
+        // Check the given course
+        if(courseToCheck != null){
+
+            Location courseLoc = courseToCheck.getStartLocation();
+            if(courseLoc != null){
+                if(Util.DoLocationsEqual(courseLoc, location, false)){
+                    return true;
+                }
+                if(checkBelow && Util.DoLocationsEqual(courseLoc, location, true)){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Loop through courses and check start location
         for(ParkourCourse course : ParkourCourses.values()){
 
-            // Start
             Location startLoc = course.getStartLocation();
             if(startLoc != null){
                 if(Util.DoLocationsEqual(startLoc, location, false)){
                     return true;
                 }
-                if(Util.DoLocationsEqual(startLoc, location, true)){
-                    return true;
-                }
-            }
-
-            // Finish
-            Location finishLoc = course.getFinishLocation();
-            if(finishLoc != null){
-                if(Util.DoLocationsEqual(finishLoc, location, false)){
-                    return true;
-                }
-                if(Util.DoLocationsEqual(finishLoc, location, true)){
-                    return true;
-                }
-            }
-
-            // Checkpoints
-            for(Location pointLoc : course.getPointLocations().values()){
-                if(Util.DoLocationsEqual(pointLoc, location, false)){
-                    return true;
-                }
-                if(Util.DoLocationsEqual(pointLoc, location, true)){
+                if(checkBelow && Util.DoLocationsEqual(startLoc, location, true)){
                     return true;
                 }
             }
@@ -311,6 +320,90 @@ public class ParkourManager {
         return false;
     }
 
+    // Returns if the given location is a finishing point.
+    public static boolean isFinishLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
 
+        // Check the given course
+        if(courseToCheck != null){
 
+            Location courseLoc = courseToCheck.getFinishLocation();
+            if(courseLoc != null){
+                if(Util.DoLocationsEqual(courseLoc, location, false)){
+                    return true;
+                }
+                if(checkBelow && Util.DoLocationsEqual(courseLoc, location, true)){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Loop through courses and check finish location
+        for(ParkourCourse course : ParkourCourses.values()){
+
+            Location finishLoc = course.getFinishLocation();
+            if(finishLoc != null){
+                if(Util.DoLocationsEqual(finishLoc, location, false)){
+                    return true;
+                }
+                if(checkBelow && Util.DoLocationsEqual(finishLoc, location, true)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Return if the given location is a checkpoint.
+    public static boolean isCheckpointLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
+
+        // Check the given course
+        if(courseToCheck != null){
+
+            for(Location pointLoc : courseToCheck.getPointLocations().values()){
+                if(Util.DoLocationsEqual(pointLoc, location, false)){
+                    return true;
+                }
+                if(checkBelow && Util.DoLocationsEqual(pointLoc, location, true)){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Loop through courses and check finish location
+        for(ParkourCourse course : ParkourCourses.values()){
+            for(Location pointLoc : course.getPointLocations().values()){
+                if(Util.DoLocationsEqual(pointLoc, location, false)){
+                    return true;
+                }
+                if(checkBelow && Util.DoLocationsEqual(pointLoc, location, true)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Returns the course id from the given location. Returns null if the location does not belong to a course.
+    public static String getCourseIdFromLocation(Location location){
+
+        // Loop through the courses
+        for(String courseKey : ParkourCourses.keySet()){
+
+            // Check locations
+            ParkourCourse course = ParkourCourses.get(courseKey);
+            if(isStartLocation(location, false, course)
+                    || isFinishLocation(location, false, course)
+                    || isCheckpointLocation(location, false, course)){
+                return courseKey;
+            }
+
+        }
+
+        return null;
+    }
 }
