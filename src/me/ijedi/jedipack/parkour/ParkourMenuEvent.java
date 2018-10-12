@@ -1,8 +1,7 @@
 package me.ijedi.jedipack.parkour;
 
-import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
-import me.ijedi.menulibrary.Menu;
+import me.ijedi.jedipack.menu.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

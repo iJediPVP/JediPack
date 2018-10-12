@@ -1,8 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.common.Util;
-import me.ijedi.menulibrary.Menu;
-import me.ijedi.menulibrary.MenuManager;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -64,12 +62,7 @@ public class ParkourCommand implements CommandExecutor {
 
             // Check for a course id. Anything except commands required for this plugin will be allowed.
             if(!ArrayUtils.contains(FIRST_ARG_BLACKLIST, firstArg)){
-                // At this point "firstArg" is our course id. Make sure the course exists.
-                if(!ParkourManager.doesCourseExist(firstArg)){
-                    String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", firstArg), true);
-                    commandSender.sendMessage(message);
-                    return true;
-                }
+                // At this point "firstArg" is our course id.
 
                 // Check for our second argument.
                 if(args.length > 1 && !Util.IsNullOrEmpty(args[1])){
@@ -105,7 +98,16 @@ public class ParkourCommand implements CommandExecutor {
                             return true;
                         }
 
-                    }else if(secondArg.equals(END)) { // Handle end
+                    }
+
+                    // Make sure the course exists
+                    if(!ParkourManager.doesCourseExist(firstArg)){
+                        String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", firstArg), true);
+                        commandSender.sendMessage(message);
+                        return true;
+                    }
+
+                    if(secondArg.equals(END)) { // Handle end
 
                         // Only allow this to be executed by a player
                         if (commandSender instanceof Player) {

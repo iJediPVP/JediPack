@@ -8,9 +8,10 @@ TODO LIST:
 
 - Parkour misc:
     - UI to edit the parkour course
-        X Delete course, Delete checkpoints
+        X Delete checkpoints
         X Put coords and world info on point lore
-        - Fix error when trying to edit a course with no points.
+        X Fix error when trying to edit a course with no points.
+        - Add option to remove the course?
     - Allow sign placements to execute parkour commands
     - Reload the parkour course pressure plates and armor stands when during onEnable()
     X Make pressure plates unbreakable (probably block break event and check if it's our stored block location)

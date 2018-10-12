@@ -2,8 +2,8 @@ package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.Util;
-import me.ijedi.menulibrary.Menu;
-import me.ijedi.menulibrary.MenuManager;
+import me.ijedi.jedipack.menu.Menu;
+import me.ijedi.jedipack.menu.MenuManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -191,9 +191,16 @@ public class ParkourManager {
 
     // Open the course menu for the player
     public static void openCourseMenu(String courseId, Player player){
-        ParkourCourse course = getCourse(courseId);
-        Menu menu = ParkourMenuEvent.getMenuFromCourse(courseId, course);
-        player.openInventory(new MenuManager().getMenu(menu.getName()));
+        try{
+            ParkourCourse course = getCourse(courseId);
+            Menu menu = ParkourMenuEvent.getMenuFromCourse(courseId, course);
+            player.openInventory(new MenuManager().getMenu(menu.getName()));
+        }
+        catch (NullPointerException e){
+            String message = ParkourManager.formatParkourString(String.format("Course '%s' does not contain any check points.", courseId), true);
+            player.sendMessage(message);
+            player.closeInventory();
+        }
     }
 
 

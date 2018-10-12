@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.initialize.CommandInitializer;
+import me.ijedi.jedipack.menu.MenuListener;
 import me.ijedi.jedipack.parkour.ParkourManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +19,8 @@ public class JediPackMain extends JavaPlugin {
         // Initialize commands
         CommandInitializer.RegisterCommands(this);
         this.saveDefaultConfig();
+
+        getServer().getPluginManager().registerEvents(new MenuListener(this), this);
 
         ParkourManager.initializeCourses();
 

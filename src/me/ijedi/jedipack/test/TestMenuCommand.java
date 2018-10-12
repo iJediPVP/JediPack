@@ -1,14 +1,14 @@
 package me.ijedi.jedipack.test;
 
+import me.ijedi.jedipack.menu.Menu;
+import me.ijedi.jedipack.menu.MenuManager;
 import me.ijedi.jedipack.parkour.ParkourCourse;
 import me.ijedi.jedipack.parkour.ParkourManager;
 import me.ijedi.jedipack.parkour.ParkourMenuEvent;
-import me.ijedi.menulibrary.MenuManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import me.ijedi.menulibrary.Menu;
 
 public class TestMenuCommand implements CommandExecutor {
 
