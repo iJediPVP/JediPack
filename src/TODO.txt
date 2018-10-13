@@ -5,6 +5,7 @@ TODO LIST:
         - Warn users that they hit a checkpoint without starting the course.
     - Restart course command
     - Back to last checkpoint command
+    - Add cooldown on point messages
 
 - Parkour misc:
     - UI to edit the parkour course

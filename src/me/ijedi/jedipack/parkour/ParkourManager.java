@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class ParkourManager {
 
@@ -23,6 +24,7 @@ public class ParkourManager {
     private static final String CONFIG_NAME = "parkourConfig.yml";
     private static FileConfiguration ParkourConfiguration;
     private static File ParkourFile;
+    private static HashMap<UUID, ParkourPlayerInfo> PlayerInfos = new HashMap<>();
 
     // Load the parkour courses from the configuratoin files.
     public static void initializeCourses(){
@@ -405,5 +407,28 @@ public class ParkourManager {
         }
 
         return null;
+    }
+
+
+    // Return a ParkourPlayerInfo for the given player and course.
+    public static ParkourPlayerInfo getPlayerInfo(Player player, String courseId){
+
+        // Return existing player info. If one doesn't exist, create it.
+        if(PlayerInfos.containsKey(player.getUniqueId())){
+            return PlayerInfos.get(player.getUniqueId());
+
+        } else {
+            ParkourPlayerInfo info = new ParkourPlayerInfo(player.getUniqueId(), courseId);
+            PlayerInfos.put(player.getUniqueId(), info);
+            return info;
+        }
+
+    }
+
+    // Remove ParkourPlayerInfo from our list.
+    public static void removePlayerInfo(UUID playerId){
+        if(PlayerInfos.containsKey(playerId)){
+            PlayerInfos.remove(playerId);
+        }
     }
 }
