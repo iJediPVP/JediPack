@@ -1,8 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
-import me.ijedi.jedipack.common.Util;
-import org.bukkit.entity.Player;
-
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -11,7 +9,6 @@ public class ParkourPlayerInfo {
     private UUID playerId;
     private String courseId;
     private Date startDate;
-    private Date endDate;
     private int currentCheckpoint;
 
     public ParkourPlayerInfo(UUID playerId, String courseId){
@@ -29,5 +26,15 @@ public class ParkourPlayerInfo {
     public void setStartDate(Date startDate, String courseId){
         this.startDate = startDate;
         this.courseId = courseId;
+    }
+
+    public long getCourseTime(Date finishDate){
+        long courseTime = (finishDate.getTime() - startDate.getTime());
+        return courseTime;
+    }
+
+    public String formatTime(long time){
+        SimpleDateFormat format = new SimpleDateFormat("mm:ss:SSS");
+        return format.format(time);
     }
 }

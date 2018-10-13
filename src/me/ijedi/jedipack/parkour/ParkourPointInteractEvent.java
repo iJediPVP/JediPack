@@ -67,9 +67,12 @@ public class ParkourPointInteractEvent implements Listener {
                     } else {
 
                         // They finished!
-                        String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s'!", courseId), false);
+                        long courseTime = info.getCourseTime(new Date());
+                        String timeStr = info.formatTime(courseTime);
+                        String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s' with a time of '%s'!", courseId, timeStr), false);
                         player.sendMessage(message);
-                        // TODO: Give course time and set course record.
+
+                        // TODO: Set course record.
                         ParkourManager.removePlayerInfo(player.getUniqueId());
                     }
 
