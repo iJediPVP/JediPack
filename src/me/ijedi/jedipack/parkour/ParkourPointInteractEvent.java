@@ -35,6 +35,11 @@ public class ParkourPointInteractEvent implements Listener {
                     // Get the player info for this player from the parkour manager
                     ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
 
+                    // See if there is a start cool down
+                    if(info.hasStartMessageCoolDown()){
+                        return;
+                    }
+
                     // If the player has already started, reset their start date.
                     if(info.hasStartedThisCourse(courseId)){
                         Date startDate = new Date();
@@ -49,15 +54,18 @@ public class ParkourPointInteractEvent implements Listener {
                         String message = ParkourManager.formatParkourString(String.format("Course '%s' started!", courseId), false);
                         player.sendMessage(message);
                     }
-
+                    info.beginStartMessageCoolDown();
 
 
                 } else if(ParkourManager.isFinishLocation(location, false, course)){
-                    // Finishing location
-                    event.getPlayer().sendMessage("Finishing location.");
 
                     // Get the player info for this player from the parkour manager
                     ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
+
+                    // See if there is a finish cool down
+                    if(info.hasFinishMessageCoolDown()){
+                        return;
+                    }
 
                     // If the player hasn't started this course, send them a warning.
                     if(!info.hasStartedThisCourse(courseId)){
@@ -75,6 +83,7 @@ public class ParkourPointInteractEvent implements Listener {
                         // TODO: Set course record.
                         ParkourManager.removePlayerInfo(player.getUniqueId());
                     }
+                    info.beginFinishMessageCoolDown();
 
                 } else if(ParkourManager.isCheckpointLocation(location, false, course)){
                     // Checkpoint location
