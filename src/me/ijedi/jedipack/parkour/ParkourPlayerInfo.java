@@ -116,15 +116,18 @@ public class ParkourPlayerInfo {
     }
 
     // Set the cool down for finish messages
-    public void beginFinishMessageCoolDown(){
+    public void beginFinishMessageCoolDown(boolean removePlayerInfo){
         hasFinishMessageCoolDown = true;
         new BukkitRunnable(){
             @Override
             public void run(){
                 hasFinishMessageCoolDown = false;
+                if(removePlayerInfo){
+                    ParkourManager.removePlayerInfo(playerId);
+                }
                 this.cancel();
             }
-        }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 20L); // 3 seconds
+        }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 19L); // 3 seconds
     }
 
     // Returns if the player has a finish message cool down

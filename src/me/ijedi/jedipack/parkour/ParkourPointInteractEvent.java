@@ -96,9 +96,11 @@ public class ParkourPointInteractEvent implements Listener {
                         }
 
                         // TODO: Set course record.
-                        ParkourManager.removePlayerInfo(player.getUniqueId());
+                        //ParkourManager.removePlayerInfo(player.getUniqueId());
+                        info.beginFinishMessageCoolDown(true);
+                        return;
                     }
-                    info.beginFinishMessageCoolDown();
+                    info.beginFinishMessageCoolDown(false);
 
                 } else if(ParkourManager.isCheckpointLocation(location, false, course)){
                     // Checkpoint location

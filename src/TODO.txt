@@ -1,6 +1,6 @@
 TODO LIST:
 - Actual parkour:
-    - Hitting start/end points
+    X Hitting start/end points
     - Hitting checkpoints
         - Warn users that they hit a checkpoint without starting the course.
     - Restart course command
