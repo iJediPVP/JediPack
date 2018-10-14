@@ -3,9 +3,10 @@ TODO LIST:
     X Hitting start/end points
     - Hitting checkpoints
         - Warn users that they hit a checkpoint without starting the course.
-    - Restart course command
+    X Restart course command
     - Back to last checkpoint command
     - Add cooldown on point messages
+        - Make this location based
 
 - Parkour misc:
     - UI to edit the parkour course

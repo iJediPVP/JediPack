@@ -205,7 +205,33 @@ public class ParkourCommand implements CommandExecutor {
 
                 } // TODO: Else, handle this..
 
-            } // TODO: Else, handle this...
+            } else if(firstArg.equals(RESTART)) {
+
+                // Only a player can run this
+                if(!(commandSender instanceof Player)) {
+                    commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+                    return true;
+                }
+
+                // If they have started a course, TP them back to the starting location.
+                Player player = (Player)commandSender;
+                ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, "");
+                if(info.hasStartedAnyCourse()) {
+
+                    // Get the start location of the course and teleport the player there.
+                    ParkourCourse course = ParkourManager.getCourse(info.getCourseId());
+                    Location startLoc = course.getStartLocation();
+                    startLoc = Util.centerLocation(startLoc);
+                    startLoc.setYaw(player.getLocation().getYaw());
+                    player.teleport(startLoc);
+                    String message = ParkourManager.formatParkourString(String.format("You have been teleported back to the start of course '%s'!", info.getCourseId()), false);
+                    player.sendMessage(message);
+
+                } else {
+                    commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                }
+                return true;
+            }
 
         }else{
             // TODO: Do something better than this if we don't have arguments..

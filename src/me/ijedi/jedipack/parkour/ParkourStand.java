@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,19 +44,9 @@ public class ParkourStand {
         // Spawn the pressure plate
         location.getBlock().setType(isStartingPoint || isFinishingPoint ? Material.GOLD_PLATE : Material.IRON_PLATE);
 
-        // Center the X and Z
-        double origX = location.getX();
-        double newX = origX - (origX % 1); // Get the whole number
-        newX = origX < 0 ? newX - .5 : newX + .5; // Add or subtract .5
-
-        double origZ = location.getZ();
-        double newZ = origZ - (origZ % 1); // Get the whole number
-        newZ = origZ < 0 ? newZ - .5 : newZ + .5; // Add or subtract .5
-
-        // Raise up the stand so it doesn't interfere with the pressure plate below it.
-        double newY = location.getY() + .25;
-
-        Location centeredLocation = new Location(world, newX, newY, newZ);
+        // Center the location, and raise up the stand so it doesn't interfere with the pressure plate below it.
+        Location centeredLocation = Util.centerLocation(location);
+        centeredLocation.setY(centeredLocation.getY() + .25);
 
         // Spawn the footer stand
         ArmorStand armorStand = world.spawn(centeredLocation, ArmorStand.class);

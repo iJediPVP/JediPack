@@ -390,6 +390,17 @@ public class ParkourCourse {
         return FinishLocation;
     }
 
+    // Returns the checkpoint number from the given location. If not found, returns 0.
+    public int getCheckpointFromLocation(Location playerLocation){
+        for(String pointKey : PointLocations.keySet()){
+
+            if(Util.DoLocationsEqual(PointLocations.get(pointKey), playerLocation, false)){
+                return Integer.parseInt(pointKey);
+            }
+        }
+        return 0;
+    }
+
     // Returns the checkpoint locations for this course.
     public HashMap<String, Location> getPointLocations(){
         return PointLocations;

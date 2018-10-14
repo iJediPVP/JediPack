@@ -30,6 +30,7 @@ public class ParkourPlayerInfo {
         this.courseId = courseId;
     }
 
+    // Returns if the player has started the given course.
     public boolean hasStartedThisCourse(String courseId){
         if(courseId.toUpperCase().equals(this.courseId)){
             return startDate != null;
@@ -37,11 +38,22 @@ public class ParkourPlayerInfo {
         return false;
     }
 
+    // Returns if the player has started ANY course.
+    public boolean hasStartedAnyCourse(){
+        return startDate != null;
+    }
+
+    public String getCourseId(){
+        return courseId;
+    }
+
+    // Set the start date for the given course.
     public void setStartDate(Date startDate, String courseId){
         this.startDate = startDate;
         this.courseId = courseId;
     }
 
+    // Returns the players time for the current course.
     public long getCourseTime(Date finishDate){
         this.courseTime = (finishDate.getTime() - startDate.getTime());
         return courseTime;
@@ -51,11 +63,13 @@ public class ParkourPlayerInfo {
         return recordTime;
     }
 
+    // Format a long into a string
     public String formatTime(long time){
         SimpleDateFormat format = new SimpleDateFormat("mm:ss:SSS");
         return format.format(time);
     }
 
+    // Returns if the player has beaten their previous record.
     public boolean checkForCourseRecord(){
         String folder = JediPackMain.getThisPlugin().getDataFolder() + "/parkour/playerData";
         String fileName = folder + "/" + playerId.toString() + ".yml";
@@ -133,5 +147,15 @@ public class ParkourPlayerInfo {
     // Returns if the player has a finish message cool down
     public boolean hasFinishMessageCoolDown(){
         return hasFinishMessageCoolDown;
+    }
+
+
+
+    public int getCurrentCheckpoint(){
+        return currentCheckpoint;
+    }
+
+    public void setCurrentCheckpoint(int checkpoint){
+        this.currentCheckpoint = checkpoint;
     }
 }

@@ -74,4 +74,20 @@ public class Util {
 
         return false;
     }
+
+    public static Location centerLocation(Location location){
+
+        // Center the X and Z
+        double origX = location.getX();
+        double newX = origX - (origX % 1); // Get the whole number
+        newX = origX < 0 ? newX - .5 : newX + .5; // Add or subtract .5
+
+        double origZ = location.getZ();
+        double newZ = origZ - (origZ % 1); // Get the whole number
+        newZ = origZ < 0 ? newZ - .5 : newZ + .5; // Add or subtract .5
+
+
+        Location centeredLoc = new Location(location.getWorld(), newX, location.getY(), newZ);
+        return centeredLoc;
+    }
 }
