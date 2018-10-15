@@ -129,7 +129,7 @@ public class ParkourMenuEvent implements Listener {
         // Check for starting point
         ArrayList<ItemStack> pointItems = new ArrayList<>();
         if(course.getStartLocation() != null){
-            ItemStack itemStack = new ItemStack(Material.GOLD_PLATE);
+            ItemStack itemStack = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = getPointLore(course.getStartLocation(), ChatColor.RED + "Click to remove the starting point."); // Arrays.asList(ChatColor.RED + "Click to remove the starting point.");
             itemMeta.setLore(itemLore);
@@ -151,7 +151,7 @@ public class ParkourMenuEvent implements Listener {
         for(int pointKey : pointIntList){
             Location location = course.getPointLocations().get(Integer.toString(pointKey));
             if(location != null){
-                ItemStack itemStack = new ItemStack(Material.IRON_PLATE);
+                ItemStack itemStack = new ItemStack(Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 List<String> itemLore = getPointLore(location, String.format(ChatColor.RED + "Click to remove Checkpoint #%s.", pointKey));
                 itemMeta.setLore(itemLore);
@@ -163,7 +163,7 @@ public class ParkourMenuEvent implements Listener {
 
         // Finish location
         if(course.getFinishLocation() != null){
-            ItemStack itemStack = new ItemStack(Material.GOLD_PLATE);
+            ItemStack itemStack = new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
             ItemMeta itemMeta = itemStack.getItemMeta();
             List<String> itemLore = getPointLore(course.getFinishLocation(),ChatColor.RED + "Click to remove the finishing point.");
             itemMeta.setLore(itemLore);
@@ -174,7 +174,7 @@ public class ParkourMenuEvent implements Listener {
 
 
         // Set up menu buttons
-        ItemStack exitButton = new ItemStack(Material.SPRUCE_DOOR_ITEM);
+        ItemStack exitButton = new ItemStack(Material.SPRUCE_DOOR);
         ItemMeta exitMeta = exitButton.getItemMeta();
         List<String> exitLore = Arrays.asList(ChatColor.GREEN + "Click to exit.");
         exitMeta.setLore(exitLore);

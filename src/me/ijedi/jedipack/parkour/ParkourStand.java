@@ -42,7 +42,7 @@ public class ParkourStand {
         World world = location.getWorld();
 
         // Spawn the pressure plate
-        location.getBlock().setType(isStartingPoint || isFinishingPoint ? Material.GOLD_PLATE : Material.IRON_PLATE);
+        location.getBlock().setType(isStartingPoint || isFinishingPoint ? Material.HEAVY_WEIGHTED_PRESSURE_PLATE : Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
 
         // Center the location, and raise up the stand so it doesn't interfere with the pressure plate below it.
         Location centeredLocation = Util.centerLocation(location);
