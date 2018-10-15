@@ -15,7 +15,7 @@ TODO LIST:
         X Fix error when trying to edit a course with no points.
         - Add option to remove the course?
     - Allow sign placements to execute parkour commands
-    - Reload the parkour course pressure plates and armor stands when during onEnable()
+    X Reload the parkour course pressure plates and armor stands when during onEnable() (not easily doable becauase armor stands spawn with different ids.. We could probably update them tho.. Maybe later)
     X Make pressure plates unbreakable (probably block break event and check if it's our stored block location)
     X Prevent the block from under the plates from breaking.
     X Prevent floating pressure plates from breaking or allowing them to be placed.

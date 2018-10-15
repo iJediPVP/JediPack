@@ -3,6 +3,7 @@ version: 1.0
 author: i_Jedi
 main: "me.ijedi.jedipack.JediPackMain"
 description: "Description here."
+api-version: 1.13
 
 
 commands:
