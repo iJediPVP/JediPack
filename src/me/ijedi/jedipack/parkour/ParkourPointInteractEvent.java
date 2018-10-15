@@ -92,11 +92,9 @@ public class ParkourPointInteractEvent implements Listener {
                                 String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s' with a time of %s! Your personal best is %s!", courseId, timeStr, prevRecordTimeStr), false);
                                 player.sendMessage(message);
                             }
-
+                            info.finishedCourse();
                         }
 
-                        // TODO: Set course record.
-                        //ParkourManager.removePlayerInfo(player.getUniqueId());
                         info.beginFinishMessageCoolDown(true);
                         return;
                     }
@@ -104,26 +102,34 @@ public class ParkourPointInteractEvent implements Listener {
 
                 } else if(ParkourManager.isCheckpointLocation(location, false, course)){
                     // Checkpoint location
-                    event.getPlayer().sendMessage("Checkpoint location.");
 
                     // See if the player has started the course yet
                     ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
                     if(!info.hasStartedThisCourse(courseId)){
-                        String message = ParkourManager.formatParkourString("You haven't started this course yet!", false);
-                        player.sendMessage(message);
+                        int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
+                        if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
+                            String message = ParkourManager.formatParkourString("You haven't started this course yet!", false);
+                            player.sendMessage(message);
+                            info.beginCheckpointMessageCoolDown(activatedCheckpoint);
+                        }
+
                         return;
                     }
 
                     // See if the player has already hit this checkpoint
                     int currentCheckpoint = info.getCurrentCheckpoint();
                     int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
-                    if(activatedCheckpoint > currentCheckpoint){
-                        player.sendMessage(ParkourManager.formatParkourString("Checkpoint reached!", false));
-                        info.setCurrentCheckpoint(activatedCheckpoint);
+                    if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
+                        if(activatedCheckpoint > currentCheckpoint){
+                            player.sendMessage(ParkourManager.formatParkourString("Checkpoint reached!", false));
+                            info.setCurrentCheckpoint(activatedCheckpoint);
 
-                    } else {
-                        player.sendMessage(ParkourManager.formatParkourString("You've already reached this checkpoint!", true));
+                        } else {
+                            player.sendMessage(ParkourManager.formatParkourString("You've already reached this checkpoint!", true));
+                        }
+                        info.beginCheckpointMessageCoolDown(activatedCheckpoint);
                     }
+                    //info.beginCheckpointMessageCoolDown();
                     return;
                 }
             }

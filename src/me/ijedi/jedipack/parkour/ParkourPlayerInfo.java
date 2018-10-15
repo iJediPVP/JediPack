@@ -24,6 +24,8 @@ public class ParkourPlayerInfo {
 
     private boolean hasStartMessageCoolDown = false;
     private boolean hasFinishMessageCoolDown = false;
+    private boolean hasCheckPointCoolDown = false;
+    private int checkPointOnCoolDown;
 
     public ParkourPlayerInfo(UUID playerId, String courseId){
         this.playerId = playerId;
@@ -111,6 +113,10 @@ public class ParkourPlayerInfo {
         }
     }
 
+    // Clears out the player's start time.
+    public void finishedCourse(){
+        startDate = null;
+    }
 
     // Set the cool down for start messages
     public void beginStartMessageCoolDown(){
@@ -141,12 +147,35 @@ public class ParkourPlayerInfo {
                 }
                 this.cancel();
             }
-        }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 19L); // 3 seconds
+        }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 20L); // 3 seconds
     }
 
     // Returns if the player has a finish message cool down
     public boolean hasFinishMessageCoolDown(){
         return hasFinishMessageCoolDown;
+    }
+
+    // Set the cool down for checkpoints
+    public void beginCheckpointMessageCoolDown(int checkpointId){
+        hasCheckPointCoolDown = true;
+        this.checkPointOnCoolDown = checkpointId;
+        new BukkitRunnable(){
+            @Override
+            public void run(){
+                if(checkPointOnCoolDown == checkpointId){
+                    hasCheckPointCoolDown = false;
+                }
+                this.cancel();
+            }
+        }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 20L); // 3 seconds
+    }
+
+    // Returns if the player has a checkpoint message cool down
+    public boolean hasCheckpointMessageCoolDown(int courseId){
+        if(courseId == this.checkPointOnCoolDown){
+            return hasCheckPointCoolDown;
+        }
+        return false;
     }
 
 

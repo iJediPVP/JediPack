@@ -1,12 +1,12 @@
 TODO LIST:
 - Actual parkour:
     X Hitting start/end points
-    - Hitting checkpoints
-        - Warn users that they hit a checkpoint without starting the course.
+    X Hitting checkpoints
+        X Warn users that they hit a checkpoint without starting the course.
     X Restart course command
     - Back to last checkpoint command
-    - Add cooldown on point messages
-        - Make this location based
+    X Add cooldown on point messages
+        X Make this location based. (Not location based but checkpoint based)
 
 - Parkour misc:
     - UI to edit the parkour course
