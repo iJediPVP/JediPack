@@ -401,6 +401,14 @@ public class ParkourCourse {
         return 0;
     }
 
+    // Return the location for the given checkpoint number.
+    public Location getCheckpointLocation(int checkpointNumber){
+        if(PointLocations.containsKey(Integer.toString(checkpointNumber))){
+            return PointLocations.get(Integer.toString(checkpointNumber));
+        }
+        return null;
+    }
+
     // Returns the checkpoint locations for this course.
     public HashMap<String, Location> getPointLocations(){
         return PointLocations;

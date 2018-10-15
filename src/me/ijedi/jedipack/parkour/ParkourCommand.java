@@ -231,6 +231,51 @@ public class ParkourCommand implements CommandExecutor {
                     commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
                 }
                 return true;
+
+            } else if (firstArg.equals(CHECKPOINT)){
+
+                // Return a player to the last checkpoint they reached.
+
+                // Only a player can run this
+                if(!(commandSender instanceof Player)) {
+                    commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+                    return true;
+                }
+
+                // If they have started a course, TP them back to their last checkpoint location.
+                Player player = (Player)commandSender;
+                ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, "");
+                if(info.hasStartedAnyCourse()) {
+
+                    // Make sure the player has reached a checkpoint
+                    if(info.getCurrentCheckpoint() <= 0){
+                        String message = ParkourManager.formatParkourString("You haven't reached a checkpoint yet!", true);
+                        player.sendMessage(message);
+                        return true;
+                    }
+
+                    // Get the start location of the course and teleport the player there.
+                    ParkourCourse course = ParkourManager.getCourse(info.getCourseId());
+                    Location checkpointLoc = course.getCheckpointLocation(info.getCurrentCheckpoint());
+                    if(checkpointLoc == null){
+                        String message = ParkourManager.formatParkourString("You haven't reached a checkpoint yet!", true);
+                        player.sendMessage(message);
+                        return true;
+                    }
+
+                    checkpointLoc.setYaw(player.getLocation().getYaw());
+                    checkpointLoc = Util.centerLocation(checkpointLoc);
+                    player.teleport(checkpointLoc);
+                    String message = ParkourManager.formatParkourString(String.format("Returned to checkpoint #%s!", info.getCurrentCheckpoint()), false);
+                    player.sendMessage(message);
+                    info.beginCheckpointMessageCoolDown(info.getCurrentCheckpoint());
+
+                } else {
+                    commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                }
+                return true;
+
+
             }
 
         }else{
