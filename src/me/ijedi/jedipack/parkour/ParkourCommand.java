@@ -2,11 +2,14 @@ package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.common.Util;
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class ParkourCommand implements CommandExecutor {
 
@@ -15,14 +18,30 @@ public class ParkourCommand implements CommandExecutor {
     private final String[] FIRST_ARG_BLACKLIST = {RESTART, CHECKPOINT};
 
     private final String CREATE = "create";
-    private final String DELETE = "delete";
+    private final String DELETE = "remove"; // I know this is basically a duplicate, but I'm lazy.
     private final String START = "start";
-    private final String END = "end";
+    private final String END = "finish";
 
     private final String ADD = "add";
     private final String REMOVE = "remove";
     private final String MOVE = "move";
     private final String EDIT = "edit";
+
+    private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
+        add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Parkour" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
+        add(ChatColor.AQUA + "/jppk " + RESTART + ChatColor.GREEN + ": Teleport back to the beginning of a course.");
+        add(ChatColor.AQUA + "/jppk " + CHECKPOINT + ChatColor.GREEN + ": Teleport back to the last checkpoint.");
+    }};
+
+    private final ArrayList<String> ADMIN_HELP_LIST = new ArrayList<String>(){{
+        add(ChatColor.AQUA + "/jppk <courseId> " + CREATE + ChatColor.GREEN + ": Creates a new parkour course with the specified name.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + DELETE + ChatColor.GREEN + ": Removes the specified parkour course.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + START + ChatColor.GREEN + ": Sets the starting location of the specified parkour course.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + END + ChatColor.GREEN + ": Sets the ending location of the specified parkour course.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + CHECKPOINT + " " + ADD + ChatColor.GREEN + ": Adds a checkpoint for the specified course.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + CHECKPOINT + " " + REMOVE + " <checkpointNumber>" + ChatColor.GREEN + ": Remove the specified checkpoint from the specified course.");
+        add(ChatColor.AQUA + "/jppk <courseId> " + EDIT + ChatColor.GREEN + ": Open the menu to edit the specified course.");
+    }};
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -32,20 +51,14 @@ public class ParkourCommand implements CommandExecutor {
 
         // Add or delete a course
         /jppk 123 create    // create the course
-        /jppk 123 delete    // remove the course
+        /jppk 123 remove    // remove the course
 
         // Modify a course
         /jppk 123 start // place the starting point of the course
-        /jppk 123 end   // place the ending point of the course
-
-        /jppk 123 1     // place the 'point 1' of the course
-        /jppk 123 2     // place the 'point 2' of the course
-        /jppk 123 1 remove // remove the 'point 1' from the course
-        /jppk 123 1 replace // override existing 'point 1' with a new one
+        /jppk 123 finish   // place the ending point of the course
 
         /jppk 123 checkpoint add // add next checkpoint in this course
         /jppk 123 checkpoint remove 1 // remove checkpoint number 1 from the course
-        /jppk 123 checkpoint move 1 // move checkpoint 1 to the specified location
 
         /jppk 123 edit // open the menu for editing the course
 
@@ -278,11 +291,15 @@ public class ParkourCommand implements CommandExecutor {
 
             }
 
-        }else{
-            // TODO: Do something better than this if we don't have arguments..
-            return false;
         }
 
-        return false;
+        for(String msg : HELP_LIST){
+            commandSender.sendMessage(msg);
+        }
+        for(String msg : ADMIN_HELP_LIST){
+            commandSender.sendMessage(msg);
+        }
+
+        return true;
     }
 }
