@@ -1,32 +1,4 @@
 TODO LIST:
-- Actual parkour:
-    X Hitting start/end points
-    X Hitting checkpoints
-        X Warn users that they hit a checkpoint without starting the course.
-    X Restart course command
-    X Back to last checkpoint command
-    X Add cooldown on point messages
-        X Make this location based. (Not location based but checkpoint based)
-
-- Parkour misc:
-    - UI to edit the parkour course
-        X Delete checkpoints
-        X Put coords and world info on point lore
-        X Fix error when trying to edit a course with no points.
-        - Add option to remove the course?
-    - Allow sign placements to execute parkour commands
-    X Reload the parkour course pressure plates and armor stands when during onEnable() (not easily doable becauase armor stands spawn with different ids.. We could probably update them tho.. Maybe later)
-    X Make pressure plates unbreakable (probably block break event and check if it's our stored block location)
-    X Prevent the block from under the plates from breaking.
-    X Prevent floating pressure plates from breaking or allowing them to be placed.
-    X Colored armor stand names
-    X Instead of adding checkpoints by having the user enter 1,2,3, etc.. Auto increment them
-        X Whe a point is removed we need to reset the number of all of the checkpoints > than the deleted one
-    X Enable/disable parkour module in the main plugin config.
-    X Colored parkour messages back to the user
-    - Parkour command help text
-    X Add a second armor stand:
-        X "Parkour"
-        X "Checkpoint #1"
-    X Permissions
+- Parkour:
+    - Create "how to" in the README.
 
