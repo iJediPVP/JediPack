@@ -107,6 +107,10 @@ public class ParkourCommand implements CommandExecutor {
                         Location location =  player.getLocation();
                         String output = ParkourManager.setStart(firstArg, location);
                         player.sendMessage(output);
+
+                        // Don't spam the player with message upon creating a starting point
+                        ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, firstArg);
+                        info.beginStartMessageCoolDown();
                         return true;
                     }
 
@@ -123,6 +127,10 @@ public class ParkourCommand implements CommandExecutor {
                         Location location = player.getLocation();
                         String output = ParkourManager.setFinish(firstArg, location);
                         player.sendMessage(output);
+
+                        // Don't spam the player with message upon creating a finishing point
+                        ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, firstArg);
+                        info.beginFinishMessageCoolDown(false);
                         return true;
 
                     } else if(secondArg.equals(CHECKPOINT)){
@@ -138,8 +146,15 @@ public class ParkourCommand implements CommandExecutor {
                                 // Add a checkpoint
                                 if(thirdArg.equals(ADD)){
 
+                                    ParkourCourse course = ParkourManager.getCourse(firstArg);
+                                    int nextCheckpoint = course.getNextCheckpointNumber();
                                     String output = ParkourManager.setPoint(firstArg,  player.getLocation());
                                     player.sendMessage(output);
+
+
+                                    // Don't spam the player with message upon creating a checkpoint
+                                    ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, firstArg);
+                                    info.beginCheckpointMessageCoolDown(nextCheckpoint);
                                     return true;
 
                                 } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
