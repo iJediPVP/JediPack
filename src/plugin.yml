@@ -7,18 +7,6 @@ api-version: 1.13
 
 
 commands:
-  ping:
-    description: A test command that returns "Pong!"
-    usage: /ping
-  pingEnable:
-    description: This does nothing besides toggling the pingCommandEnabled configuration.
-    usage: /pingEnable
-  testMenu:
-    description: /testMenu command.
-    usage: /testMenu
-  testStand:
-    description: /testStand command.
-    usage: /testStand
   jppk:
-    description: /jppk command. Tell Jedi to write some proper help text.
+    description: "Interact with parkour courses. Use '/jppk help' for more information."
     usage: /jppk
