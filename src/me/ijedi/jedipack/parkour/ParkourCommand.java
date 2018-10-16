@@ -68,6 +68,12 @@ public class ParkourCommand implements CommandExecutor {
 
         * */
 
+        // Only a player can run this
+        if(!(commandSender instanceof Player)) {
+            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+            return true;
+        }
+
 
         // Sse if we have args
         if(args.length > 0 && !Util.IsNullOrEmpty(args[0])){
@@ -96,21 +102,12 @@ public class ParkourCommand implements CommandExecutor {
 
                     }else if(secondArg.equals(START)){ // Handle start
 
-                        // Only allow this to be executed by a player
-                        if(commandSender instanceof Player){
-
-                            // Get the player's location and try to set the starting point for this course.
-                            Player player = (Player)commandSender;
-                            Location location =  player.getLocation();
-                            String output = ParkourManager.setStart(firstArg, location);
-                            commandSender.sendMessage(output);
-                            return true;
-
-                        }else{
-                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                            return true;
-                        }
-
+                        // Get the player's location and try to set the starting point for this course.
+                        Player player = (Player)commandSender;
+                        Location location =  player.getLocation();
+                        String output = ParkourManager.setStart(firstArg, location);
+                        commandSender.sendMessage(output);
+                        return true;
                     }
 
                     // Make sure the course exists
@@ -122,20 +119,12 @@ public class ParkourCommand implements CommandExecutor {
 
                     if(secondArg.equals(END)) { // Handle end
 
-                        // Only allow this to be executed by a player
-                        if (commandSender instanceof Player) {
-
-                            // Get the player's location and try to set the finishing point for this course.
-                            Player player = (Player) commandSender;
-                            Location location = player.getLocation();
-                            String output = ParkourManager.setFinish(firstArg, location);
-                            commandSender.sendMessage(output);
-                            return true;
-
-                        } else {
-                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                            return true;
-                        }
+                        // Get the player's location and try to set the finishing point for this course.
+                        Player player = (Player) commandSender;
+                        Location location = player.getLocation();
+                        String output = ParkourManager.setFinish(firstArg, location);
+                        commandSender.sendMessage(output);
+                        return true;
 
                     } else if(secondArg.equals(CHECKPOINT)){
 
@@ -150,64 +139,39 @@ public class ParkourCommand implements CommandExecutor {
                                 // Add a checkpoint
                                 if(thirdArg.equals(ADD)){
 
-                                    // Only allow players to execute
-                                    if(commandSender instanceof Player){
-                                        Player player = (Player)commandSender;
-                                        String output = ParkourManager.setPoint(firstArg,  player.getLocation());
-                                        commandSender.sendMessage(output);
-                                        return true;
-                                    }
-                                    else{
-                                        commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                                        return true;
-                                    }
+                                    Player player = (Player)commandSender;
+                                    String output = ParkourManager.setPoint(firstArg,  player.getLocation());
+                                    commandSender.sendMessage(output);
+                                    return true;
 
                                 } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
 
-                                    // Only allow players to execute
-                                    if(commandSender instanceof Player){
+                                    // See if a point number was given.
+                                    if(args.length > 3){
 
-                                        // See if a point number was given.
-                                        if(args.length > 3){
+                                        String pointStr = args[3];
+                                        if(Util.IsInteger(pointStr)){
 
-                                            String pointStr = args[3];
-                                            if(Util.IsInteger(pointStr)){
-
-                                                // Remove the point
-                                                int pointInt = Integer.parseInt(pointStr);
-                                                String output = ParkourManager.removePoint(firstArg, pointInt);
-                                                commandSender.sendMessage(output);
-                                                return true;
-
-                                            } else {
-                                                commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
-                                                return true;
-                                            }
+                                            // Remove the point
+                                            int pointInt = Integer.parseInt(pointStr);
+                                            String output = ParkourManager.removePoint(firstArg, pointInt);
+                                            commandSender.sendMessage(output);
+                                            return true;
 
                                         } else {
-                                            commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
+                                            commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
                                             return true;
                                         }
-                                    }
-                                    else{
-                                        commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+
+                                    } else {
+                                        commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
                                         return true;
                                     }
-
-                                } else if(thirdArg.equals(MOVE)){ // Move a checkpoint
-
                                 }
                             }
-
                         }
 
                     } else if(secondArg.equals(EDIT)){
-
-                        // Only a player can run this
-                        if(!(commandSender instanceof Player)) {
-                            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                            return true;
-                        }
 
                         // Open up the menu for this course
                         Player player = (Player) commandSender;
@@ -219,12 +183,6 @@ public class ParkourCommand implements CommandExecutor {
                 } // TODO: Else, handle this..
 
             } else if(firstArg.equals(RESTART)) {
-
-                // Only a player can run this
-                if(!(commandSender instanceof Player)) {
-                    commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                    return true;
-                }
 
                 // If they have started a course, TP them back to the starting location.
                 Player player = (Player)commandSender;
@@ -248,12 +206,6 @@ public class ParkourCommand implements CommandExecutor {
             } else if (firstArg.equals(CHECKPOINT)){
 
                 // Return a player to the last checkpoint they reached.
-
-                // Only a player can run this
-                if(!(commandSender instanceof Player)) {
-                    commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
-                    return true;
-                }
 
                 // If they have started a course, TP them back to their last checkpoint location.
                 Player player = (Player)commandSender;
@@ -287,7 +239,6 @@ public class ParkourCommand implements CommandExecutor {
                     commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
                 }
                 return true;
-
 
             }
 
