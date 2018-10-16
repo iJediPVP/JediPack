@@ -74,6 +74,7 @@ public class ParkourCommand implements CommandExecutor {
             return true;
         }
 
+        Player player = (Player) commandSender;
 
         // Sse if we have args
         if(args.length > 0 && !Util.IsNullOrEmpty(args[0])){
@@ -91,39 +92,37 @@ public class ParkourCommand implements CommandExecutor {
                     if(secondArg.equals(CREATE)) {
 
                         String output = ParkourManager.createCourse(firstArg);
-                        commandSender.sendMessage(output);
+                        player.sendMessage(output);
                         return true;
 
                     }else if(secondArg.equals(DELETE)){ // Handle delete
 
                         String output = ParkourManager.removeCourse(firstArg);
-                        commandSender.sendMessage(output);
+                        player.sendMessage(output);
                         return true;
 
                     }else if(secondArg.equals(START)){ // Handle start
 
                         // Get the player's location and try to set the starting point for this course.
-                        Player player = (Player)commandSender;
                         Location location =  player.getLocation();
                         String output = ParkourManager.setStart(firstArg, location);
-                        commandSender.sendMessage(output);
+                        player.sendMessage(output);
                         return true;
                     }
 
                     // Make sure the course exists
                     if(!ParkourManager.doesCourseExist(firstArg)){
                         String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", firstArg), true);
-                        commandSender.sendMessage(message);
+                        player.sendMessage(message);
                         return true;
                     }
 
                     if(secondArg.equals(END)) { // Handle end
 
                         // Get the player's location and try to set the finishing point for this course.
-                        Player player = (Player) commandSender;
                         Location location = player.getLocation();
                         String output = ParkourManager.setFinish(firstArg, location);
-                        commandSender.sendMessage(output);
+                        player.sendMessage(output);
                         return true;
 
                     } else if(secondArg.equals(CHECKPOINT)){
@@ -139,9 +138,8 @@ public class ParkourCommand implements CommandExecutor {
                                 // Add a checkpoint
                                 if(thirdArg.equals(ADD)){
 
-                                    Player player = (Player)commandSender;
                                     String output = ParkourManager.setPoint(firstArg,  player.getLocation());
-                                    commandSender.sendMessage(output);
+                                    player.sendMessage(output);
                                     return true;
 
                                 } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
@@ -155,16 +153,16 @@ public class ParkourCommand implements CommandExecutor {
                                             // Remove the point
                                             int pointInt = Integer.parseInt(pointStr);
                                             String output = ParkourManager.removePoint(firstArg, pointInt);
-                                            commandSender.sendMessage(output);
+                                            player.sendMessage(output);
                                             return true;
 
                                         } else {
-                                            commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
+                                            player.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
                                             return true;
                                         }
 
                                     } else {
-                                        commandSender.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
+                                        player.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
                                         return true;
                                     }
                                 }
@@ -174,7 +172,6 @@ public class ParkourCommand implements CommandExecutor {
                     } else if(secondArg.equals(EDIT)){
 
                         // Open up the menu for this course
-                        Player player = (Player) commandSender;
                         ParkourManager.openCourseMenu(firstArg, player);
                         return true;
 
@@ -185,7 +182,6 @@ public class ParkourCommand implements CommandExecutor {
             } else if(firstArg.equals(RESTART)) {
 
                 // If they have started a course, TP them back to the starting location.
-                Player player = (Player)commandSender;
                 ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, "");
                 if(info.hasStartedAnyCourse()) {
 
@@ -199,7 +195,7 @@ public class ParkourCommand implements CommandExecutor {
                     player.sendMessage(message);
 
                 } else {
-                    commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                    player.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
                 }
                 return true;
 
@@ -208,7 +204,6 @@ public class ParkourCommand implements CommandExecutor {
                 // Return a player to the last checkpoint they reached.
 
                 // If they have started a course, TP them back to their last checkpoint location.
-                Player player = (Player)commandSender;
                 ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, "");
                 if(info.hasStartedAnyCourse()) {
 
@@ -236,7 +231,7 @@ public class ParkourCommand implements CommandExecutor {
                     info.beginCheckpointMessageCoolDown(info.getCurrentCheckpoint());
 
                 } else {
-                    commandSender.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                    player.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
                 }
                 return true;
 
@@ -245,10 +240,10 @@ public class ParkourCommand implements CommandExecutor {
         }
 
         for(String msg : HELP_LIST){
-            commandSender.sendMessage(msg);
+            player.sendMessage(msg);
         }
         for(String msg : ADMIN_HELP_LIST){
-            commandSender.sendMessage(msg);
+            player.sendMessage(msg);
         }
 
         return true;
