@@ -24,8 +24,20 @@ public class ParkourCommand implements CommandExecutor {
 
     private final String ADD = "add";
     private final String REMOVE = "remove";
-    private final String MOVE = "move";
     private final String EDIT = "edit";
+
+    // Admin permissions
+    private final String PKPERM_ADMIN_CREATE = "jppk.admin.create";
+    private final String PKPERM_ADMIN_DELETE = "jppk.admin.delete";
+    private final String PKPERM_ADMIN_START = "jppk.admin.start";
+    private final String PKPERM_ADMIN_FINISH = "jppk.admin.finish";
+    private final String PKPERM_ADMIN_EDIT = "jppk.admin.edit";
+    private final String PKPERM_ADMIN_CHECKPOINT_ADD = "jppk.admin.checkpoint.add";
+    private final String PKPERM_ADMIN_CHECKPOINT_REMOVE = "jppk.admin.checkpoint.remove";
+
+    public static final String PKPERM_PARKOUR = "jppk.parkour.parkour";
+    private final String PKPERM_PARKOUR_RESTART = "jppk.parkour.restart";
+    private final String PKPERM_PARKOUR_CHECKPOINT = "jppk.parkour.checkpoint";
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Parkour" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
@@ -91,17 +103,32 @@ public class ParkourCommand implements CommandExecutor {
                     // Handle create
                     if(secondArg.equals(CREATE)) {
 
+                        // Check perms
+                        if(hasNoPerms(player, PKPERM_ADMIN_CREATE)){
+                            return true;
+                        }
+
                         String output = ParkourManager.createCourse(firstArg);
                         player.sendMessage(output);
                         return true;
 
                     }else if(secondArg.equals(DELETE)){ // Handle delete
 
+                        // Check perms
+                        if(hasNoPerms(player, PKPERM_ADMIN_DELETE)){
+                            return true;
+                        }
+
                         String output = ParkourManager.removeCourse(firstArg);
                         player.sendMessage(output);
                         return true;
 
                     }else if(secondArg.equals(START)){ // Handle start
+
+                        // Check perms
+                        if(hasNoPerms(player, PKPERM_ADMIN_START)){
+                            return true;
+                        }
 
                         // Get the player's location and try to set the starting point for this course.
                         Location location =  player.getLocation();
@@ -123,6 +150,11 @@ public class ParkourCommand implements CommandExecutor {
 
                     if(secondArg.equals(END)) { // Handle end
 
+                        // Check perms
+                        if(hasNoPerms(player, PKPERM_ADMIN_FINISH)){
+                            return true;
+                        }
+
                         // Get the player's location and try to set the finishing point for this course.
                         Location location = player.getLocation();
                         String output = ParkourManager.setFinish(firstArg, location);
@@ -135,56 +167,65 @@ public class ParkourCommand implements CommandExecutor {
 
                     } else if(secondArg.equals(CHECKPOINT)){
 
-                        // If there are no other args, return to the last checkpoint
-                        if(args.length == 2){
-                            // TODO: write this code..
-                        }
-                        else{
-                            // Check for third argument
-                            if(args.length > 2){
-                                String thirdArg = Util.ToLower(args[2]);
-                                // Add a checkpoint
-                                if(thirdArg.equals(ADD)){
+                        // Check for third argument
+                        if(args.length > 2){
+                            String thirdArg = Util.ToLower(args[2]);
+                            // Add a checkpoint
+                            if(thirdArg.equals(ADD)){
 
-                                    ParkourCourse course = ParkourManager.getCourse(firstArg);
-                                    int nextCheckpoint = course.getNextCheckpointNumber();
-                                    String output = ParkourManager.setPoint(firstArg,  player.getLocation());
-                                    player.sendMessage(output);
-
-
-                                    // Don't spam the player with message upon creating a checkpoint
-                                    ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, firstArg);
-                                    info.beginCheckpointMessageCoolDown(nextCheckpoint);
+                                // Check perms
+                                if(hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_ADD)){
                                     return true;
+                                }
 
-                                } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
+                                ParkourCourse course = ParkourManager.getCourse(firstArg);
+                                int nextCheckpoint = course.getNextCheckpointNumber();
+                                String output = ParkourManager.setPoint(firstArg,  player.getLocation());
+                                player.sendMessage(output);
 
-                                    // See if a point number was given.
-                                    if(args.length > 3){
 
-                                        String pointStr = args[3];
-                                        if(Util.IsInteger(pointStr)){
+                                // Don't spam the player with message upon creating a checkpoint
+                                ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, firstArg);
+                                info.beginCheckpointMessageCoolDown(nextCheckpoint);
+                                return true;
 
-                                            // Remove the point
-                                            int pointInt = Integer.parseInt(pointStr);
-                                            String output = ParkourManager.removePoint(firstArg, pointInt);
-                                            player.sendMessage(output);
-                                            return true;
+                            } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
 
-                                        } else {
-                                            player.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
-                                            return true;
-                                        }
+                                // Check perms
+                                if(hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_REMOVE)){
+                                    return true;
+                                }
+
+                                // See if a point number was given.
+                                if(args.length > 3){
+
+                                    String pointStr = args[3];
+                                    if(Util.IsInteger(pointStr)){
+
+                                        // Remove the point
+                                        int pointInt = Integer.parseInt(pointStr);
+                                        String output = ParkourManager.removePoint(firstArg, pointInt);
+                                        player.sendMessage(output);
+                                        return true;
 
                                     } else {
-                                        player.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
+                                        player.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
                                         return true;
                                     }
+
+                                } else {
+                                    player.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
+                                    return true;
                                 }
                             }
                         }
 
                     } else if(secondArg.equals(EDIT)){
+
+                        // Check perms
+                        if(hasNoPerms(player, PKPERM_ADMIN_EDIT)){
+                            return true;
+                        }
 
                         // Open up the menu for this course
                         ParkourManager.openCourseMenu(firstArg, player);
@@ -195,6 +236,11 @@ public class ParkourCommand implements CommandExecutor {
                 } // TODO: Else, handle this..
 
             } else if(firstArg.equals(RESTART)) {
+
+                // Check perms
+                if(hasNoPerms(player, PKPERM_PARKOUR_RESTART)){
+                    return true;
+                }
 
                 // If they have started a course, TP them back to the starting location.
                 ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, "");
@@ -215,6 +261,11 @@ public class ParkourCommand implements CommandExecutor {
                 return true;
 
             } else if (firstArg.equals(CHECKPOINT)){
+
+                // Check perms
+                if(hasNoPerms(player, PKPERM_PARKOUR_CHECKPOINT)){
+                    return true;
+                }
 
                 // Return a player to the last checkpoint they reached.
 
@@ -262,5 +313,14 @@ public class ParkourCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+
+    public boolean hasNoPerms(Player player, String permission){
+        if(ParkourManager.getPermsEnabled() && !player.hasPermission(permission)){
+            player.sendMessage(ParkourManager.formatParkourString("You need permission to use this command!", true));
+            return true;
+        }
+        return false;
     }
 }

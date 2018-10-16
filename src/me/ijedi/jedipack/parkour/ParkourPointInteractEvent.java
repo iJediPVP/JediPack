@@ -22,12 +22,19 @@ public class ParkourPointInteractEvent implements Listener {
             // Get the block location
             Block block = event.getClickedBlock();
             Location location = block.getLocation();
+            Player player = event.getPlayer();
+
+            /*// See if the player has perms
+            if(ParkourManager.getPermsEnabled() && !player.hasPermission(ParkourCommand.PKPERM_PARKOUR)){
+                player.sendMessage(ParkourManager.formatParkourString("You do not have permission to use this!", true));
+                return;
+            }*/
 
             // Check for a course id
             String courseId = ParkourManager.getCourseIdFromLocation(location);
             if(!Util.IsNullOrEmpty(courseId)){
                 ParkourCourse course = ParkourManager.getCourse(courseId);
-                Player player = event.getPlayer();
+
 
                 // Starting point
                 if(ParkourManager.isStartLocation(location, false, course)){
@@ -138,4 +145,5 @@ public class ParkourPointInteractEvent implements Listener {
         }
 
     }
+
 }

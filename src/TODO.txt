@@ -28,5 +28,5 @@ TODO LIST:
     X Add a second armor stand:
         X "Parkour"
         X "Checkpoint #1"
-    - Permissions
+    X Permissions
 
