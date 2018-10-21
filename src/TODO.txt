@@ -4,7 +4,8 @@ TODO LIST:
     - Tab complete for commands
 
 - Tab List:
-    - Allow user to set tab header and footer in the config
+    - Figure out new lines
+    - Show player info?
     - Allow user to reload the tab config by itself
 
 - MOTD
