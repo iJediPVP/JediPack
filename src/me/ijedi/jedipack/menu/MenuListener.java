@@ -31,7 +31,6 @@ public class MenuListener implements Listener {
                 //Check itemName
                 try{
                     ItemStack item = event.getCurrentItem();
-                    String itemName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
 
                     //Check if a button
                     if(menu.isButton(item)){

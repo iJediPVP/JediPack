@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.menu.MenuListener;
+import me.ijedi.jedipack.motd.MOTDManager;
 import me.ijedi.jedipack.parkour.ParkourManager;
 import me.ijedi.jedipack.tabmessage.TabMessageCommand;
 import me.ijedi.jedipack.tabmessage.TabMessageManager;
@@ -22,11 +23,15 @@ public class JediPackMain extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MenuListener(this), this);
 
+        // Initialize parkour
         ParkourManager.initializeCourses();
 
         // Initialize tab messages
         getCommand(TabMessageCommand.BASE_COMMAND).setExecutor(new TabMessageCommand());
         TabMessageManager.intializeTabMessages(false);
+
+        // Initialize motd
+        MOTDManager.initializeMotd();
 
         this.getLogger().info("JediPack is enabled!");
     }
