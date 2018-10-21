@@ -34,6 +34,8 @@ public class TabMessageManager {
       <wt1> - 12 Hour world time
       <wt2> - 24 Hour world time
 
+      \n - new lines (not \r\n)
+
       Color codes: https://www.digminecraft.com/lists/color_list_pc.php
     * */
 
@@ -42,7 +44,6 @@ public class TabMessageManager {
     private static final String COLOR_SYMBOL = "colorSymbol";
     private static final String HEADER = "header";
     private static final String FOOTER = "footer";
-    private static final String ANIMATED = "animated";
     private static final String MESSAGES = "message";
     private static final String WORLD_NAME = "worldForTime";
 
@@ -65,8 +66,6 @@ public class TabMessageManager {
     private static char colorSymbol = '$';
     private static HashMap<Integer, String> headerMap = new HashMap<>();
     private static HashMap<Integer, String> footerMap = new HashMap<>();
-    private static boolean isHeadersAnimated = false;
-    private static boolean isFootersAnimated = false;
     private static String worldNameForTime;
 
     // Current values
@@ -143,12 +142,6 @@ public class TabMessageManager {
             colorSymbol = '$';
             config.set(COLOR_SYMBOL, Character.toString(colorSymbol));
 
-            isHeadersAnimated = false;
-            config.set(HEADER + "." + ANIMATED, isHeadersAnimated);
-
-            isFootersAnimated = false;
-            config.set(FOOTER + "." + ANIMATED, isFootersAnimated);
-
             worldNameForTime = "world";
             config.set(WORLD_NAME, worldNameForTime);
 
@@ -178,8 +171,6 @@ public class TabMessageManager {
             // Read config
             isEnabled = config.getBoolean(ENABLED);
             colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];
-            isHeadersAnimated = config.getBoolean(HEADER + "." + ANIMATED);
-            isFootersAnimated = config.getBoolean(FOOTER + "." + ANIMATED);
             List<String> headerList = config.getStringList(HEADER + "." + MESSAGES);
             List<String> footerList = config.getStringList(FOOTER + "." + MESSAGES);
             fillMessageMaps(headerList.toArray(new String[headerList.size()]), footerList.toArray(new String[footerList.size()]));
