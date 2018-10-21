@@ -3,11 +3,13 @@ package me.ijedi.jedipack.tabmessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.Util;
 import net.minecraft.server.v1_13_R2.IChatBaseComponent;
 import net.minecraft.server.v1_13_R2.PacketDataSerializer;
 import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
@@ -29,6 +31,8 @@ public class TabMessageManager {
       <d2> - Date format: DD/MM/YYYY
       <t1> - 12 Hour time
       <t2> - 24 Hour time
+      <wt1> - 12 Hour world time
+      <wt2> - 24 Hour world time
 
       Color codes: https://www.digminecraft.com/lists/color_list_pc.php
     * */
@@ -40,17 +44,21 @@ public class TabMessageManager {
     private static final String FOOTER = "footer";
     private static final String ANIMATED = "animated";
     private static final String MESSAGES = "message";
+    private static final String WORLD_NAME = "worldForTime";
 
     private static FileConfiguration tabMessageConfiguration;
     private static File tabMessageFile;
     private static PacketPlayOutPlayerListHeaderFooter tabListPacket;
 
-    private static HashMap<String, SimpleDateFormat> tabDateTimeArgs = new HashMap<String, SimpleDateFormat>(){{
+    private static final HashMap<String, SimpleDateFormat> TAB_DATE_ARGS = new HashMap<String, SimpleDateFormat>(){{
         put("<d1>", new SimpleDateFormat("MM/dd/yyyy"));
         put("<d2>", new SimpleDateFormat("dd/MM/yyyy"));
         put("<t1>", new SimpleDateFormat("hh:mm:ss a z")); //12 hour time
         put("<t2>", new SimpleDateFormat("HH:mm:ss")); //24 hour time
     }};
+
+    private static final String WORLD_TIME_ARG = "<wt1>";
+    private static final String WORLD_TIME24_ARG = "<wt2>";
 
     // Config values
     private static boolean isEnabled = false;
@@ -59,6 +67,7 @@ public class TabMessageManager {
     private static HashMap<Integer, String> footerMap = new HashMap<>();
     private static boolean isHeadersAnimated = false;
     private static boolean isFootersAnimated = false;
+    private static String worldNameForTime;
 
     // Current values
     private static int currentHeaderInt;
@@ -73,12 +82,13 @@ public class TabMessageManager {
         tabMessageFile = getFile();
         tabMessageConfiguration = getFileConfiguration();
 
-        if(isEnabled){
-            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are enabled!", false));
-        } else {
+        if(!isEnabled){
             JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are not enabled!", false));
             return;
         }
+        JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are enabled!", false));
+
+
 
         // Start the task to send packets
         new BukkitRunnable(){
@@ -98,20 +108,6 @@ public class TabMessageManager {
             }
         }.runTaskTimer(JediPackMain.getThisPlugin(), 0l, 1 * 20l);
 
-    }
-
-
-    // Save the ParkourManager configuration file.
-    private static void saveConfiguration(){
-        try{
-            File file = getFile();
-            tabMessageConfiguration.save(file);
-
-        }catch(IOException e){
-            String errorMessage = formatTabMessageLogString("JediPack Parkour - Error saving configuration file.", true);
-            JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-            JediPackMain.getThisPlugin().getLogger().info(e.toString());
-        }
     }
 
     // Get the File object for the TabMessageManager.
@@ -141,14 +137,20 @@ public class TabMessageManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(tabMessageFile);
 
             // Defaults
-            config.set(ENABLED, false);
             isEnabled = false;
-            config.set(COLOR_SYMBOL, "$");
+            config.set(ENABLED, isEnabled);
+
             colorSymbol = '$';
-            config.set(HEADER + "." + ANIMATED, false);
+            config.set(COLOR_SYMBOL, Character.toString(colorSymbol));
+
             isHeadersAnimated = false;
-            config.set(FOOTER + "." + ANIMATED, false);
+            config.set(HEADER + "." + ANIMATED, isHeadersAnimated);
+
             isFootersAnimated = false;
+            config.set(FOOTER + "." + ANIMATED, isFootersAnimated);
+
+            worldNameForTime = "world";
+            config.set(WORLD_NAME, worldNameForTime);
 
             String[] defaultHeaders = new String[1];
             defaultHeaders[0] = "$fDefault Header";
@@ -181,6 +183,7 @@ public class TabMessageManager {
             List<String> headerList = config.getStringList(HEADER + "." + MESSAGES);
             List<String> footerList = config.getStringList(FOOTER + "." + MESSAGES);
             fillMessageMaps(headerList.toArray(new String[headerList.size()]), footerList.toArray(new String[footerList.size()]));
+            worldNameForTime = config.getString(WORLD_NAME);
 
             return config;
         }
@@ -228,13 +231,70 @@ public class TabMessageManager {
 
         // Fill in date/times
         Date date = new Date();
-        for(String arg : tabDateTimeArgs.keySet()){
-            str = str.replaceAll(arg, tabDateTimeArgs.get(arg).format(date));
+        for(String arg : TAB_DATE_ARGS.keySet()){
+            str = str.replaceAll(arg, TAB_DATE_ARGS.get(arg).format(date));
+        }
+
+        // World times
+        if(str.contains(WORLD_TIME_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+            // 12 hour time
+            World worldForTime = Bukkit.getWorld(worldNameForTime);
+
+            if(worldForTime != null){
+                long worldLong = worldForTime.getTime();
+                String formatted = convertWorldTicksToTimeString(worldLong, false);
+                str = str.replace(WORLD_TIME_ARG, formatted);
+            }
+
+        } else if(str.contains(WORLD_TIME24_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+            // 24 hour time
+            World worldForTime = Bukkit.getWorld(worldNameForTime);
+
+            if(worldForTime != null){
+                long worldLong = worldForTime.getTime();
+                String formatted = convertWorldTicksToTimeString(worldLong, true);
+                str = str.replace(WORLD_TIME24_ARG, formatted);
+            }
         }
 
         // Translate colors
         str = ChatColor.translateAlternateColorCodes(colorSymbol, str);
         return str;
+    }
+
+    // Convert world ticks to 12 or 24 hour time
+    public static String convertWorldTicksToTimeString(long ticks, boolean is24Hour){
+
+        // Convert ticks to IRL time
+        // Offset by 6000 so that the time aligns more with a IRL time
+        ticks += 6000;
+        ticks %= 24000;
+
+        int hours = (int)Math.floor(ticks / 1000);
+        int minutes = (int) ((ticks % 1000) / 1000.0 * 60);
+
+        String amPM = "";
+        if(!is24Hour) {
+
+            // Set AM/PM
+            if(hours > 11){
+                amPM = "PM";
+            } else {
+                amPM = "AM";
+            }
+
+            // Convert to 12 hours
+            if(hours > 12){
+                hours -= 12;
+            }
+        }
+
+        // Format and return
+        String output = String.format("%2s:%2s", Integer.toString(hours), Integer.toString(minutes)).replace(' ', '0');
+        if(!is24Hour){
+            output += " " + amPM;
+        }
+        return output;
     }
 
 
