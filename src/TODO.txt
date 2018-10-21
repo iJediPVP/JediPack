@@ -1,4 +1,6 @@
 TODO LIST:
+- General:
+    - Create generic formatting of messages to the player.
 - Parkour:
     - Create "how to" in the README.
     - Tab complete for commands
@@ -7,4 +9,5 @@ TODO LIST:
     - Tab complete for commands
     - Create "how to"
 
-- MOTD
+- MOTD:
+    - Create "how to"

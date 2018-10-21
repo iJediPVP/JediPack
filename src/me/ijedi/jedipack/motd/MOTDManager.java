@@ -44,18 +44,18 @@ public class MOTDManager {
     private static String worldNameForTime;
 
     // Load MOTD configs.
-    public static void initializeMOTD(){
+    public static void initializeMOTD(boolean reload){
 
         // Load configs
         motdFile = getFile();
-        motdConfiguration = getFileConfiguration();
+        motdConfiguration = getFileConfiguration(reload);
 
         if(!isEnabled){
             JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is disabled.");
             return;
         }
 
-        JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is disabled.");
+        JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is enabled.");
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new MOTDPingEvent(), plugin);
     }
@@ -76,9 +76,9 @@ public class MOTDManager {
     }
 
     // Get the FileConfiguration object for the MOTDManager
-    private static FileConfiguration getFileConfiguration(){
+    private static FileConfiguration getFileConfiguration(boolean reload){
 
-        if(motdConfiguration != null){
+        if(motdConfiguration != null && !reload){
             return motdConfiguration;
         }
 
@@ -131,6 +131,15 @@ public class MOTDManager {
         }
     }
 
+    // Format the given string for motd log messages
+    public static String formatMOTDLogString(String str, boolean isError){
+        String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[MOTD] ";
+        if(isError){
+            finalString += ChatColor.RED;
+        }
+        finalString += str;
+        return finalString;
+    }
 
     // Returns the formatted MOTD string.
     public static String getMotd(){

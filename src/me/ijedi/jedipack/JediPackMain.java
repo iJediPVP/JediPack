@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.menu.MenuListener;
+import me.ijedi.jedipack.motd.MOTDCommand;
 import me.ijedi.jedipack.motd.MOTDManager;
 import me.ijedi.jedipack.parkour.ParkourManager;
 import me.ijedi.jedipack.tabmessage.TabMessageCommand;
@@ -31,7 +32,8 @@ public class JediPackMain extends JavaPlugin {
         TabMessageManager.intializeTabMessages(false);
 
         // Initialize motd
-        MOTDManager.initializeMOTD();
+        getCommand(MOTDCommand.BASE_COMMAND).setExecutor(new MOTDCommand());
+        MOTDManager.initializeMOTD(false);
 
         this.getLogger().info("JediPack is enabled!");
     }
