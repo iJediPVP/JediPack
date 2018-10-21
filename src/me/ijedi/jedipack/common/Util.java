@@ -90,4 +90,41 @@ public class Util {
         Location centeredLoc = new Location(location.getWorld(), newX, location.getY(), newZ);
         return centeredLoc;
     }
+
+
+
+    // Convert world ticks to 12 or 24 hour time
+    public static String convertWorldTicksToTimeString(long ticks, boolean is24Hour){
+
+        // Convert ticks to IRL time
+        // Offset by 6000 so that the time aligns more with a IRL time
+        ticks += 6000;
+        ticks %= 24000;
+
+        int hours = (int)Math.floor(ticks / 1000);
+        int minutes = (int) ((ticks % 1000) / 1000.0 * 60);
+
+        String amPM = "";
+        if(!is24Hour) {
+
+            // Set AM/PM
+            if(hours > 11){
+                amPM = "PM";
+            } else {
+                amPM = "AM";
+            }
+
+            // Convert to 12 hours
+            if(hours > 12){
+                hours -= 12;
+            }
+        }
+
+        // Format and return
+        String output = String.format("%2s:%2s", Integer.toString(hours), Integer.toString(minutes)).replace(' ', '0');
+        if(!is24Hour){
+            output += " " + amPM;
+        }
+        return output;
+    }
 }

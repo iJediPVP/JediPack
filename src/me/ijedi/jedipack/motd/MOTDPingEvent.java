@@ -12,7 +12,8 @@ public class MOTDPingEvent implements Listener {
         // Make sure MOTD is enabled
         if(MOTDManager.isEnabled){
 
-            String motd = String.format("%s\n%s", MOTDManager.topLineMessage, MOTDManager.bottomLineMessage);
+            // Set the MOTD
+            String motd = MOTDManager.getMotd();
             event.setMotd(motd);
         }
     }

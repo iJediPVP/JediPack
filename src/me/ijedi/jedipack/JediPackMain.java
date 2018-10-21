@@ -31,7 +31,7 @@ public class JediPackMain extends JavaPlugin {
         TabMessageManager.intializeTabMessages(false);
 
         // Initialize motd
-        MOTDManager.initializeMotd();
+        MOTDManager.initializeMOTD();
 
         this.getLogger().info("JediPack is enabled!");
     }

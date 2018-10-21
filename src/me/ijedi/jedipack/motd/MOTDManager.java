@@ -1,20 +1,36 @@
 package me.ijedi.jedipack.motd;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class MOTDManager {
 
+    /*
+    * Arguments:
+      <wt1> - 12 Hour world time
+      <wt2> - 24 Hour world time
+    * */
+
+    // Config names
     private static final String CONFIG_NAME = "motdConfig.yml";
     private static final String ENABLED = "enabled";
     private static final String TOPLINE = "topLine";
     private static final String BOTTOMLINE = "bottomLine";
+    private static final String COLOR_SYMBOL = "colorSymbol";
+    private static final String WORLD_NAME = "worldForTime";
+
+    // Arguments
+    private static final String WORLD_TIME_ARG = "<wt1>";
+    private static final String WORLD_TIME24_ARG = "<wt2>";
 
     // Configs
     private static FileConfiguration motdConfiguration;
@@ -22,10 +38,13 @@ public class MOTDManager {
 
     // Current values
     public static boolean isEnabled;
-    public static String topLineMessage;
-    public static String bottomLineMessage;
+    private static String topLineMessage;
+    private static String bottomLineMessage;
+    private static char colorSymbol = '$';
+    private static String worldNameForTime;
 
-    public static void initializeMotd(){
+    // Load MOTD configs.
+    public static void initializeMOTD(){
 
         // Load configs
         motdFile = getFile();
@@ -78,6 +97,12 @@ public class MOTDManager {
             bottomLineMessage = "Default Bottom Line";
             config.set(BOTTOMLINE, bottomLineMessage);
 
+            colorSymbol = '$';
+            config.set(COLOR_SYMBOL, colorSymbol);
+
+            worldNameForTime = "world";
+            config.set(WORLD_NAME, worldNameForTime);
+
             try{
                 config.save(motdFile);
             }
@@ -95,8 +120,44 @@ public class MOTDManager {
             isEnabled = config.getBoolean(ENABLED);
             topLineMessage = config.getString(TOPLINE);
             bottomLineMessage = config.getString(BOTTOMLINE);
+            colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];
+            worldNameForTime = config.getString(WORLD_NAME);
+
+            // Translate colors
+            topLineMessage = ChatColor.translateAlternateColorCodes(colorSymbol, topLineMessage);
+            bottomLineMessage = ChatColor.translateAlternateColorCodes(colorSymbol, bottomLineMessage);
 
             return config;
         }
+    }
+
+
+    // Returns the formatted MOTD string.
+    public static String getMotd(){
+        String motd = String.format("%s\n%s", MOTDManager.topLineMessage, MOTDManager.bottomLineMessage);
+
+        // World times
+        if(motd.contains(WORLD_TIME_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+            // 12 hour time
+            World worldForTime = Bukkit.getWorld(worldNameForTime);
+
+            if(worldForTime != null){
+                long worldLong = worldForTime.getTime();
+                String formatted = Util.convertWorldTicksToTimeString(worldLong, false);
+                motd = motd.replace(WORLD_TIME_ARG, formatted);
+            }
+
+        } else if(motd.contains(WORLD_TIME24_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+            // 24 hour time
+            World worldForTime = Bukkit.getWorld(worldNameForTime);
+
+            if(worldForTime != null){
+                long worldLong = worldForTime.getTime();
+                String formatted = Util.convertWorldTicksToTimeString(worldLong, true);
+                motd = motd.replace(WORLD_TIME24_ARG, formatted);
+            }
+        }
+
+        return motd;
     }
 }
