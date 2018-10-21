@@ -1,9 +1,18 @@
 package me.ijedi.jedipack.tabmessage;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import me.ijedi.jedipack.JediPackMain;
+import net.minecraft.server.v1_13_R2.IChatBaseComponent;
+import net.minecraft.server.v1_13_R2.PacketDataSerializer;
+import net.minecraft.server.v1_13_R2.PacketPlayOutPlayerListHeaderFooter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabMessageManager {
+
+    /*
+    * Arguments:
+      <d1> - Date format: MM/DD/YYYY
+      <d2> - Date format: DD/MM/YYYY
+      <t1> - 12 Hour time
+      <t2> - 24 Hour time
+    * */
 
     private static final String CONFIG_NAME = "tabMessageConfig.yml";
     private static final String ENABLED = "enabled";
@@ -22,13 +39,20 @@ public class TabMessageManager {
 
     private static FileConfiguration TabMessageConfiguration;
     private static File TabMessageFile;
+    private static IChatBaseComponent headerChat, footerChat;
+    private static PacketPlayOutPlayerListHeaderFooter tabListPacket;
 
+    // Config values
     private static boolean isEnabled = false;
     private static char colorSymbol = '$';
     private static List<String> headers = new ArrayList<>();
     private static List<String> footers = new ArrayList<>();
     private static boolean isHeadersAnimated = false;
     private static boolean isFootersAnimated = false;
+
+    // Current values
+    private static String currentHeader;
+    private static String currentFooter;
 
 
     // Load the configuration for tab messages
@@ -47,6 +71,26 @@ public class TabMessageManager {
         }for(String str : footers){
             JediPackMain.getThisPlugin().getLogger().info(str);
         }
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                if(isEnabled){
+
+                    // TODO: write code to cycle through tablists
+                    setNextTableList("This is a header!", "This is a footer!");
+
+                    //Send to all players
+                    for(Player player : Bukkit.getOnlinePlayers()){
+                        sendTabList(player);
+                    }
+
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(JediPackMain.getThisPlugin(), 0l, 1 * 20l);
+
     }
 
 
@@ -143,5 +187,32 @@ public class TabMessageManager {
         }
         finalString += str;
         return finalString;
+    }
+
+
+    public static void setNextTableList(String headerStr, String footerStr){
+        currentHeader = headerStr;
+        currentFooter = footerStr;
+
+        ByteBuf byteBuffer = ByteBufAllocator.DEFAULT.buffer();
+        PacketDataSerializer packetDataSerializer = new PacketDataSerializer(byteBuffer);
+        tabListPacket = new PacketPlayOutPlayerListHeaderFooter();
+
+        try {
+            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + currentHeader + "\"}"));
+            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + currentFooter + "\"}"));
+            tabListPacket.a(packetDataSerializer);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // Send packets to the player
+    public static void sendTabList(Player player){
+        if(tabListPacket != null){
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(tabListPacket);
+        }
     }
 }
