@@ -41,7 +41,7 @@ public class ParkourManager {
         }
 
         // Initialize parkour commands
-        plugin.getCommand("jppk").setExecutor(new ParkourCommand());
+        plugin.getCommand(ParkourCommand.BASE_COMMAND).setExecutor(new ParkourCommand());
 
         // Initialize events
         plugin.getServer().getPluginManager().registerEvents(new ParkourBlockBreakEvent(), plugin);

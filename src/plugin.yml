@@ -16,25 +16,25 @@ commands:
 
 
 permissions:
-  jppk.admin.create:
+  jp.parkour.admin.create:
     description: "Gives permission to create a parkour course."
-  jppk.admin.delete:
+  jp.parkour.admin.delete:
     description: "Gives permission to delete a parkour course."
-  jppk.admin.start:
+  jp.parkour.admin.start:
     description: "Gives permission to set the starting point of a parkour course."
-  jppk.admin.finish:
+  jp.parkour.admin.finish:
     description: "Gives permission to set the finishing point of a parkour course."
-  jppk.admin.edit:
+  jp.parkour.admin.edit:
     description: "Gives permission to use the menu UI to edit a parkour course."
-  jppk.admin.checkpoint.add:
+  jp.parkour.admin.checkpoint.add:
     description: "Gives permission to add checkpoints to a parkour course."
-  jppk.admin.checkpoint.remove:
+  jp.parkour.admin.checkpoint.remove:
     description: "Gives permission to remove checkpoints from a parkour course."
-  jppk.parkour.parkour:
+  jp.parkour.user.course:
     description: "Gives permission to a player to use a parkour course."
-  jppk.parkour.restart:
+  jp.parkour.user.restart:
     description: "Gives permission to the command '/jppk restart'."
-  jppk.parkour.checkpoint:
+  jp.parkour.user.checkpoint:
     description: "Gives permission to the command '/jppk checkpoint'."
 
   jp.tabmessage.reload:

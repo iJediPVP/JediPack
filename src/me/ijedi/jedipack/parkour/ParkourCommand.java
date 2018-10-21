@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class ParkourCommand implements CommandExecutor {
 
+    public static final String BASE_COMMAND = "jppk";
     private final String RESTART = "restart";
     private final String CHECKPOINT = "checkpoint";
     private final String[] FIRST_ARG_BLACKLIST = {RESTART, CHECKPOINT};
@@ -27,32 +28,32 @@ public class ParkourCommand implements CommandExecutor {
     private final String EDIT = "edit";
 
     // Admin permissions
-    private final String PKPERM_ADMIN_CREATE = "jppk.admin.create";
-    private final String PKPERM_ADMIN_DELETE = "jppk.admin.delete";
-    private final String PKPERM_ADMIN_START = "jppk.admin.start";
-    private final String PKPERM_ADMIN_FINISH = "jppk.admin.finish";
-    private final String PKPERM_ADMIN_EDIT = "jppk.admin.edit";
-    private final String PKPERM_ADMIN_CHECKPOINT_ADD = "jppk.admin.checkpoint.add";
-    private final String PKPERM_ADMIN_CHECKPOINT_REMOVE = "jppk.admin.checkpoint.remove";
+    private final String PKPERM_ADMIN_CREATE = "jp.parkour.admin.create";
+    private final String PKPERM_ADMIN_DELETE = "jp.parkour.admin.delete";
+    private final String PKPERM_ADMIN_START = "jp.parkour.admin.start";
+    private final String PKPERM_ADMIN_FINISH = "jp.parkour.admin.finish";
+    private final String PKPERM_ADMIN_EDIT = "jp.parkour.admin.edit";
+    private final String PKPERM_ADMIN_CHECKPOINT_ADD = "jp.parkour.admin.checkpoint.add";
+    private final String PKPERM_ADMIN_CHECKPOINT_REMOVE = "jp.parkour.admin.checkpoint.remove";
 
-    public static final String PKPERM_PARKOUR = "jppk.parkour.parkour";
-    private final String PKPERM_PARKOUR_RESTART = "jppk.parkour.restart";
-    private final String PKPERM_PARKOUR_CHECKPOINT = "jppk.parkour.checkpoint";
+    public static final String PKPERM_PARKOUR = "jp.parkour.user.course";
+    private final String PKPERM_PARKOUR_RESTART = "jp.parkour.user.restart";
+    private final String PKPERM_PARKOUR_CHECKPOINT = "jp.parkour.user.checkpoint";
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Parkour" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
-        add(ChatColor.AQUA + "/jppk " + RESTART + ChatColor.GREEN + ": Teleport back to the beginning of a course.");
-        add(ChatColor.AQUA + "/jppk " + CHECKPOINT + ChatColor.GREEN + ": Teleport back to the last checkpoint.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + RESTART + ChatColor.GREEN + ": Teleport back to the beginning of a course.");
+        add(ChatColor.AQUA + "/\" + BASE_COMMAND + \" " + CHECKPOINT + ChatColor.GREEN + ": Teleport back to the last checkpoint.");
     }};
 
     private final ArrayList<String> ADMIN_HELP_LIST = new ArrayList<String>(){{
-        add(ChatColor.AQUA + "/jppk <courseId> " + CREATE + ChatColor.GREEN + ": Creates a new parkour course with the specified name.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + DELETE + ChatColor.GREEN + ": Removes the specified parkour course.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + START + ChatColor.GREEN + ": Sets the starting location of the specified parkour course.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + END + ChatColor.GREEN + ": Sets the ending location of the specified parkour course.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + CHECKPOINT + " " + ADD + ChatColor.GREEN + ": Adds a checkpoint for the specified course.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + CHECKPOINT + " " + REMOVE + " <checkpointNumber>" + ChatColor.GREEN + ": Remove the specified checkpoint from the specified course.");
-        add(ChatColor.AQUA + "/jppk <courseId> " + EDIT + ChatColor.GREEN + ": Open the menu to edit the specified course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + CREATE + ChatColor.GREEN + ": Creates a new parkour course with the specified name.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + DELETE + ChatColor.GREEN + ": Removes the specified parkour course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + START + ChatColor.GREEN + ": Sets the starting location of the specified parkour course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + END + ChatColor.GREEN + ": Sets the ending location of the specified parkour course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + CHECKPOINT + " " + ADD + ChatColor.GREEN + ": Adds a checkpoint for the specified course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + CHECKPOINT + " " + REMOVE + " <checkpointNumber>" + ChatColor.GREEN + ": Remove the specified checkpoint from the specified course.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <courseId> " + EDIT + ChatColor.GREEN + ": Open the menu to edit the specified course.");
     }};
 
     @Override
