@@ -10,3 +10,26 @@ commands:
   jppk:
     description: "Interact with parkour courses. Use '/jppk help' for more information."
     usage: /jppk
+
+
+permissions:
+  jppk.admin.create:
+    description: "Gives permission to create a parkour course."
+  jppk.admin.delete:
+    description: "Gives permission to delete a parkour course."
+  jppk.admin.start:
+    description: "Gives permission to set the starting point of a parkour course."
+  jppk.admin.finish:
+    description: "Gives permission to set the finishing point of a parkour course."
+  jppk.admin.edit:
+    description: "Gives permission to use the menu UI to edit a parkour course."
+  jppk.admin.checkpoint.add:
+    description: "Gives permission to add checkpoints to a parkour course."
+  jppk.admin.checkpoint.remove:
+    description: "Gives permission to remove checkpoints from a parkour course."
+  jppk.parkour.parkour:
+    description: "Gives permission to a player to use a parkour course."
+  jppk.parkour.restart:
+    description: "Gives permission to the command '/jppk restart'."
+  jppk.parkour.checkpoint:
+    description: "Gives permission to the command '/jppk checkpoint'."

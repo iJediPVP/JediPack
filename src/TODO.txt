@@ -1,4 +1,10 @@
 TODO LIST:
 - Parkour:
     - Create "how to" in the README.
+    - Tab complete for commands
 
+- Tab List:
+    - Allow user to set tab header and footer in the config
+    - Allow user to reload the tab config by itself
+
+- MOTD
