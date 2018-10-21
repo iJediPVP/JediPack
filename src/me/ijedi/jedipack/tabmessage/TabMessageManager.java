@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TabMessageManager {
@@ -27,6 +27,8 @@ public class TabMessageManager {
       <d2> - Date format: DD/MM/YYYY
       <t1> - 12 Hour time
       <t2> - 24 Hour time
+
+      Color codes: https://www.digminecraft.com/lists/color_list_pc.php
     * */
 
     private static final String CONFIG_NAME = "tabMessageConfig.yml";
@@ -37,50 +39,46 @@ public class TabMessageManager {
     private static final String ANIMATED = "animated";
     private static final String MESSAGES = "message";
 
-    private static FileConfiguration TabMessageConfiguration;
-    private static File TabMessageFile;
-    private static IChatBaseComponent headerChat, footerChat;
+    private static FileConfiguration tabMessageConfiguration;
+    private static File tabMessageFile;
     private static PacketPlayOutPlayerListHeaderFooter tabListPacket;
 
     // Config values
     private static boolean isEnabled = false;
     private static char colorSymbol = '$';
-    private static List<String> headers = new ArrayList<>();
-    private static List<String> footers = new ArrayList<>();
+    private static HashMap<Integer, String> headerMap = new HashMap<>();
+    private static HashMap<Integer, String> footerMap = new HashMap<>();
     private static boolean isHeadersAnimated = false;
     private static boolean isFootersAnimated = false;
 
     // Current values
-    private static String currentHeader;
-    private static String currentFooter;
+    private static int currentHeaderInt;
+    private static int currentFooterInt;
+
 
 
     // Load the configuration for tab messages
     public static void intializeTabMessages(){
 
         // Load the config
-        TabMessageFile = getFile();
-        TabMessageConfiguration = getFileConfiguration();
+        tabMessageFile = getFile();
+        tabMessageConfiguration = getFileConfiguration();
 
-        JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(isEnabled));
-        JediPackMain.getThisPlugin().getLogger().info(Character.toString(colorSymbol));
-        JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(isHeadersAnimated));
-        JediPackMain.getThisPlugin().getLogger().info(Boolean.toString(isFootersAnimated));
-        for(String str : headers){
-            JediPackMain.getThisPlugin().getLogger().info(str);
-        }for(String str : footers){
-            JediPackMain.getThisPlugin().getLogger().info(str);
+        if(isEnabled){
+            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageString("TabMessages are enabled!", false));
+        } else {
+            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageString("TabMessages are not enabled!", false));
+            return;
         }
 
+        // Start the task to send packets
         new BukkitRunnable(){
             @Override
             public void run() {
                 if(isEnabled){
 
-                    // TODO: write code to cycle through tablists
-                    setNextTableList("This is a header!", "This is a footer!");
-
-                    //Send to all players
+                    // Set the tab message and send to all players
+                    setNextTableList();
                     for(Player player : Bukkit.getOnlinePlayers()){
                         sendTabList(player);
                     }
@@ -98,7 +96,7 @@ public class TabMessageManager {
     private static void saveConfiguration(){
         try{
             File file = getFile();
-            TabMessageConfiguration.save(file);
+            tabMessageConfiguration.save(file);
 
         }catch(IOException e){
             String errorMessage = formatTabMessageString("JediPack Parkour - Error saving configuration file.", true);
@@ -110,8 +108,8 @@ public class TabMessageManager {
     // Get the File object for the TabMessageManager.
     private static File getFile(){
 
-        if(TabMessageFile != null){
-            return TabMessageFile;
+        if(tabMessageFile != null){
+            return tabMessageFile;
         }
 
         String folder = JediPackMain.getThisPlugin().getDataFolder() + "/tabMessage";
@@ -124,14 +122,14 @@ public class TabMessageManager {
     // Get the FileConfiguration object for the TabMessageManager
     private static FileConfiguration getFileConfiguration(){
 
-        if(TabMessageConfiguration != null){
-            return TabMessageConfiguration;
+        if(tabMessageConfiguration != null){
+            return tabMessageConfiguration;
         }
 
         // Create the file if it doesn't exist.
-        if(!TabMessageFile.exists()){
-            TabMessageFile.getParentFile().mkdirs();
-            FileConfiguration config = YamlConfiguration.loadConfiguration(TabMessageFile);
+        if(!tabMessageFile.exists()){
+            tabMessageFile.getParentFile().mkdirs();
+            FileConfiguration config = YamlConfiguration.loadConfiguration(tabMessageFile);
 
             // Defaults
             config.set(ENABLED, false);
@@ -145,16 +143,16 @@ public class TabMessageManager {
 
             String[] defaultHeaders = new String[1];
             defaultHeaders[0] = "$fDefault Header";
-            headers.add("$Default Header");
             config.set(HEADER + "." + MESSAGES, defaultHeaders);
 
             String[] defaultFooters = new String[1];
             defaultFooters[0] = "$fDefault Footer";
-            headers.add("$Default Footer");
             config.set(FOOTER + "." + MESSAGES, defaultFooters);
 
+            fillMessageMaps(defaultHeaders, defaultFooters);
+
             try{
-                config.save(TabMessageFile);
+                config.save(tabMessageFile);
             }
             catch(IOException e){
                 String errorMessage = formatTabMessageString("JediPack TabMessage - Error saving configuration file.", true);
@@ -164,19 +162,46 @@ public class TabMessageManager {
             return config;
 
         } else {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(TabMessageFile);
+            FileConfiguration config = YamlConfiguration.loadConfiguration(tabMessageFile);
 
             // Read config
             isEnabled = config.getBoolean(ENABLED);
             colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];
             isHeadersAnimated = config.getBoolean(HEADER + "." + ANIMATED);
             isFootersAnimated = config.getBoolean(FOOTER + "." + ANIMATED);
-            headers = config.getStringList(HEADER + "." + MESSAGES);
-            footers = config.getStringList(FOOTER + "." + MESSAGES);
+            List<String> headerList = config.getStringList(HEADER + "." + MESSAGES);
+            List<String> footerList = config.getStringList(FOOTER + "." + MESSAGES);
+            fillMessageMaps(headerList.toArray(new String[headerList.size()]), footerList.toArray(new String[footerList.size()]));
 
             return config;
         }
     }
+
+    // Fill message hash maps from the configuration
+    private static void fillMessageMaps(String[] headers, String[] footers){
+        headerMap = new HashMap<>();
+        footerMap = new HashMap<>();
+
+        // Fill headers
+        if(headers != null){
+            int x = 0;
+            for(String str : headers){
+                headerMap.put(x, str);
+                x++;
+            }
+        }
+
+        // Fill footers
+        if(footers != null){
+            int x = 0;
+            for(String str : footers){
+                footerMap.put(x, str);
+                x++;
+            }
+        }
+    }
+
+
 
 
     // Format the given string for tab message chat messages
@@ -190,17 +215,25 @@ public class TabMessageManager {
     }
 
 
-    public static void setNextTableList(String headerStr, String footerStr){
-        currentHeader = headerStr;
-        currentFooter = footerStr;
 
+    // Set the next tab list messages
+    public static void setNextTableList(){
+        // Get the header
+        currentHeaderInt = getNextHeaderInt();
+        String headerStr = ChatColor.translateAlternateColorCodes(colorSymbol, headerMap.get(currentHeaderInt));
+
+        // Get the footer
+        currentFooterInt = getNextFooterInt();
+        String footerStr = ChatColor.translateAlternateColorCodes(colorSymbol, footerMap.get(currentFooterInt));
+
+        // Set up the packet
         ByteBuf byteBuffer = ByteBufAllocator.DEFAULT.buffer();
         PacketDataSerializer packetDataSerializer = new PacketDataSerializer(byteBuffer);
         tabListPacket = new PacketPlayOutPlayerListHeaderFooter();
 
         try {
-            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + currentHeader + "\"}"));
-            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + currentFooter + "\"}"));
+            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + headerStr + "\"}"));
+            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footerStr + "\"}"));
             tabListPacket.a(packetDataSerializer);
 
         } catch (IOException e) {
@@ -208,6 +241,27 @@ public class TabMessageManager {
         }
     }
 
+    // Return the int key for the next header.
+    private static int getNextHeaderInt(){
+        int nextInt = currentHeaderInt;
+        if(currentHeaderInt < headerMap.size() && currentHeaderInt + 1 < headerMap.size()){
+            nextInt++;
+        } else {
+            nextInt = 0;
+        }
+        return nextInt;
+    }
+
+    // Return the int key for the next footer.
+    private static int getNextFooterInt(){
+        int nextInt = currentFooterInt;
+        if(currentFooterInt < footerMap.size() && currentFooterInt + 1 < footerMap.size()){
+            nextInt++;
+        } else {
+            nextInt = 0;
+        }
+        return nextInt;
+    }
 
     // Send packets to the player
     public static void sendTabList(Player player){
