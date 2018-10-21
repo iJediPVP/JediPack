@@ -18,6 +18,7 @@ public class MOTDManager {
     * Arguments:
       <wt1> - 12 Hour world time
       <wt2> - 24 Hour world time
+      <weather>
     * */
 
     // Config names
@@ -31,10 +32,12 @@ public class MOTDManager {
     // Arguments
     private static final String WORLD_TIME_ARG = "<wt1>";
     private static final String WORLD_TIME24_ARG = "<wt2>";
+    private static final String WEATHER_ARG = "<weather>";
 
     // Configs
     private static FileConfiguration motdConfiguration;
     private static File motdFile;
+    private static World worldForTime;
 
     // Current values
     public static boolean isEnabled;
@@ -58,6 +61,8 @@ public class MOTDManager {
         JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is enabled.");
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new MOTDPingEvent(), plugin);
+
+        worldForTime = Bukkit.getServer().getWorld(worldNameForTime);
     }
 
 
@@ -146,25 +151,32 @@ public class MOTDManager {
         String motd = String.format("%s\n%s", MOTDManager.topLineMessage, MOTDManager.bottomLineMessage);
 
         // World times
-        if(motd.contains(WORLD_TIME_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
-            // 12 hour time
-            World worldForTime = Bukkit.getWorld(worldNameForTime);
+        // 12 hour time
+        if(motd.contains(WORLD_TIME_ARG) && worldForTime != null){
+            long worldLong = worldForTime.getTime();
+            String formatted = Util.convertWorldTicksToTimeString(worldLong, false);
+            motd = motd.replace(WORLD_TIME_ARG, formatted);
 
-            if(worldForTime != null){
-                long worldLong = worldForTime.getTime();
-                String formatted = Util.convertWorldTicksToTimeString(worldLong, false);
-                motd = motd.replace(WORLD_TIME_ARG, formatted);
+        }
+
+        // 24 hour time
+        if(motd.contains(WORLD_TIME24_ARG) && worldForTime != null){
+            long worldLong = worldForTime.getTime();
+            String formatted = Util.convertWorldTicksToTimeString(worldLong, true);
+            motd = motd.replace(WORLD_TIME24_ARG, formatted);
+        }
+
+        // Weather
+        if(motd.contains(WEATHER_ARG) && worldForTime != null){
+
+            String weatherStr = "Sunshine";
+            if(worldForTime.hasStorm()){
+                weatherStr = "Raining";
             }
-
-        } else if(motd.contains(WORLD_TIME24_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
-            // 24 hour time
-            World worldForTime = Bukkit.getWorld(worldNameForTime);
-
-            if(worldForTime != null){
-                long worldLong = worldForTime.getTime();
-                String formatted = Util.convertWorldTicksToTimeString(worldLong, true);
-                motd = motd.replace(WORLD_TIME24_ARG, formatted);
+            if(worldForTime.isThundering()){
+                weatherStr = "Thunder";
             }
+            motd = motd.replace(WEATHER_ARG, weatherStr);
         }
 
         return motd;
