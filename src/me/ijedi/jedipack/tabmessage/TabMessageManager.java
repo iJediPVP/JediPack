@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class TabMessageManager {
     private static HashMap<Integer, String> headerMap = new HashMap<>();
     private static HashMap<Integer, String> footerMap = new HashMap<>();
     private static String worldNameForTime;
+    private static BukkitTask tabMessageTask;
 
     // Current values
     private static int currentHeaderInt;
@@ -75,11 +77,11 @@ public class TabMessageManager {
 
 
     // Load the configuration for tab messages
-    public static void intializeTabMessages(){
+    public static void intializeTabMessages(boolean reload){
 
         // Load the config
         tabMessageFile = getFile();
-        tabMessageConfiguration = getFileConfiguration();
+        tabMessageConfiguration = getFileConfiguration(reload);
 
         if(!isEnabled){
             JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are not enabled!", false));
@@ -87,10 +89,13 @@ public class TabMessageManager {
         }
         JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are enabled!", false));
 
-
+        // Clean up existing task
+        if(tabMessageTask != null && !tabMessageTask.isCancelled()){
+            tabMessageTask.cancel();
+        }
 
         // Start the task to send packets
-        new BukkitRunnable(){
+        tabMessageTask = new BukkitRunnable(){
             @Override
             public void run() {
                 if(isEnabled){
@@ -124,9 +129,9 @@ public class TabMessageManager {
     }
 
     // Get the FileConfiguration object for the TabMessageManager
-    private static FileConfiguration getFileConfiguration(){
+    private static FileConfiguration getFileConfiguration(boolean reload){
 
-        if(tabMessageConfiguration != null){
+        if(tabMessageConfiguration != null && !reload){
             return tabMessageConfiguration;
         }
 

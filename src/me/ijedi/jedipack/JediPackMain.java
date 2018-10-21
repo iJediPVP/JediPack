@@ -2,6 +2,7 @@ package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.menu.MenuListener;
 import me.ijedi.jedipack.parkour.ParkourManager;
+import me.ijedi.jedipack.tabmessage.TabMessageCommand;
 import me.ijedi.jedipack.tabmessage.TabMessageManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,7 +24,9 @@ public class JediPackMain extends JavaPlugin {
 
         ParkourManager.initializeCourses();
 
-        TabMessageManager.intializeTabMessages();
+        // Initialize tab messages
+        getCommand(TabMessageCommand.BASE_COMMAND).setExecutor(new TabMessageCommand());
+        TabMessageManager.intializeTabMessages(false);
 
         this.getLogger().info("JediPack is enabled!");
     }

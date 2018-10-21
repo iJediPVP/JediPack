@@ -3,9 +3,8 @@ TODO LIST:
     - Create "how to" in the README.
     - Tab complete for commands
 
-- Tab List:
-    - Figure out new lines
-    - Show player info?
-    - Allow user to reload the tab config by itself
+- TabMessage:
+    - Tab complete for commands
+    - Create "how to"
 
 - MOTD

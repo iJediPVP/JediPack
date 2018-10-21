@@ -10,6 +10,9 @@ commands:
   jppk:
     description: "Interact with parkour courses. Use '/jppk help' for more information."
     usage: /jppk
+  jptm:
+    description: "Reloads the configuration for Tab Messages."
+    usage: /jptm reload
 
 
 permissions:
@@ -33,3 +36,6 @@ permissions:
     description: "Gives permission to the command '/jppk restart'."
   jppk.parkour.checkpoint:
     description: "Gives permission to the command '/jppk checkpoint'."
+
+  jp.tabmessage.reload:
+    description: "Gives permission to the command '/jptm reload'."
