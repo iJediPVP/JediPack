@@ -16,6 +16,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,6 +45,13 @@ public class TabMessageManager {
     private static File tabMessageFile;
     private static PacketPlayOutPlayerListHeaderFooter tabListPacket;
 
+    private static HashMap<String, SimpleDateFormat> tabDateTimeArgs = new HashMap<String, SimpleDateFormat>(){{
+        put("<d1>", new SimpleDateFormat("MM/dd/yyyy"));
+        put("<d2>", new SimpleDateFormat("dd/MM/yyyy"));
+        put("<t1>", new SimpleDateFormat("hh:mm:ss a z")); //12 hour time
+        put("<t2>", new SimpleDateFormat("HH:mm:ss")); //24 hour time
+    }};
+
     // Config values
     private static boolean isEnabled = false;
     private static char colorSymbol = '$';
@@ -65,9 +74,9 @@ public class TabMessageManager {
         tabMessageConfiguration = getFileConfiguration();
 
         if(isEnabled){
-            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageString("TabMessages are enabled!", false));
+            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are enabled!", false));
         } else {
-            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageString("TabMessages are not enabled!", false));
+            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are not enabled!", false));
             return;
         }
 
@@ -99,7 +108,7 @@ public class TabMessageManager {
             tabMessageConfiguration.save(file);
 
         }catch(IOException e){
-            String errorMessage = formatTabMessageString("JediPack Parkour - Error saving configuration file.", true);
+            String errorMessage = formatTabMessageLogString("JediPack Parkour - Error saving configuration file.", true);
             JediPackMain.getThisPlugin().getLogger().info(errorMessage);
             JediPackMain.getThisPlugin().getLogger().info(e.toString());
         }
@@ -155,7 +164,7 @@ public class TabMessageManager {
                 config.save(tabMessageFile);
             }
             catch(IOException e){
-                String errorMessage = formatTabMessageString("JediPack TabMessage - Error saving configuration file.", true);
+                String errorMessage = formatTabMessageLogString("JediPack TabMessage - Error saving configuration file.", true);
                 JediPackMain.getThisPlugin().getLogger().info(errorMessage);
                 JediPackMain.getThisPlugin().getLogger().info(e.toString());
             }
@@ -204,8 +213,8 @@ public class TabMessageManager {
 
 
 
-    // Format the given string for tab message chat messages
-    public static String formatTabMessageString(String str, boolean isError){
+    // Format the given string for tab message log messages
+    public static String formatTabMessageLogString(String str, boolean isError){
         String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[TabMessage] ";
         if(isError){
             finalString += ChatColor.RED;
@@ -214,17 +223,33 @@ public class TabMessageManager {
         return finalString;
     }
 
+    // Format the given string for tab messages that are sent via packets
+    public static String formatTabMessage(String str){
+
+        // Fill in date/times
+        Date date = new Date();
+        for(String arg : tabDateTimeArgs.keySet()){
+            str = str.replaceAll(arg, tabDateTimeArgs.get(arg).format(date));
+        }
+
+        // Translate colors
+        str = ChatColor.translateAlternateColorCodes(colorSymbol, str);
+        return str;
+    }
+
 
 
     // Set the next tab list messages
     public static void setNextTableList(){
         // Get the header
         currentHeaderInt = getNextHeaderInt();
-        String headerStr = ChatColor.translateAlternateColorCodes(colorSymbol, headerMap.get(currentHeaderInt));
+        String headerStr = headerMap.get((currentHeaderInt));
+        headerStr = formatTabMessage(headerStr);
 
         // Get the footer
         currentFooterInt = getNextFooterInt();
-        String footerStr = ChatColor.translateAlternateColorCodes(colorSymbol, footerMap.get(currentFooterInt));
+        String footerStr = footerMap.get(currentFooterInt);
+        footerStr = formatTabMessage(footerStr);
 
         // Set up the packet
         ByteBuf byteBuffer = ByteBufAllocator.DEFAULT.buffer();
