@@ -16,6 +16,9 @@ commands:
   jpmotd:
     description: "Reloads the configuration for MOTD."
     usage: /jpmotd reload
+  jpsmite:
+    description: "Smites the specified player."
+    usage: /jpsmite <player>
 
 
 permissions:
@@ -45,3 +48,6 @@ permissions:
 
   jp.motd.reload:
     description: "Gives permission to the command '/jpmotd reload'."
+
+  jp.smite:
+    description: "Gives permission to the command '/jpsmite'."

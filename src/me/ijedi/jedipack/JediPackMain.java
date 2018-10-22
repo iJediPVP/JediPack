@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.menu.MenuListener;
+import me.ijedi.jedipack.misc.SmiteCommand;
 import me.ijedi.jedipack.motd.MOTDCommand;
 import me.ijedi.jedipack.motd.MOTDManager;
 import me.ijedi.jedipack.parkour.ParkourManager;
@@ -34,6 +35,9 @@ public class JediPackMain extends JavaPlugin {
         // Initialize motd
         getCommand(MOTDCommand.BASE_COMMAND).setExecutor(new MOTDCommand());
         MOTDManager.initializeMOTD(false);
+
+        // Initialize misc
+        getCommand(SmiteCommand.BASE_COMMAND).setExecutor(new SmiteCommand());
 
         this.getLogger().info("JediPack is enabled!");
     }

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class MOTDCommand  implements CommandExecutor {
+public class MOTDCommand implements CommandExecutor {
 
     public static final String BASE_COMMAND = "jpmotd";
     private static final String RELOAD_PERM = "jp.motd.reload";
