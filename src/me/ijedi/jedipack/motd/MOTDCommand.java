@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.motd;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,7 +32,7 @@ public class MOTDCommand  implements CommandExecutor {
         // Check for "reload" arg
         if(args.length > 0 && args[0].toLowerCase().equals(RELOAD_ARG)){
             MOTDManager.initializeMOTD(true);
-            commandSender.sendMessage(MOTDManager.formatMOTDLogString("MOTD config has been reloaded.", false));
+            MessageTypeEnum.MOTDMessage.sendMessage("The MOTD configuration has been reloaded.", commandSender, false);
             return true;
         }
 

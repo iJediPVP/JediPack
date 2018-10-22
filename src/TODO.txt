@@ -1,6 +1,4 @@
 TODO LIST:
-- General:
-    - Create generic formatting of messages to the player.
 - Parkour:
     - Create "how to" in the README.
     - Tab complete for commands

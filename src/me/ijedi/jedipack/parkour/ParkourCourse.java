@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -131,23 +132,27 @@ public class ParkourCourse {
     public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber) {
 
         if(isStart && StartLocation != null){
-            return ParkourManager.formatParkourString(String.format("A starting point for course '%s' has already been set!", CourseId), true);
+            String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A starting point for course '%s' has already been set!", CourseId), true, true);
+            return msg;
         } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
 
         if(isFinish && FinishLocation != null){
-            return ParkourManager.formatParkourString(String.format("A finishing point for course '%s' has already been set!", CourseId), true);
+            String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A finishing point for course '%s' has already been set!", CourseId), true, true);
+            return  msg;
         } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
 
 
         // Make sure the block the player's feet is in is AIR.
         if(!location.getBlock().getType().equals(Material.AIR)){
-            return ParkourManager.formatParkourString("A parkour point cannot be placed here!", true);
+            String msg = MessageTypeEnum.ParkourMessage.formatMessage("A parkour point cannot be placed here!", true, true);
+            return msg;
         }
 
         // Verify that the block under the point is a solid.
         Location belowLocation = new Location(location.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
         if(!belowLocation.getBlock().getType().isSolid()){
-            return ParkourManager.formatParkourString("A parkour point must be placed on a solid block!", true);
+            String msg = MessageTypeEnum.ParkourMessage.formatMessage("A parkour point must be placed on a solid block!", true, true);
+            return msg;
         }
 
 
@@ -164,25 +169,25 @@ public class ParkourCourse {
         String pointName = "";
         if (isStart) {
             baseConfigPath = START + ".";
-            output = ParkourManager.formatParkourString(String.format("The starting point for course '%s' has been set!", CourseId), false);
+            output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("The starting point for course '%s' has been set!", CourseId), true, false);
             StartLocation = saveLocation;
             pointName = "Parkour Start";
 
         } else if (isFinish) {
             baseConfigPath = FINISH + ".";
-            output = ParkourManager.formatParkourString(String.format("The finishing point for course '%s' has been set!", CourseId), false);
+            output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("The finishing point for course '%s' has been set!", CourseId), true, false);
             FinishLocation = saveLocation;
             pointName = "Parkour Finish";
 
         } else if (pointNumber > 0) {
             baseConfigPath = POINT + "." + pointNumber + ".";
-            output = ParkourManager.formatParkourString(String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId), false);
+            output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("Point #'%s' for course '%s' has been set!", pointNumber, CourseId), true, false);
             pointName = "Checkpoint #" + pointNumber;
 
             // If we don't already have this point, add it.
             String pointStr = Integer.toString(pointNumber);
             if(PointLocations.containsKey(pointStr)){
-                output = ParkourManager.formatParkourString(String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId), true);
+                output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId), true, true);
                 return output;
             }
             PointLocations.put(pointStr, saveLocation);
@@ -208,7 +213,7 @@ public class ParkourCourse {
 
             return output;
         } else {
-            return ParkourManager.formatParkourString(String.format("Invalid arguments were given to set this point for course '%s'!", CourseId), false);
+            return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Invalid arguments were given to set this point for course '%s'!", CourseId), true, true);
         }
     }
 
@@ -244,10 +249,10 @@ public class ParkourCourse {
             if(removeFromMap){
                 PointLocations.remove(pointStr);
             }
-            return ParkourManager.formatParkourString(String.format("Point '#%s' was removed from course '%s'!", pointNumber, CourseId), true);
+            return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Point '#%s' was removed from course '%s'!", pointNumber, CourseId), true, false);
         }
 
-        return ParkourManager.formatParkourString(String.format("Course '%s' does not contain point '#%s'.", CourseId, pointNumber), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not contain point '#%s'.", CourseId, pointNumber), true, true);
     }
 
     // Remove all points for this course
@@ -421,9 +426,8 @@ public class ParkourCourse {
             CourseConfiguration.save(file);
 
         }catch(IOException e){
-            String errorMessage = ParkourManager.formatParkourString("JediPack Parkour - Error saving configuration file for " + CourseId + ".", true);
-            JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-            JediPackMain.getThisPlugin().getLogger().info(e.toString());
+            MessageTypeEnum.ParkourMessage.logMessage("Error saving configuration file for " + CourseId + ".");
+            MessageTypeEnum.ParkourMessage.logMessage(e.toString());
         }
     }
 
@@ -457,9 +461,8 @@ public class ParkourCourse {
             try{
                 config.save(CourseFile);
             }catch(IOException e){
-                String errorMessage = ParkourManager.formatParkourString(String.format("JediPack Parkour - Error saving configuration file for course '%s'.", CourseId), true);
-                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-                JediPackMain.getThisPlugin().getLogger().info(e.toString());
+                MessageTypeEnum.ParkourMessage.logMessage(String.format("Error saving configuration file for course '%s'.", CourseId));
+                MessageTypeEnum.ParkourMessage.logMessage(e.toString());
             }
             return config;
 

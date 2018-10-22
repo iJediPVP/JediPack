@@ -136,16 +136,6 @@ public class MOTDManager {
         }
     }
 
-    // Format the given string for motd log messages
-    public static String formatMOTDLogString(String str, boolean isError){
-        String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[MOTD] ";
-        if(isError){
-            finalString += ChatColor.RED;
-        }
-        finalString += str;
-        return finalString;
-    }
-
     // Returns the formatted MOTD string.
     public static String getMotd(){
         String motd = String.format("%s\n%s", MOTDManager.topLineMessage, MOTDManager.bottomLineMessage);

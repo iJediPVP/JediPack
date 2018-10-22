@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import me.ijedi.jedipack.menu.Menu;
 import org.bukkit.ChatColor;
@@ -47,21 +48,18 @@ public class ParkourMenuEvent implements Listener {
                         if(itemName.toUpperCase().startsWith("START")){
                             // Make sure course exists
                             if(!ParkourManager.doesCourseExist(courseId)){
-                                String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not exist!", courseId), player, true);
                                 player.closeInventory();
 
                             } else if(!ParkourManager.hasStart(courseId)){
                                 // Make sure we have a starting point
-                                String message = ParkourManager.formatParkourString(String.format("Course '%s' does not have a starting point!", courseId), true);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not have a starting point!", courseId), player, true);
                                 player.closeInventory();
 
                             } else{
                                 // Remove start
                                 ParkourManager.removeStart(courseId);
-                                String message = ParkourManager.formatParkourString(String.format("The starting point for course '%s' has been removed!", courseId), false);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("The starting point for course '%s' has been removed!", courseId), player,false);
                                 ParkourManager.openCourseMenu(courseId, player);
                             }
 
@@ -70,21 +68,18 @@ public class ParkourMenuEvent implements Listener {
 
                             // Make sure course exists
                             if(!ParkourManager.doesCourseExist(courseId)){
-                                String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not exist!", courseId), player,true);
                                 player.closeInventory();
 
                             } else if(!ParkourManager.hasFinish(courseId)){
                                 // Make sure we have a starting point
-                                String message = ParkourManager.formatParkourString(String.format("Course '%s' does not have a finishing point!", courseId), true);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not have a finishing point!", courseId), player,true);
                                 player.closeInventory();
 
                             } else{
                                 // Remove start
                                 ParkourManager.removeFinish(courseId);
-                                String message = ParkourManager.formatParkourString(String.format("The finishing point for course '%s' has been removed!", courseId), false);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("The finishing point for course '%s' has been removed!", courseId), player,false);
                                 ParkourManager.openCourseMenu(courseId, player);
                             }
 
@@ -98,8 +93,7 @@ public class ParkourMenuEvent implements Listener {
 
                                 // Make sure course exists
                                 if(!ParkourManager.doesCourseExist(courseId)){
-                                    String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
-                                    player.sendMessage(message);
+                                    MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not exist!", courseId), player,true);
                                     player.closeInventory();
 
                                 } else {
@@ -109,8 +103,7 @@ public class ParkourMenuEvent implements Listener {
                                     ParkourManager.openCourseMenu(courseId, player);
                                 }
                             } else {
-                                String message = ParkourManager.formatParkourString("Invalid checkpoint name.", true);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage("Invalid checkpoint name.", player,true);
                                 player.closeInventory();
                             }
                         }

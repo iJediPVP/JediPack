@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 public enum MessageTypeEnum {
 
     // Declare enums
-    TabMessage("[TabMessage]", ChatColor.GREEN, ChatColor.BOLD, null);
+    TabMessage("[TabMessage]", ChatColor.GOLD, ChatColor.BOLD, null),
+    MOTDMessage("[MOTD]", ChatColor.GOLD, ChatColor.BOLD, null),
+    ParkourMessage("[Parkour]", ChatColor.GOLD, ChatColor.BOLD, null);
 
 
 
@@ -37,6 +39,12 @@ public enum MessageTypeEnum {
 
         String newMsg = formatMessage(msg, useColors, isError);
         sender.sendMessage(newMsg);
+    }
+
+    // Sends a message to the given player.
+    public void sendMessage(String msg, Player player, boolean isError){
+        String newMsg = formatMessage(msg, true, isError);
+        player.sendMessage(newMsg);
     }
 
     // Logs a message to the plugin console.

@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import me.ijedi.jedipack.menu.Menu;
 import me.ijedi.jedipack.menu.MenuManager;
@@ -36,7 +37,7 @@ public class ParkourManager {
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         FileConfiguration pluginConfig = plugin.getConfig();
         if(!pluginConfig.getBoolean(JediPackMain.PARKOUR_ENABLED)){
-            plugin.getLogger().info(formatParkourString("Parkour is not enabled!", false));
+            MessageTypeEnum.ParkourMessage.logMessage("Parkour is not enabled!");
             return;
         }
 
@@ -58,7 +59,7 @@ public class ParkourManager {
             // Loop through the course names and initialize each ParkourCourse object
             for (String courseName : courseList) {
                 if(!doesCourseExist(courseName)){
-                    plugin.getLogger().info(formatParkourString("Loading course: " + courseName, false));
+                    MessageTypeEnum.ParkourMessage.logMessage("Loading course: " + courseName);
                     ParkourCourse course = new ParkourCourse(courseName);
                     ParkourCourses.put(courseName, course);
                 }
@@ -90,9 +91,9 @@ public class ParkourManager {
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
-            return formatParkourString(String.format("Created course '%s'!", courseId), false);
+            return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Created course '%s'!", courseId), true, false);
         }
-        return formatParkourString(String.format("Course '%s' already exists.", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' already exists.", courseId), true, true);
     }
 
     public static String removeCourse(String courseId){
@@ -110,10 +111,10 @@ public class ParkourManager {
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
-            return formatParkourString(String.format("Course '%s' has been removed!", courseId), false);
+            return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' has been removed!", courseId), true, false);
         }
 
-        return formatParkourString(String.format("Course '%s' does not exist.", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not exist.", courseId), true, true);
     }
 
     public static ParkourCourse getCourse(String courseId){
@@ -134,7 +135,7 @@ public class ParkourManager {
 
             return output;
         }
-        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not exist!", courseId), true, true);
     }
 
     // Set the finishing point for the specified parkour course.
@@ -146,7 +147,7 @@ public class ParkourManager {
 
             return output;
         }
-        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not exist!", courseId), true, true);
     }
 
     // Create a new checkpoint for the specified parkour course.
@@ -158,7 +159,7 @@ public class ParkourManager {
 
             return output;
         }
-        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not exist!", courseId), true, true);
     }
 
     // Remove the specified checkpoint from the specified parkour course.
@@ -170,7 +171,7 @@ public class ParkourManager {
 
             return output;
         }
-        return formatParkourString(String.format("Course '%s' does not exist!", courseId), true);
+        return MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' does not exist!", courseId), true, true);
     }
 
     // See if a course has a starting point. This assumes that the course exists.
@@ -207,7 +208,7 @@ public class ParkourManager {
             player.openInventory(new MenuManager().getMenu(menu.getName()));
         }
         catch (NullPointerException e){
-            String message = ParkourManager.formatParkourString(String.format("Course '%s' is empty.", courseId), true);
+            String message = MessageTypeEnum.ParkourMessage.formatMessage(String.format("Course '%s' is empty.", courseId), true, true);
             player.sendMessage(message);
             player.closeInventory();
         }
@@ -222,9 +223,8 @@ public class ParkourManager {
             ParkourConfiguration.save(file);
 
         }catch(IOException e){
-            String errorMessage = formatParkourString("JediPack Parkour - Error saving configuration file.", true);
-            JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-            JediPackMain.getThisPlugin().getLogger().info(e.toString());
+            MessageTypeEnum.ParkourMessage.logMessage("Error saving configuration file.");
+            MessageTypeEnum.ParkourMessage.logMessage(e.toString());
         }
     }
 
@@ -259,9 +259,8 @@ public class ParkourManager {
             try{
                 config.save(ParkourFile);
             }catch(IOException e){
-                String errorMessage = formatParkourString("JediPack Parkour - Error saving configuration file.", true);
-                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-                JediPackMain.getThisPlugin().getLogger().info(e.toString());
+                MessageTypeEnum.ParkourMessage.logMessage("Error saving configuration file.");
+                MessageTypeEnum.ParkourMessage.logMessage(e.toString());
             }
             return config;
 
@@ -273,16 +272,6 @@ public class ParkourManager {
     }
 
 
-
-    // Format the given string for parkour chat messages
-    public static String formatParkourString(String str, boolean isError){
-        String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[Parkour] ";
-        if(isError){
-            finalString += ChatColor.RED;
-        }
-        finalString += str;
-        return finalString;
-    }
 
     // Returns if the given location belongs to a parkour course
     public static Boolean isParkourBlockLocation(Location location){

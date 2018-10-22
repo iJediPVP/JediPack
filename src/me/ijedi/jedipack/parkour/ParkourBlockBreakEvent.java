@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,7 @@ public class ParkourBlockBreakEvent implements Listener {
         if(ParkourManager.isParkourBlockLocation(blockLocation)){
             Player player = event.getPlayer();
             if(player != null){
-                player.sendMessage(ParkourManager.formatParkourString("You cannot break this. It's part of a parkour course!", true));
+                MessageTypeEnum.ParkourMessage.sendMessage("You cannot break this. It's part of a parkour course!", player, true);
             }
             event.setCancelled(true);
         }

@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -51,15 +52,13 @@ public class ParkourPointInteractEvent implements Listener {
                     if(info.hasStartedThisCourse(courseId)){
                         Date startDate = new Date();
                         info.setStartDate(startDate, courseId);
-                        String message = ParkourManager.formatParkourString(String.format("Restarting course '%s'!", courseId), false);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("Restarting course '%s'!", courseId), player,false);
 
                     } else {
                         // Else we haven't started this course. So we should start it.
                         Date startDate = new Date();
                         info.setStartDate(startDate, courseId);
-                        String message = ParkourManager.formatParkourString(String.format("Course '%s' started!", courseId), false);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' started!", courseId), player, false);
                     }
                     info.beginStartMessageCoolDown();
 
@@ -76,8 +75,7 @@ public class ParkourPointInteractEvent implements Listener {
 
                     // If the player hasn't started this course, send them a warning.
                     if(!info.hasStartedThisCourse(courseId)){
-                        String message = ParkourManager.formatParkourString(String.format("You haven't started course '%s' yet!", courseId), true);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("You haven't started course '%s' yet!", courseId), player,true);
 
                     } else {
 
@@ -86,18 +84,15 @@ public class ParkourPointInteractEvent implements Listener {
                         boolean isNewRecord = info.checkForCourseRecord();
                         String timeStr = info.formatTime(courseTime);
                         if(isNewRecord){
-                            String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s' with a new record time of '%s'!", courseId, timeStr), false);
-                            player.sendMessage(message);
+                            MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a new record time of '%s'!", courseId, timeStr), player,false);
 
                         } else {
                             long prevRecordTime = info.getRecordTime();
                             if(prevRecordTime == 0){
-                                String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s' with a time of %s!", courseId, timeStr), false);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a time of %s!", courseId, timeStr), player,false);
                             } else {
                                 String prevRecordTimeStr = info.formatTime(prevRecordTime);
-                                String message = ParkourManager.formatParkourString(String.format("Congratulations! You have finished course '%s' with a time of %s! Your personal best is %s!", courseId, timeStr, prevRecordTimeStr), false);
-                                player.sendMessage(message);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a time of %s! Your personal best is %s!", courseId, timeStr, prevRecordTimeStr), player,false);
                             }
                             info.finishedCourse();
                         }
@@ -115,8 +110,7 @@ public class ParkourPointInteractEvent implements Listener {
                     if(!info.hasStartedThisCourse(courseId)){
                         int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
                         if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
-                            String message = ParkourManager.formatParkourString("You haven't started this course yet!", false);
-                            player.sendMessage(message);
+                            MessageTypeEnum.ParkourMessage.sendMessage("You haven't started this course yet!", player,true);
                             info.beginCheckpointMessageCoolDown(activatedCheckpoint);
                         }
 
@@ -128,11 +122,11 @@ public class ParkourPointInteractEvent implements Listener {
                     int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
                     if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
                         if(activatedCheckpoint > currentCheckpoint){
-                            player.sendMessage(ParkourManager.formatParkourString("Checkpoint reached!", false));
+                            MessageTypeEnum.ParkourMessage.sendMessage("Checkpoint reached!", player,false);
                             info.setCurrentCheckpoint(activatedCheckpoint);
 
                         } else {
-                            player.sendMessage(ParkourManager.formatParkourString("You've already reached this checkpoint!", true));
+                            MessageTypeEnum.ParkourMessage.sendMessage("You've already reached this checkpoint!", player, true);
                         }
                         info.beginCheckpointMessageCoolDown(activatedCheckpoint);
                     }

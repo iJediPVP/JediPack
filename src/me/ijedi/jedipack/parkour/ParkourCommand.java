@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.parkour;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
@@ -43,7 +44,7 @@ public class ParkourCommand implements CommandExecutor {
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Parkour" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + RESTART + ChatColor.GREEN + ": Teleport back to the beginning of a course.");
-        add(ChatColor.AQUA + "/\" + BASE_COMMAND + \" " + CHECKPOINT + ChatColor.GREEN + ": Teleport back to the last checkpoint.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + CHECKPOINT + ChatColor.GREEN + ": Teleport back to the last checkpoint.");
     }};
 
     private final ArrayList<String> ADMIN_HELP_LIST = new ArrayList<String>(){{
@@ -83,7 +84,7 @@ public class ParkourCommand implements CommandExecutor {
 
         // Only a player can run this
         if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(ParkourManager.formatParkourString("This command can only be executed by a player!", true));
+            MessageTypeEnum.ParkourMessage.sendMessage("This command can only be executed by a player!", commandSender, true);
             return true;
         }
 
@@ -144,8 +145,7 @@ public class ParkourCommand implements CommandExecutor {
 
                     // Make sure the course exists
                     if(!ParkourManager.doesCourseExist(firstArg)){
-                        String message = ParkourManager.formatParkourString(String.format("Course '%s' does not exist!", firstArg), true);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' does not exist!", firstArg), player, true);
                         return true;
                     }
 
@@ -210,12 +210,12 @@ public class ParkourCommand implements CommandExecutor {
                                         return true;
 
                                     } else {
-                                        player.sendMessage(ParkourManager.formatParkourString("A point number must be an integer.", true));
+                                        MessageTypeEnum.ParkourMessage.sendMessage("A point number must be an integer.", player, true);
                                         return true;
                                     }
 
                                 } else {
-                                    player.sendMessage(ParkourManager.formatParkourString("A point number must be specified.", true));
+                                    MessageTypeEnum.ParkourMessage.sendMessage("A point number must be specified.", player, true);
                                     return true;
                                 }
                             }
@@ -253,11 +253,10 @@ public class ParkourCommand implements CommandExecutor {
                     startLoc = Util.centerLocation(startLoc);
                     startLoc.setYaw(player.getLocation().getYaw());
                     player.teleport(startLoc);
-                    String message = ParkourManager.formatParkourString(String.format("You have been teleported back to the start of course '%s'!", info.getCourseId()), false);
-                    player.sendMessage(message);
+                    MessageTypeEnum.ParkourMessage.sendMessage(String.format("You have been teleported back to the start of course '%s'!", info.getCourseId()), player, false);
 
                 } else {
-                    player.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                    MessageTypeEnum.ParkourMessage.sendMessage("You haven't started a parkour course yet!", player, true);
                 }
                 return true;
 
@@ -276,8 +275,7 @@ public class ParkourCommand implements CommandExecutor {
 
                     // Make sure the player has reached a checkpoint
                     if(info.getCurrentCheckpoint() <= 0){
-                        String message = ParkourManager.formatParkourString("You haven't reached a checkpoint yet!", true);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage("You haven't reached a checkpoint yet!", player, true);
                         return true;
                     }
 
@@ -285,20 +283,18 @@ public class ParkourCommand implements CommandExecutor {
                     ParkourCourse course = ParkourManager.getCourse(info.getCourseId());
                     Location checkpointLoc = course.getCheckpointLocation(info.getCurrentCheckpoint());
                     if(checkpointLoc == null){
-                        String message = ParkourManager.formatParkourString("You haven't reached a checkpoint yet!", true);
-                        player.sendMessage(message);
+                        MessageTypeEnum.ParkourMessage.sendMessage("You haven't reached a checkpoint yet!", player, true);
                         return true;
                     }
 
                     checkpointLoc.setYaw(player.getLocation().getYaw());
                     checkpointLoc = Util.centerLocation(checkpointLoc);
                     player.teleport(checkpointLoc);
-                    String message = ParkourManager.formatParkourString(String.format("Returned to checkpoint #%s!", info.getCurrentCheckpoint()), false);
-                    player.sendMessage(message);
+                    MessageTypeEnum.ParkourMessage.sendMessage(String.format("Returned to checkpoint #%s!", info.getCurrentCheckpoint()), player, false);
                     info.beginCheckpointMessageCoolDown(info.getCurrentCheckpoint());
 
                 } else {
-                    player.sendMessage(ParkourManager.formatParkourString("You haven't started a parkour course yet!", true));
+                    MessageTypeEnum.ParkourMessage.sendMessage("You haven't started a parkour course yet!", player, true);
                 }
                 return true;
 
@@ -319,7 +315,7 @@ public class ParkourCommand implements CommandExecutor {
 
     public boolean hasNoPerms(Player player, String permission){
         if(ParkourManager.getPermsEnabled() && !player.hasPermission(permission)){
-            player.sendMessage(ParkourManager.formatParkourString("You need permission to use this command!", true));
+            MessageTypeEnum.ParkourMessage.sendMessage("You need permission to use this command!", player, true);
             return true;
         }
         return false;

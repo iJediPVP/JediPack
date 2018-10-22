@@ -211,19 +211,6 @@ public class TabMessageManager {
 
 
 
-
-    // Format the given string for tab message log messages
-    public static String formatTabMessageLogString(String str, boolean isError){
-        /*String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[TabMessage] ";
-        if(isError){
-            finalString += ChatColor.RED;
-        }
-        finalString += str;*/
-
-        String finalString = MessageTypeEnum.TabMessage.formatMessage(str, true, isError);
-        return finalString;
-    }
-
     // Format the given string for tab messages that are sent via packets
     public static String formatTabMessage(String str){
 
@@ -259,8 +246,6 @@ public class TabMessageManager {
         str = ChatColor.translateAlternateColorCodes(colorSymbol, str);
         return str;
     }
-
-
 
 
 
