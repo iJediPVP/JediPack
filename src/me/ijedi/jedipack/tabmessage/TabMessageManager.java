@@ -3,6 +3,7 @@ package me.ijedi.jedipack.tabmessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import net.minecraft.server.v1_13_R2.IChatBaseComponent;
 import net.minecraft.server.v1_13_R2.PacketDataSerializer;
@@ -84,10 +85,10 @@ public class TabMessageManager {
         tabMessageConfiguration = getFileConfiguration(reload);
 
         if(!isEnabled){
-            JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are not enabled!", false));
+            MessageTypeEnum.TabMessage.logMessage("TabMessages are not enabled!");
             return;
         }
-        JediPackMain.getThisPlugin().getLogger().info(formatTabMessageLogString("TabMessages are enabled!", false));
+        MessageTypeEnum.TabMessage.logMessage("TabMessages are enabled!");
 
         // Clean up existing task
         if(tabMessageTask != null && !tabMessageTask.isCancelled()){
@@ -164,9 +165,8 @@ public class TabMessageManager {
                 config.save(tabMessageFile);
             }
             catch(IOException e){
-                String errorMessage = formatTabMessageLogString("JediPack TabMessage - Error saving configuration file.", true);
-                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-                JediPackMain.getThisPlugin().getLogger().info(e.toString());
+                MessageTypeEnum.TabMessage.logMessage("Error saving configuration file.");
+                MessageTypeEnum.TabMessage.logMessage(e.toString());
             }
             return config;
 
@@ -214,11 +214,13 @@ public class TabMessageManager {
 
     // Format the given string for tab message log messages
     public static String formatTabMessageLogString(String str, boolean isError){
-        String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[TabMessage] ";
+        /*String finalString = ChatColor.GREEN + "" + ChatColor.BOLD + "[TabMessage] ";
         if(isError){
             finalString += ChatColor.RED;
         }
-        finalString += str;
+        finalString += str;*/
+
+        String finalString = MessageTypeEnum.TabMessage.formatMessage(str, true, isError);
         return finalString;
     }
 

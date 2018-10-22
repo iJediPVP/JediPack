@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.tabmessage;
 
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,7 +32,7 @@ public class TabMessageCommand implements CommandExecutor {
         // Check for "reload" arg
         if(args.length > 0 && args[0].toLowerCase().equals(RELOAD_ARG)){
             TabMessageManager.intializeTabMessages(true);
-            commandSender.sendMessage(TabMessageManager.formatTabMessageLogString("TabMessage config has been reloaded.", false));
+            MessageTypeEnum.TabMessage.sendMessage("The TabMessage configuration has been reloaded.", commandSender, false);
             return true;
         }
 
