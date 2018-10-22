@@ -1,4 +1,6 @@
 TODO LIST:
+- Misc:
+    - Move enabled/disabled configs to a central place
 - Parkour:
     - Create "how to" in the README.
     - Tab complete for commands
@@ -9,3 +11,11 @@ TODO LIST:
 
 - MOTD:
     - Create "how to"
+
+- Sign locks:
+    - Allow player to lock a chest (or double chest) by placing a sign with the following text: "SignLock" in the top line.
+        - Create lock by writing to config
+        - Load locks from config
+        - Prevent chest from opening that has a lock
+    - Allow player to add other players to locked things
+    - Allow locking of furnaces and other things?

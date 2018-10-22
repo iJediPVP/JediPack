@@ -5,6 +5,7 @@ import me.ijedi.jedipack.misc.SmiteCommand;
 import me.ijedi.jedipack.motd.MOTDCommand;
 import me.ijedi.jedipack.motd.MOTDManager;
 import me.ijedi.jedipack.parkour.ParkourManager;
+import me.ijedi.jedipack.signlock.SignLockManager;
 import me.ijedi.jedipack.tabmessage.TabMessageCommand;
 import me.ijedi.jedipack.tabmessage.TabMessageManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +36,10 @@ public class JediPackMain extends JavaPlugin {
         // Initialize motd
         getCommand(MOTDCommand.BASE_COMMAND).setExecutor(new MOTDCommand());
         MOTDManager.initializeMOTD(false);
+
+        // Initialize sign locks
+        SignLockManager.initializeSignLocks();
+
 
         // Initialize misc
         getCommand(SmiteCommand.BASE_COMMAND).setExecutor(new SmiteCommand());
