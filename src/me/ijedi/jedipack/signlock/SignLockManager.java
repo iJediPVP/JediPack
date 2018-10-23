@@ -28,14 +28,10 @@ public class SignLockManager {
     * */
 
     private static final String CONFIG_NAME = "signLocks.yml";
-    private static final String ENABLED = "enabled";
 
     private static FileConfiguration lockConfiguration;
     private static File lockFile;
     private static HashMap<UUID, SignLock> signLocks = new HashMap<>();
-
-    // Config values
-    private static boolean isEnabled;
 
 
     // Initialize
@@ -45,7 +41,7 @@ public class SignLockManager {
         lockFile = getFile();
         lockConfiguration = getFileConfiguration();
 
-        if(!isEnabled){
+        if(!JediPackMain.isSignLocksEnabled){
             MessageTypeEnum.SignLockMessage.logMessage("Sign Locks are disabled!");
             return;
         }
@@ -86,8 +82,8 @@ public class SignLockManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(lockFile);
 
             // Defaults
-            isEnabled = false;
-            config.set(ENABLED, isEnabled);
+            //isEnabled = false;
+            //config.set(ENABLED, isEnabled);
 
             try{
                 config.save(lockFile);
@@ -102,7 +98,7 @@ public class SignLockManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(lockFile);
 
             // Read config
-            isEnabled = config.getBoolean(ENABLED);
+            //isEnabled = config.getBoolean(ENABLED);
 
             return config;
         }

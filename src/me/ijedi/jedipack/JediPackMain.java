@@ -8,12 +8,22 @@ import me.ijedi.jedipack.parkour.ParkourManager;
 import me.ijedi.jedipack.signlock.SignLockManager;
 import me.ijedi.jedipack.tabmessage.TabMessageCommand;
 import me.ijedi.jedipack.tabmessage.TabMessageManager;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class JediPackMain extends JavaPlugin {
 
     private static JavaPlugin thisPlugin;
-    public static final String PARKOUR_ENABLED = "parkourEnabled";
+
+    // Config names
+    private static final String PARKOUR_ENABLED = "parkourEnabled";
+    private static final String MOTD_ENABLED = "motdEnabled";
+    private static final String TABMESSAGE_ENABLED = "tabMessageEnabled";
+    private static final String SIGNLOCKS_ENABLED = "signLocksEnabled";
+
+    // Config values
+    public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled;
+
 
     @Override
     public void onEnable(){
@@ -22,8 +32,7 @@ public class JediPackMain extends JavaPlugin {
         thisPlugin = this;
 
         // Initialize all the things
-        this.saveDefaultConfig();
-
+        initConfig();
         getServer().getPluginManager().registerEvents(new MenuListener(this), this);
 
         // Initialize parkour
@@ -57,6 +66,16 @@ public class JediPackMain extends JavaPlugin {
 
     public static JavaPlugin getThisPlugin() {
         return thisPlugin;
+    }
+
+    private void initConfig(){
+        this.saveDefaultConfig();
+
+        FileConfiguration config = this.getConfig();
+        isParkourEnabled = config.getBoolean(PARKOUR_ENABLED);
+        isMotdEnabled = config.getBoolean(MOTD_ENABLED);
+        isTabMessageEnabled = config.getBoolean(TABMESSAGE_ENABLED);
+        isSignLocksEnabled = config.getBoolean(SIGNLOCKS_ENABLED);
     }
 
 }

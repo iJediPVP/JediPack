@@ -1,1 +1,6 @@
-parkourEnabled: true
+# Enable/Disable modules.
+parkourEnabled: false
+motdEnabled: false
+tabMessageEnabled: false
+signLocksEnabled: false
+

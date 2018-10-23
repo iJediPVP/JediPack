@@ -42,7 +42,6 @@ public class TabMessageManager {
     * */
 
     private static final String CONFIG_NAME = "tabMessageConfig.yml";
-    private static final String ENABLED = "enabled";
     private static final String COLOR_SYMBOL = "colorSymbol";
     private static final String HEADER = "header";
     private static final String FOOTER = "footer";
@@ -64,7 +63,6 @@ public class TabMessageManager {
     private static final String WORLD_TIME24_ARG = "<wt2>";
 
     // Config values
-    private static boolean isEnabled = false;
     private static char colorSymbol = '$';
     private static HashMap<Integer, String> headerMap = new HashMap<>();
     private static HashMap<Integer, String> footerMap = new HashMap<>();
@@ -84,7 +82,7 @@ public class TabMessageManager {
         tabMessageFile = getFile();
         tabMessageConfiguration = getFileConfiguration(reload);
 
-        if(!isEnabled){
+        if(!JediPackMain.isTabMessageEnabled){
             MessageTypeEnum.TabMessage.logMessage("TabMessages are not enabled!");
             return;
         }
@@ -99,7 +97,7 @@ public class TabMessageManager {
         tabMessageTask = new BukkitRunnable(){
             @Override
             public void run() {
-                if(isEnabled){
+                if(JediPackMain.isTabMessageEnabled){
 
                     // Set the tab message and send to all players
                     setNextTableList();
@@ -142,8 +140,8 @@ public class TabMessageManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(tabMessageFile);
 
             // Defaults
-            isEnabled = false;
-            config.set(ENABLED, isEnabled);
+            //isEnabled = false;
+            //config.set(ENABLED, isEnabled);
 
             colorSymbol = '$';
             config.set(COLOR_SYMBOL, Character.toString(colorSymbol));
@@ -174,7 +172,7 @@ public class TabMessageManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(tabMessageFile);
 
             // Read config
-            isEnabled = config.getBoolean(ENABLED);
+            //isEnabled = config.getBoolean(ENABLED);
             colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];
             List<String> headerList = config.getStringList(HEADER + "." + MESSAGES);
             List<String> footerList = config.getStringList(FOOTER + "." + MESSAGES);

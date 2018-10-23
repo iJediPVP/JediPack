@@ -1,9 +1,10 @@
 TODO LIST:
 - Misc:
-    - Move enabled/disabled configs to a central place
+
 - Parkour:
     - Create "how to" in the README.
     - Tab complete for commands
+    - Really need to unload and load the course when disabling and enabling the plugin.
 
 - TabMessage:
     - Tab complete for commands

@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.motd;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +24,6 @@ public class MOTDManager {
 
     // Config names
     private static final String CONFIG_NAME = "motdConfig.yml";
-    private static final String ENABLED = "enabled";
     private static final String TOPLINE = "topLine";
     private static final String BOTTOMLINE = "bottomLine";
     private static final String COLOR_SYMBOL = "colorSymbol";
@@ -40,7 +40,6 @@ public class MOTDManager {
     private static World worldForTime;
 
     // Current values
-    public static boolean isEnabled;
     private static String topLineMessage;
     private static String bottomLineMessage;
     private static char colorSymbol = '$';
@@ -53,12 +52,12 @@ public class MOTDManager {
         motdFile = getFile();
         motdConfiguration = getFileConfiguration(reload);
 
-        if(!isEnabled){
-            JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is disabled.");
+        if(!JediPackMain.isMotdEnabled){
+            MessageTypeEnum.MOTDMessage.logMessage("MOTD is disabled!");
             return;
         }
 
-        JediPackMain.getThisPlugin().getLogger().info("JediPack MOTD is enabled.");
+        MessageTypeEnum.MOTDMessage.logMessage("MOTD is enabled!");
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new MOTDPingEvent(), plugin);
 
@@ -93,8 +92,8 @@ public class MOTDManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(motdFile);
 
             // Defaults
-            isEnabled = false;
-            config.set(ENABLED, isEnabled);
+            //isEnabled = false;
+            //config.set(ENABLED, isEnabled);
 
             topLineMessage = "Default Top Line";
             config.set(TOPLINE, topLineMessage);
@@ -112,9 +111,8 @@ public class MOTDManager {
                 config.save(motdFile);
             }
             catch(IOException e){
-                String errorMessage = "JediPack MOTD - Error saving configuration file.";
-                JediPackMain.getThisPlugin().getLogger().info(errorMessage);
-                JediPackMain.getThisPlugin().getLogger().info(e.toString());
+                MessageTypeEnum.MOTDMessage.logMessage("Error saving configuration file.");
+                MessageTypeEnum.MOTDMessage.logMessage(e.toString());
             }
             return config;
 
@@ -122,7 +120,7 @@ public class MOTDManager {
             FileConfiguration config = YamlConfiguration.loadConfiguration(motdFile);
 
             // Read config
-            isEnabled = config.getBoolean(ENABLED);
+            //isEnabled = config.getBoolean(ENABLED);
             topLineMessage = config.getString(TOPLINE);
             bottomLineMessage = config.getString(BOTTOMLINE);
             colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];

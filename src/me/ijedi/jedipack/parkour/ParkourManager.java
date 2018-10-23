@@ -35,8 +35,7 @@ public class ParkourManager {
 
         // See if parkour is enabled
         JavaPlugin plugin = JediPackMain.getThisPlugin();
-        FileConfiguration pluginConfig = plugin.getConfig();
-        if(!pluginConfig.getBoolean(JediPackMain.PARKOUR_ENABLED)){
+        if(!JediPackMain.isParkourEnabled){
             MessageTypeEnum.ParkourMessage.logMessage("Parkour is not enabled!");
             return;
         }
