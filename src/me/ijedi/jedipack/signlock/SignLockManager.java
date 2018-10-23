@@ -2,44 +2,22 @@ package me.ijedi.jedipack.signlock;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import me.ijedi.jedipack.common.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class SignLockManager {
 
-    /* Config mark up
-    isEnabled: false
-        locks:
-          '<lockIdHere>':
-            owner: '<pGuid>'
-            x:
-            y:
-            z:
-            worldId: ''
-            shared:
-              - '<p1Guid>'
-              - '<p2Guid>'
-    * */
-
-    private static final String CONFIG_NAME = "signLocks.yml";
-
-    private static FileConfiguration lockConfiguration;
-    private static File lockFile;
-    private static HashMap<UUID, SignLock> signLocks = new HashMap<>();
+    private static HashMap<UUID, SignLockPlayerInfo> playerInfoMap = new HashMap<>();
 
 
     // Initialize
     public static void initializeSignLocks(){
-
-        // Load configs
-        lockFile = getFile();
-        lockConfiguration = getFileConfiguration();
 
         if(!JediPackMain.isSignLocksEnabled){
             MessageTypeEnum.SignLockMessage.logMessage("Sign Locks are disabled!");
@@ -51,56 +29,42 @@ public class SignLockManager {
         // Register events
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new SignLockChangeEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new SignLockBreakEvent(), plugin);
+
+        // Load player data
+        for(Player player : Bukkit.getOnlinePlayers()){
+            SignLockPlayerInfo info = new SignLockPlayerInfo(player.getUniqueId());
+            info.loadPlayerFile();
+            playerInfoMap.put(player.getUniqueId(), info);
+        }
     }
 
 
+    // Return the player info for the specified player id
+    public static SignLockPlayerInfo getPlayerInfo(UUID playerId){
 
-    // Get the File object for this manager.
-    private static File getFile(){
-
-        if(lockFile != null){
-            return lockFile;
-        }
-
-        String folder = JediPackMain.getThisPlugin().getDataFolder() + "/signLocks";
-        String fileName = CONFIG_NAME;
-        File configFile = new File(folder, fileName);
-
-        return configFile;
-    }
-
-    // Get the FileConfiguration object for the TabMessageManager
-    private static FileConfiguration getFileConfiguration(){
-
-        if(lockConfiguration != null){
-            return lockConfiguration;
-        }
-
-        // Create the file if it doesn't exist.
-        if(!lockFile.exists()){
-            lockFile.getParentFile().mkdirs();
-            FileConfiguration config = YamlConfiguration.loadConfiguration(lockFile);
-
-            // Defaults
-            //isEnabled = false;
-            //config.set(ENABLED, isEnabled);
-
-            try{
-                config.save(lockFile);
-            }
-            catch(IOException e){
-                MessageTypeEnum.SignLockMessage.logMessage("Error saving configuration file.");
-                MessageTypeEnum.SignLockMessage.logMessage(e.toString());
-            }
-            return config;
+        // Add a new player info if we don't already have one
+        if(playerInfoMap.containsKey(playerId)){
+            return playerInfoMap.get(playerId);
 
         } else {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(lockFile);
 
-            // Read config
-            //isEnabled = config.getBoolean(ENABLED);
-
-            return config;
+            SignLockPlayerInfo info = new SignLockPlayerInfo(playerId);
+            info.loadPlayerFile();
+            playerInfoMap.put(playerId, info);
+            return info;
         }
+    }
+
+    public static boolean isSignLockLocation(Location location){
+
+        for(SignLockPlayerInfo playerInfo : playerInfoMap.values()){
+
+            if(playerInfo.hasLockAtLocation(location)){
+                return true;
+            }
+
+        }
+        return false;
     }
 }

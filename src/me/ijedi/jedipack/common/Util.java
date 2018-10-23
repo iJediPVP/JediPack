@@ -1,7 +1,8 @@
 package me.ijedi.jedipack.common;
 
-import me.ijedi.jedipack.JediPackMain;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.material.Sign;
 
 import java.util.HashMap;
 
@@ -126,5 +127,12 @@ public class Util {
             output += " " + amPM;
         }
         return output;
+    }
+
+    // Returns the block that the given sign was placed on.
+    public static Block getBlockFromPlacedSign(Block signBlock){
+        Sign sign = (Sign)signBlock.getState().getData();
+        Block block = signBlock.getRelative(sign.getAttachedFace());
+        return block;
     }
 }
