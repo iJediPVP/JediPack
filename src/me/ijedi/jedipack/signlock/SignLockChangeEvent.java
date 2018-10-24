@@ -31,7 +31,7 @@ public class SignLockChangeEvent implements Listener {
                 Player player = event.getPlayer();
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
                 Location blockLocation = signBlock.getLocation();
-                blockLocation = Util.centerLocation(blockLocation);
+                blockLocation = Util.centerSignLockLocation(blockLocation);
 
                 if(playerInfo.hasLockAtLocation(blockLocation)){
                     MessageTypeEnum.SignLockMessage.sendMessage("There is already a sign lock on this location.", player, true);

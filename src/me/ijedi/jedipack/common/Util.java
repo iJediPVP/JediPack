@@ -76,7 +76,7 @@ public class Util {
         return false;
     }
 
-    public static Location centerLocation(Location location){
+    public static Location centerParkourLocation(Location location){
 
         // Center the X and Z
         double origX = location.getX();
@@ -134,5 +134,18 @@ public class Util {
         Sign sign = (Sign)signBlock.getState().getData();
         Block block = signBlock.getRelative(sign.getAttachedFace());
         return block;
+    }
+
+    public static Location getCenteredBlockLocation(Location location){
+        location.setX(location.getX() + .5);
+        location.setZ(location.getZ() - .5);
+        return location;
+    }
+
+    public static Location centerSignLockLocation(Location location){
+
+        location.setX(location.getX() + .5);
+        location.setZ(location.getZ() + .5);
+        return location;
     }
 }

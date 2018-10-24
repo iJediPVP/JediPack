@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -121,11 +120,16 @@ public class SignLockPlayerInfo {
     }
 
     // Returns if the player has a lock at this location.
-    public boolean hasLockAtLocation(Location lockLocation){
+    public boolean hasLockAtLocation(Location testLocation){
 
         for(SignLock lock : signLocks.values()){
+
             Location exisitngLoc = lock.getLockLocation();
-            if(Util.DoLocationsEqual(lockLocation, exisitngLoc, false)) {
+            Block lockedContainer = Util.getBlockFromPlacedSign(exisitngLoc.getBlock());
+            Location lockedLocation = Util.centerSignLockLocation(lockedContainer.getLocation());
+
+            if(Util.DoLocationsEqual(testLocation, exisitngLoc, false)
+                    || Util.DoLocationsEqual(testLocation, lockedLocation, false)) {
                 return true;
             }
         }

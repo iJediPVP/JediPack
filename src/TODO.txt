@@ -15,7 +15,6 @@ TODO LIST:
 
 - Sign locks:
     - Allow player to lock a chest (or double chest) by placing a sign with the following text: "SignLock" in the top line.
-        - Verify that sign locations are correct.. I don't think they are now. 
         - Prevent signs on multiple sides of the chest
         - Prevent chest from breaking/opening that has a lock
         - Add names to locks so a player can remove them via a command
