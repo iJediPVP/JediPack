@@ -50,7 +50,7 @@ public class SignLockManager {
 
         File playerDataFolder = new File(JediPackMain.getThisPlugin().getDataFolder() + "/signLocks");
         if(!playerDataFolder.exists()){
-            playerDataFolder.mkdir();
+            playerDataFolder.mkdirs();
         }
         File[] playerFiles = playerDataFolder.listFiles();
         for(File file : playerFiles){

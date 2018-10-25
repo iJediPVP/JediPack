@@ -46,6 +46,10 @@ public class SignLock {
     // Write lock to config file
     public void writeToConfig(FileConfiguration configuration, File file){
 
+        if(!file.exists()){
+            file.mkdirs();
+        }
+
         String lockKey = lockId.toString();
         String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
 
