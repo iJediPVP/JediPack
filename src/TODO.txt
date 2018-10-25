@@ -16,8 +16,7 @@ TODO LIST:
 - Sign locks:
     - Create sign commands to control locking. "[SignLock]" in a sign will lock the container. Use / commands to control it.
     - Allow locking of double chests
-    - Prevent chest from breaking/opening that has a lock
-    - Add names to locks so a player can remove them via a command
+    - Prevent chest from opening that has a lock
     - Allow player to add other players to locked things
     - Allow locking of furnaces and other things?
     - Prevent the use hoppers to empty chests.

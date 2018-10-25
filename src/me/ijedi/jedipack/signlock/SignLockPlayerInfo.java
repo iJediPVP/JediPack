@@ -21,6 +21,7 @@ public class SignLockPlayerInfo {
     /* Config mark up
     signLocks/playerId.yml
       '<lockIdHere>':
+        lockNum:
         x:
         y:
         z:
@@ -31,6 +32,7 @@ public class SignLockPlayerInfo {
     * */
 
     public static final String LOCKS = "locks";
+    public static final String LOCK_NUM = "lockNum";
     public static final String X = "x";
     public static final String Y = "y";
     public static final String Z = "z";
@@ -84,7 +86,9 @@ public class SignLockPlayerInfo {
                         World world = Bukkit.getServer().getWorld(worldId);
                         Location lockLocation = new Location(world, x, y, z);
 
-                        addNewLock(lockId, lockLocation, false);
+                        int lockNumber = lockInfoSection.getInt(LOCK_NUM);
+
+                        addNewLock(lockId, lockNumber, lockLocation, false);
                     }
 
                 }
@@ -100,23 +104,25 @@ public class SignLockPlayerInfo {
 
 
     // Add a new lock for this player.
-    public void addNewLock(UUID lockId, Location lockLocation, boolean save){
+    public SignLock addNewLock(UUID lockId, int lockNumber, Location lockLocation, boolean save){
 
-        if(!hasLockAtLocation(lockLocation, null)){
-
-            if(lockId == null){
-                lockId = UUID.randomUUID();
-            }
-
-            SignLock newLock = new SignLock(lockId, lockLocation);
-            signLocks.put(newLock.getLockId(), newLock);
-
-            // Write lock to config
-            if(save){
-                newLock.writeToConfig(fileConfiguration, file);
-            }
+        if(lockId == null){
+            lockId = UUID.randomUUID();
         }
 
+        if(lockNumber == 0){
+            lockNumber = getNextSignLockNumber();
+        }
+
+        SignLock newLock = new SignLock(lockId, lockLocation, lockNumber);
+        signLocks.put(newLock.getLockId(), newLock);
+
+        // Write lock to config
+        if(save){
+            newLock.writeToConfig(fileConfiguration, file);
+        }
+
+        return newLock;
     }
 
     // Returns if the player has a lock at this location.
@@ -148,6 +154,17 @@ public class SignLockPlayerInfo {
     // Return the sign locks for this player.
     public HashMap<UUID, SignLock> getSignLocks(){
         return signLocks;
+    }
+
+    // Get the number for the next sign lock.
+    public int getNextSignLockNumber(){
+        int maxNumber = 0;
+        for(SignLock lock : signLocks.values()){
+            if(lock.getLockNumber() > maxNumber){
+                maxNumber = lock.getLockNumber();
+            }
+        }
+        return maxNumber + 1;
     }
 
 }

@@ -2,6 +2,7 @@ package me.ijedi.jedipack.signlock;
 
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class SignLockChangeEvent implements Listener {
 
+    private final String SIGNLOCK = "[SignLock]";
+
     @EventHandler
     public void onSignChange(SignChangeEvent event){
 
@@ -21,12 +24,17 @@ public class SignLockChangeEvent implements Listener {
         Block eventBlock = event.getBlock();
         if(eventBlock.getType().equals(Material.WALL_SIGN)){
 
+            // We don't care if the sign lock "command" wasn't given
+            boolean isSignLock = event.getLine(0).toLowerCase().equals(SIGNLOCK.toLowerCase());
+            if(!isSignLock){
+                return;
+            }
+
+            // Only when placed on chests and trapped chests
             Block placedOnBlock = Util.getBlockFromPlacedSign(eventBlock);
             if(placedOnBlock == null){
                 return;
             }
-
-            // Only for chests and trapped chests
             Material placedType = placedOnBlock.getType();
             if(placedType.equals(Material.CHEST) || placedType.equals(Material.TRAPPED_CHEST)){
 
@@ -46,8 +54,12 @@ public class SignLockChangeEvent implements Listener {
                     }
 
                 } else {
-                    // TODO: Parse command text
-                    playerInfo.addNewLock(null, blockLocation, true);
+                    // Create the lock and update the sign text
+                    SignLock newLock = playerInfo.addNewLock(null, 0, blockLocation, true);
+                    int lockNum = newLock.getLockNumber();
+                    event.setLine(0, ChatColor.GREEN + SIGNLOCK);
+                    event.setLine(1, ChatColor.GREEN + "#" + Integer.toString(lockNum));
+
                     MessageTypeEnum.SignLockMessage.sendMessage("Lock created!", player, false);
                 }
             }
