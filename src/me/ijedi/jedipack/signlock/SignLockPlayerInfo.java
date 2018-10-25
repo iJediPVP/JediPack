@@ -184,6 +184,15 @@ public class SignLockPlayerInfo {
         for(SignLock lock : signLocks.values()){
             lock.writeToConfig(fileConfiguration, file);
         }
+
+        try{
+            fileConfiguration.save(file);
+        } catch (IOException e) {
+            String message = String.format("Error saving configuration file for player $s.", playerId.toString());
+            MessageTypeEnum.SignLockMessage.logMessage(message);
+            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
+        }
+
     }
 
 }
