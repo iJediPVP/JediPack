@@ -2,12 +2,12 @@ package me.ijedi.jedipack.signlock;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
-import org.bukkit.Bukkit;
+import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -41,10 +41,26 @@ public class SignLockManager {
         plugin.getServer().getPluginManager().registerEvents(new SignLockBreakEvent(), plugin);
 
         // Load player data
-        for(Player player : Bukkit.getOnlinePlayers()){
+        /*for(Player player : Bukkit.getOnlinePlayers()){
             SignLockPlayerInfo info = new SignLockPlayerInfo(player.getUniqueId());
             info.loadPlayerFile();
             playerInfoMap.put(player.getUniqueId(), info);
+        }*/
+
+        File playerDataFolder = new File(JediPackMain.getThisPlugin().getDataFolder() + "/signLocks");
+        if(!playerDataFolder.exists()){
+            playerDataFolder.mkdir();
+        }
+        File[] playerFiles = playerDataFolder.listFiles();
+        for(File file : playerFiles){
+            try{
+                String fileName = FilenameUtils.removeExtension(file.getName());
+                UUID playerId = UUID.fromString(fileName);
+                SignLockPlayerInfo info = new SignLockPlayerInfo(playerId);
+                info.loadPlayerFile();
+                playerInfoMap.put(playerId, info);
+
+            } catch(IllegalArgumentException e) {} // Swallow this. The file name isn't a UUID.
         }
     }
 
