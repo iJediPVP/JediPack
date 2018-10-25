@@ -39,6 +39,7 @@ public class SignLockManager {
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new SignLockChangeEvent(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SignLockBreakEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new SignLockInteractEvent(), plugin);
 
         // Load player data
         /*for(Player player : Bukkit.getOnlinePlayers()){

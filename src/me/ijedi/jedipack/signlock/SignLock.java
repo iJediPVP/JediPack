@@ -80,12 +80,12 @@ public class SignLock {
 
     // Return true if given player id can break this lock or container.
     public boolean hasBreakableAccess(UUID playerId){
-        return playerId == this.playerId;
+        return playerId.equals(this.playerId);
     }
 
     // Return true if given player id can open this locked container.
     public boolean hasContainerAccess(UUID playerId){
-        if(playerId == this.playerId || sharedIds.contains(playerId)){
+        if(playerId.equals(this.playerId) || sharedIds.contains(playerId)){
             return true;
         }
         return false;
