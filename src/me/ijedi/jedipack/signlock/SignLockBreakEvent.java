@@ -34,6 +34,24 @@ public class SignLockBreakEvent implements Listener {
         // If this location is locked, don't allow it to be broken.
         if(SignLockManager.isSignLockLocation(blockLoc)){
             Player player = event.getPlayer();
+
+            // See if the player can break this block
+            SignLock lock = SignLockManager.getLockFromLocation(blockLoc);
+            if(lock.hasBreakableAccess(player.getUniqueId())){
+
+                // If it's not a wall sign, warn the player
+                if(!block.getType().equals(Material.WALL_SIGN)){
+                    MessageTypeEnum.SignLockMessage.sendMessage("You must break this lock on this container first!", player, true);
+                    event.setCancelled(true);
+                    return;
+
+                }
+                // Else allow it and remove the sign lock.
+                SignLockManager.removeSignLock(lock);
+                MessageTypeEnum.SignLockMessage.sendMessage("Sign Lock #" + Integer.toString(lock.getLockNumber()) + " has been removed!", player, false);
+                return;
+            }
+
             if(event.getBlock().getType().equals(Material.WALL_SIGN)){
                 MessageTypeEnum.SignLockMessage.sendMessage("This sign lock cannot be broken!", player, true);
             } else {

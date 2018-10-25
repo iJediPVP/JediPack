@@ -47,6 +47,7 @@ public class SignLockPlayerInfo {
         this.playerId = playerId;
     }
 
+
     // Load player file
     public void loadPlayerFile(){
 
@@ -114,7 +115,7 @@ public class SignLockPlayerInfo {
             lockNumber = getNextSignLockNumber();
         }
 
-        SignLock newLock = new SignLock(lockId, lockLocation, lockNumber);
+        SignLock newLock = new SignLock(lockId, lockLocation, lockNumber, playerId);
         signLocks.put(newLock.getLockId(), newLock);
 
         // Write lock to config
@@ -130,25 +131,33 @@ public class SignLockPlayerInfo {
 
         for(SignLock lock : signLocks.values()){
 
-            // Get the block locked by the sign
-            Location existingLoc = lock.getLockLocation();
-            Block lockedContainer = Util.getBlockFromPlacedSign(existingLoc.getBlock());
-            Location lockedLocation = Util.centerSignLockLocation(lockedContainer.getLocation());
-
-            if(Util.DoLocationsEqual(placedSignLocation, existingLoc, false)
-                    ||Util.DoLocationsEqual(placedSignLocation, lockedLocation, false)) {
+            // Check locations
+            if(lock.isLockedLocation(placedSignLocation)){
                 return true;
             }
 
-            // Check the placedOnLocation
-            if(placedOnLocation != null && (
-                    Util.DoLocationsEqual(placedOnLocation, existingLoc, false)
-                            ||Util.DoLocationsEqual(placedOnLocation, lockedLocation, false)
-                    )){
+            if(placedOnLocation != null && lock.isLockedLocation(placedOnLocation)){
                 return true;
             }
         }
         return false;
+    }
+
+    // Returns lock based on the given locations
+    public SignLock getLockFromLocation(Location placedSignLocation, Location placedOnLocation){
+
+        for(SignLock lock : signLocks.values()){
+
+            // Check locations
+            if(lock.isLockedLocation(placedSignLocation)){
+                return lock;
+            }
+
+            if(placedOnLocation != null && lock.isLockedLocation(placedOnLocation)){
+                return lock;
+            }
+        }
+        return null;
     }
 
     // Return the sign locks for this player.
@@ -165,6 +174,18 @@ public class SignLockPlayerInfo {
             }
         }
         return maxNumber + 1;
+    }
+
+    // Remove the given sign lock
+    public void removeSignLock(SignLock lockToRemove){
+
+        signLocks.remove(lockToRemove.getLockId());
+
+        // Update the config file
+        fileConfiguration.set(LOCKS, new String[0]);
+        for(SignLock lock : signLocks.values()){
+            lock.writeToConfig(fileConfiguration, file);
+        }
     }
 
 }

@@ -55,15 +55,30 @@ public class SignLockManager {
         }
     }
 
+    // Returns true if the location is locked by a sign
     public static boolean isSignLockLocation(Location location){
 
         for(SignLockPlayerInfo playerInfo : playerInfoMap.values()){
-
             if(playerInfo.hasLockAtLocation(location, null)){
                 return true;
             }
-
         }
         return false;
+    }
+
+    // Return the SignLock from the given location.
+    public static SignLock getLockFromLocation(Location location){
+        for(SignLockPlayerInfo playerInfo : playerInfoMap.values()){
+            if(playerInfo.hasLockAtLocation(location, null)){
+                return playerInfo.getLockFromLocation(location, null);
+            }
+        }
+        return null;
+    }
+
+    // Remove the given SignLock
+    public static void removeSignLock(SignLock lock){
+        SignLockPlayerInfo info = getPlayerInfo(lock.getPlayerId());
+        info.removeSignLock(lock);
     }
 }
