@@ -36,7 +36,7 @@ public class SignLockChangeEvent implements Listener {
                 return;
             }
             Material placedType = placedOnBlock.getType();
-            if(placedType.equals(Material.CHEST) || placedType.equals(Material.TRAPPED_CHEST)){
+            if(SignLockManager.LOCKABLE_CONTAINERS.contains(placedType)){
 
                 Player player = event.getPlayer();
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());

@@ -10,22 +10,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.ArrayList;
-
 public class SignLockBreakEvent implements Listener {
-
-    private static ArrayList<Material> MAT_BLACKLIST = new ArrayList<Material>(){{
-        add(Material.CHEST);
-        add(Material.TRAPPED_CHEST);
-        add(Material.WALL_SIGN);
-    }};
 
     @EventHandler
     public void onSignLockBreak(BlockBreakEvent event){
 
         Block block = event.getBlock();
 
-        if(!MAT_BLACKLIST.contains(block.getType())){
+        if(!block.getType().equals(Material.WALL_SIGN) && !SignLockManager.LOCKABLE_CONTAINERS.contains(block.getType())){
             return;
         }
 

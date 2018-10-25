@@ -4,15 +4,25 @@ import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class SignLockManager {
 
     private static HashMap<UUID, SignLockPlayerInfo> playerInfoMap = new HashMap<>();
+    public static ArrayList<Material> LOCKABLE_CONTAINERS = new ArrayList<Material>(){{
+        add(Material.CHEST);
+        add(Material.TRAPPED_CHEST);
+        add(Material.FURNACE);
+        add(Material.HOPPER);
+        add(Material.DISPENSER);
+        add(Material.DROPPER);
+    }};
 
 
     // Initialize
