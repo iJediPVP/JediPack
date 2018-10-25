@@ -14,9 +14,10 @@ TODO LIST:
     - Create "how to"
 
 - Sign locks:
-    - Allow player to lock a chest (or double chest) by placing a sign with the following text: "SignLock" in the top line.
-        - Prevent signs on multiple sides of the chest. Think I may need to change to block place event? Or combo block place & sign change
-        - Prevent chest from breaking/opening that has a lock
-        - Add names to locks so a player can remove them via a command
+    - Create sign commands to control locking. "[SignLock]" in a sign will lock the container. Use / commands to control it.
+    - Allow locking of double chests
+    - Prevent chest from breaking/opening that has a lock
+    - Add names to locks so a player can remove them via a command
     - Allow player to add other players to locked things
     - Allow locking of furnaces and other things?
+    - Prevent the use hoppers to empty chests.

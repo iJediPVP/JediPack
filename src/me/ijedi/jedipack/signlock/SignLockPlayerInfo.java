@@ -102,7 +102,7 @@ public class SignLockPlayerInfo {
     // Add a new lock for this player.
     public void addNewLock(UUID lockId, Location lockLocation, boolean save){
 
-        if(!hasLockAtLocation(lockLocation)){
+        if(!hasLockAtLocation(lockLocation, null)){
 
             if(lockId == null){
                 lockId = UUID.randomUUID();
@@ -120,16 +120,25 @@ public class SignLockPlayerInfo {
     }
 
     // Returns if the player has a lock at this location.
-    public boolean hasLockAtLocation(Location testLocation){
+    public boolean hasLockAtLocation(Location placedSignLocation, Location placedOnLocation){
 
         for(SignLock lock : signLocks.values()){
 
-            Location exisitngLoc = lock.getLockLocation();
-            Block lockedContainer = Util.getBlockFromPlacedSign(exisitngLoc.getBlock());
+            // Get the block locked by the sign
+            Location existingLoc = lock.getLockLocation();
+            Block lockedContainer = Util.getBlockFromPlacedSign(existingLoc.getBlock());
             Location lockedLocation = Util.centerSignLockLocation(lockedContainer.getLocation());
 
-            if(Util.DoLocationsEqual(testLocation, exisitngLoc, false)
-                    || Util.DoLocationsEqual(testLocation, lockedLocation, false)) {
+            if(Util.DoLocationsEqual(placedSignLocation, existingLoc, false)
+                    ||Util.DoLocationsEqual(placedSignLocation, lockedLocation, false)) {
+                return true;
+            }
+
+            // Check the placedOnLocation
+            if(placedOnLocation != null && (
+                    Util.DoLocationsEqual(placedOnLocation, existingLoc, false)
+                            ||Util.DoLocationsEqual(placedOnLocation, lockedLocation, false)
+                    )){
                 return true;
             }
         }

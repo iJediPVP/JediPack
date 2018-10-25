@@ -2,7 +2,6 @@ package me.ijedi.jedipack.signlock;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
-import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -60,7 +59,7 @@ public class SignLockManager {
 
         for(SignLockPlayerInfo playerInfo : playerInfoMap.values()){
 
-            if(playerInfo.hasLockAtLocation(location)){
+            if(playerInfo.hasLockAtLocation(location, null)){
                 return true;
             }
 
