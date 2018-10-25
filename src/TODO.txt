@@ -14,9 +14,7 @@ TODO LIST:
     - Create "how to"
 
 - Sign locks:
-    - Create sign commands to control locking. "[SignLock]" in a sign will lock the container. Use / commands to control it.
+    - Use / commands to control locks.
+        - Enable hopper placement next to locked containers
+        - Give/revoke access for another player
     - Allow locking of double chests
-    - Prevent chest from opening that has a lock
-    - Allow player to add other players to locked things
-    - Allow locking of furnaces and other things?
-    - Prevent the use hoppers to empty chests.
