@@ -113,7 +113,7 @@ public class SignLockEvents implements Listener {
 
                 } else {
                     // Create the lock and update the sign text
-                    SignLock newLock = playerInfo.addNewLock(null, 0, blockLocation, true);
+                    SignLock newLock = playerInfo.addNewLock(null, 0, blockLocation, false, true);
                     int lockNum = newLock.getLockNumber();
                     event.setLine(0, ChatColor.GREEN + SIGNLOCK);
                     event.setLine(1, ChatColor.GREEN + "#" + Integer.toString(lockNum));
@@ -159,14 +159,28 @@ public class SignLockEvents implements Listener {
     @EventHandler
     public void signLockInventoryMoveEvent(InventoryMoveItemEvent event){
 
-        // The purpose of this is to prevent items from being remove from a locked container.
+        // The purpose of this is to prevent items from being removee from or placed in a locked container.
         // We shouldn't need to bother with players, since a player without access can't interact with a locked container..
         if(event.getDestination().getHolder() instanceof Hopper){
 
             // See if this is a locked location
             Location eventLocation = Util.centerSignLockLocation(event.getSource().getLocation());
             if(SignLockManager.isSignLockLocation(eventLocation)){
-                event.setCancelled(true);
+                SignLock lock = SignLockManager.getLockFromLocation(eventLocation);
+                if(!lock.isHoppersEnabled()){
+                    event.setCancelled(true);
+                }
+            }
+
+        } else if(event.getSource().getHolder() instanceof Hopper){
+
+            // See if this is a locked location
+            Location eventLocation = Util.centerSignLockLocation(event.getDestination().getLocation());
+            if(SignLockManager.isSignLockLocation(eventLocation)){
+                SignLock lock = SignLockManager.getLockFromLocation(eventLocation);
+                if(!lock.isHoppersEnabled()){
+                    event.setCancelled(true);
+                }
             }
         }
     }

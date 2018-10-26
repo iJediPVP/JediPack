@@ -17,11 +17,13 @@ public class SignLockCommand implements CommandExecutor {
     public static final String BASE_COMMAND = "signlock";
     public static final String SHARE = "share";
     public static final String REVOKE = "revoke";
+    public static final String HOPPERS = "hoppers";
 
     /*
     Commands:
-    /signlock share <lockNumber> <playerName>...
-    /signlock revoke <lockNumber> <playerName>...
+    /signlock share <lockNumber> <playerName>...    : Give access to another player
+    /signlock revoke <lockNumber> <playerName>...   : Remove access from a player
+    /signlock hopppers <lockNumber>                 : Toggle if hoppers can interact with the locked container
 
     * */
 
@@ -255,6 +257,37 @@ public class SignLockCommand implements CommandExecutor {
 
                     // FINALLY DONE
                     return true;
+
+                } else {
+                    MessageTypeEnum.SignLockMessage.sendMessage("You must specify a lock number!", player, true);
+                    return true;
+                }
+
+            } else if(firstArg.equals(HOPPERS)){
+                ////// Toggle hoppers
+                // Check for a lock number
+                if(args.length > 1){
+                    String lockStr = args[1];
+
+                    // Validate
+                    if(!Util.IsInteger(lockStr)){
+                        MessageTypeEnum.SignLockMessage.sendMessage("Invalid lock number specified.", player, true);
+                        return true;
+                    }
+                    int lockNumber = Integer.parseInt(lockStr);
+
+                    SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
+                    SignLock signLock = playerInfo.getLockByNumber(lockNumber);
+                    if(signLock == null){
+                        MessageTypeEnum.SignLockMessage.sendMessage("Invalid lock number specified.", player, true);
+                        return true;
+                    }
+
+                    // Toggle the hoppers!
+                    boolean hoppersEnabled = playerInfo.toggleHoppersForLock(signLock);
+                    String message = "Hoppers are now " + (hoppersEnabled ? "enabled" : "disabled") + "!";
+                    MessageTypeEnum.SignLockMessage.sendMessage(message, player, false);
+                    return  true;
 
                 } else {
                     MessageTypeEnum.SignLockMessage.sendMessage("You must specify a lock number!", player, true);

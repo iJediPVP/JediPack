@@ -35,6 +35,7 @@ public class SignLockPlayerInfo {
     public static final String Z = "z";
     public static final String WORLDID = "worldId";
     public static final String SHARED = "shared";
+    public static final String HOPPERS = "hoppersEnabled";
 
     private UUID playerId;
     private HashMap<UUID, SignLock> signLocks = new HashMap<>();
@@ -86,10 +87,10 @@ public class SignLockPlayerInfo {
                         Location lockLocation = new Location(world, x, y, z);
 
                         int lockNumber = lockInfoSection.getInt(LOCK_NUM);
-
                         List<String> shared = lockInfoSection.getStringList(SHARED);
+                        boolean hoppersEnabled = lockInfoSection.getBoolean(HOPPERS);
 
-                        SignLock newLock = addNewLock(lockId, lockNumber, lockLocation, false);
+                        SignLock newLock = addNewLock(lockId, lockNumber, lockLocation, hoppersEnabled, false);
                         newLock.setSharedIds(shared);
                     }
 
@@ -106,7 +107,7 @@ public class SignLockPlayerInfo {
 
 
     // Add a new lock for this player.
-    public SignLock addNewLock(UUID lockId, int lockNumber, Location lockLocation, boolean save){
+    public SignLock addNewLock(UUID lockId, int lockNumber, Location lockLocation, boolean hoppersEnabled, boolean save){
 
         if(lockId == null){
             lockId = UUID.randomUUID();
@@ -116,7 +117,7 @@ public class SignLockPlayerInfo {
             lockNumber = getNextSignLockNumber();
         }
 
-        SignLock newLock = new SignLock(lockId, lockLocation, lockNumber, playerId);
+        SignLock newLock = new SignLock(lockId, lockLocation, lockNumber, playerId, hoppersEnabled);
         signLocks.put(newLock.getLockId(), newLock);
 
         // Write lock to config
@@ -216,6 +217,11 @@ public class SignLockPlayerInfo {
     // Remove access from a player for the given sign lock
     public void removeSharedPlayerFromLock(SignLock lock, UUID playerId){
         lock.removeSharedPlayer(playerId, fileConfiguration, file);
+    }
+
+    // Toggle if hoppers are enabled for the given lock
+    public boolean toggleHoppersForLock(SignLock lock){
+        return lock.toggleHoppers(fileConfiguration, file);
     }
 
 }

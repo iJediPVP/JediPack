@@ -19,12 +19,14 @@ public class SignLock {
     private Location lockLocation;
     private int lockNumber;
     private List<String> sharedIds = new ArrayList<>();
+    private boolean hoppersEnabled = false;
 
-    public SignLock(UUID lockId, Location lockLocation, int lockNumber, UUID playerId){
+    public SignLock(UUID lockId, Location lockLocation, int lockNumber, UUID playerId, boolean hoppersEnabled){
         this.lockId = lockId;
         this.lockLocation = lockLocation;
         this.lockNumber = lockNumber;
         this.playerId = playerId;
+        this.hoppersEnabled = hoppersEnabled;
     }
 
     // Getters
@@ -44,10 +46,19 @@ public class SignLock {
         return playerId;
     }
 
+    public boolean isHoppersEnabled() {
+        return hoppersEnabled;
+    }
+
     // Setters
     public void setSharedIds(List<String> sharedIds){
         this.sharedIds = sharedIds;
     }
+
+    public void setHoppersEnabled(boolean hoppersEnabled){
+        this.hoppersEnabled = hoppersEnabled;
+    }
+
 
     // Write lock to config file
     public void writeToConfig(FileConfiguration configuration, File file){
@@ -56,19 +67,31 @@ public class SignLock {
             file.mkdirs();
         }
 
-        String lockKey = lockId.toString();
-        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        String lockPath = getLockPath();
 
         configuration.set(lockPath + SignLockPlayerInfo.WORLDID, lockLocation.getWorld().getUID().toString());
         configuration.set(lockPath + SignLockPlayerInfo.X, lockLocation.getX());
         configuration.set(lockPath + SignLockPlayerInfo.Y, lockLocation.getY());
         configuration.set(lockPath + SignLockPlayerInfo.Z, lockLocation.getZ());
         configuration.set(lockPath + SignLockPlayerInfo.LOCK_NUM, lockNumber);
+        configuration.set(lockPath + SignLockPlayerInfo.SHARED, new String[0]);
+        configuration.set(lockPath + SignLockPlayerInfo.HOPPERS, false);
+        save(configuration, file);
+    }
 
+    // Returns the config path to this lock
+    private String getLockPath(){
+        String lockKey = lockId.toString();
+        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        return lockPath;
+    }
+
+    // Save this lock to a file
+    private void save(FileConfiguration configuration, File file){
         try{
             configuration.save(file);
         } catch (IOException e) {
-            String message = String.format("Error saving configuration file for lock $s.", lockKey);
+            String message = String.format("Error saving configuration file for lock $s.", lockId.toString());
             MessageTypeEnum.SignLockMessage.logMessage(message);
             MessageTypeEnum.SignLockMessage.logMessage(e.toString());
         }
@@ -109,17 +132,9 @@ public class SignLock {
         }
         sharedIds.add(playerId.toString());
 
-        String lockKey = lockId.toString();
-        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        String lockPath = getLockPath();
         configuration.set(lockPath + SignLockPlayerInfo.SHARED, sharedIds.toArray(new String[sharedIds.size()]));
-
-        try{
-            configuration.save(file);
-        } catch (IOException e) {
-            String message = String.format("Error saving configuration file for lock $s.", lockKey);
-            MessageTypeEnum.SignLockMessage.logMessage(message);
-            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
-        }
+        save(configuration, file);
     }
 
     // Remove access from this lock for the given player id.
@@ -130,16 +145,33 @@ public class SignLock {
         }
         sharedIds.remove(playerId.toString());
 
-        String lockKey = lockId.toString();
-        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        String lockPath = getLockPath();
         configuration.set(lockPath + SignLockPlayerInfo.SHARED, sharedIds.toArray(new String[sharedIds.size()]));
 
         try{
             configuration.save(file);
         } catch (IOException e) {
-            String message = String.format("Error saving configuration file for lock $s.", lockKey);
+            String message = String.format("Error saving configuration file for lock $s.", lockId.toString());
             MessageTypeEnum.SignLockMessage.logMessage(message);
             MessageTypeEnum.SignLockMessage.logMessage(e.toString());
         }
+    }
+
+    // Returns if hoppers are enabled.
+    public boolean areHoppersEnabled(){
+        return hoppersEnabled;
+    }
+
+    // Toggle if hoppers are enabled or not.
+    public boolean toggleHoppers(FileConfiguration configuration, File file){
+
+        hoppersEnabled = !hoppersEnabled;
+
+        String lockPath = getLockPath();
+        configuration.set(lockPath + SignLockPlayerInfo.HOPPERS, hoppersEnabled);
+
+        save(configuration, file);
+
+        return hoppersEnabled;
     }
 }

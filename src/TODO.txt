@@ -18,8 +18,7 @@ TODO LIST:
 - Sign locks:
     - Use / commands to control locks.
         - Command permissions (make an override permission to open anything)
-        - Enable hopper placement next to locked containers
-        - Prevent TNT and redstone stuff from interacting with hoppers. Also creepers..
+        - Prevent TNT and redstone stuff from interacting with containers. Also creepers..
     - Allow locking of double chests
     - Allow locking of doors
     - Help text
