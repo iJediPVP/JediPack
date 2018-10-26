@@ -19,6 +19,9 @@ commands:
   jpsmite:
     description: "Smites the specified player."
     usage: /jpsmite <player>
+  signlock:
+    description: "Interact with Sign Locks."
+    usage: /signlock
 
 
 permissions:

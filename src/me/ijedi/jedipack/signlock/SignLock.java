@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SignLock {
@@ -17,7 +18,7 @@ public class SignLock {
     private UUID playerId;
     private Location lockLocation;
     private int lockNumber;
-    private ArrayList<UUID> sharedIds = new ArrayList<>();
+    private List<String> sharedIds = new ArrayList<>();
 
     public SignLock(UUID lockId, Location lockLocation, int lockNumber, UUID playerId){
         this.lockId = lockId;
@@ -41,6 +42,11 @@ public class SignLock {
 
     public UUID getPlayerId() {
         return playerId;
+    }
+
+    // Setters
+    public void setSharedIds(List<String> sharedIds){
+        this.sharedIds = sharedIds;
     }
 
     // Write lock to config file
@@ -89,10 +95,30 @@ public class SignLock {
 
     // Return true if given player id can open this locked container.
     public boolean hasContainerAccess(UUID playerId){
-        if(playerId.equals(this.playerId) || sharedIds.contains(playerId)){
+        if(playerId.equals(this.playerId) || sharedIds.contains(playerId.toString())){
             return true;
         }
         return false;
     }
 
+    // Give the given player id access to this lock.
+    public void addSharedPlayer(UUID playerId, FileConfiguration configuration, File file){
+
+        if(hasContainerAccess(playerId)){
+            return;
+        }
+        sharedIds.add(playerId.toString());
+
+        String lockKey = lockId.toString();
+        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        configuration.set(lockPath + SignLockPlayerInfo.SHARED, sharedIds.toArray(new String[sharedIds.size()]));
+
+        try{
+            configuration.save(file);
+        } catch (IOException e) {
+            String message = String.format("Error saving configuration file for lock $s.", lockKey);
+            MessageTypeEnum.SignLockMessage.logMessage(message);
+            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
+        }
+    }
 }

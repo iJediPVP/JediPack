@@ -11,8 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class SignLockPlayerInfo {
 
@@ -35,6 +34,7 @@ public class SignLockPlayerInfo {
     public static final String Y = "y";
     public static final String Z = "z";
     public static final String WORLDID = "worldId";
+    public static final String SHARED = "shared";
 
     private UUID playerId;
     private HashMap<UUID, SignLock> signLocks = new HashMap<>();
@@ -87,7 +87,10 @@ public class SignLockPlayerInfo {
 
                         int lockNumber = lockInfoSection.getInt(LOCK_NUM);
 
-                        addNewLock(lockId, lockNumber, lockLocation, false);
+                        List<String> shared = lockInfoSection.getStringList(SHARED);
+
+                        SignLock newLock = addNewLock(lockId, lockNumber, lockLocation, false);
+                        newLock.setSharedIds(shared);
                     }
 
                 }
@@ -193,6 +196,21 @@ public class SignLockPlayerInfo {
             MessageTypeEnum.SignLockMessage.logMessage(e.toString());
         }
 
+    }
+
+    // Return the sign lock with he specified lock number
+    public SignLock getLockByNumber(int lockNumber){
+        for(SignLock lock : signLocks.values()){
+            if(lock.getLockNumber() == lockNumber){
+                return lock;
+            }
+        }
+        return null;
+    }
+
+    // Add a player to the sign lock
+    public void addSharedPlayedToLock(SignLock lock, UUID playerId){
+        lock.addSharedPlayer(playerId, fileConfiguration, file);
     }
 
 }

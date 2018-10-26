@@ -35,9 +35,10 @@ public class SignLockManager {
 
         MessageTypeEnum.SignLockMessage.logMessage("Sign Locks are enabled!");
 
-        // Register events
+        // Register events & commands
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new SignLockEvents(), plugin);
+        plugin.getCommand(SignLockCommand.BASE_COMMAND).setExecutor(new SignLockCommand());
 
         // Load player data
         File playerDataFolder = new File(JediPackMain.getThisPlugin().getDataFolder() + "/signLocks");

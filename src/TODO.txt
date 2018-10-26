@@ -15,7 +15,8 @@ TODO LIST:
 
 - Sign locks:
     - Use / commands to control locks.
+        - Command permissions
         - Enable hopper placement next to locked containers
-        - Give/revoke access for another player
+        - Revoke access for another player
         - Prevent TNT and redstone stuff from interacting with hoppers. Also creepers..
     - Allow locking of double chests
