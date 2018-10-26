@@ -7,18 +7,30 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 
 public class SignLockEvents implements Listener {
 
     private final String SIGNLOCK = "[SignLock]";
+    public static ArrayList<Material> LOCKABLE_CONTAINERS = new ArrayList<Material>(){{
+        add(Material.CHEST);
+        add(Material.TRAPPED_CHEST);
+        add(Material.FURNACE);
+        add(Material.HOPPER);
+        add(Material.DISPENSER);
+        add(Material.DROPPER);
+    }};
 
     // Event for handling when sign locks are broken.
     @EventHandler
@@ -26,7 +38,7 @@ public class SignLockEvents implements Listener {
 
         Block block = event.getBlock();
 
-        if(!block.getType().equals(Material.WALL_SIGN) && !SignLockManager.LOCKABLE_CONTAINERS.contains(block.getType())){
+        if(!block.getType().equals(Material.WALL_SIGN) && !LOCKABLE_CONTAINERS.contains(block.getType())){
             return;
         }
 
@@ -82,7 +94,7 @@ public class SignLockEvents implements Listener {
                 return;
             }
             Material placedType = placedOnBlock.getType();
-            if(SignLockManager.LOCKABLE_CONTAINERS.contains(placedType)){
+            if(LOCKABLE_CONTAINERS.contains(placedType)){
 
                 Player player = event.getPlayer();
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
@@ -125,7 +137,7 @@ public class SignLockEvents implements Listener {
 
         // If this block can be locked, check if it is locked and see if this player has permission.
         Block block = event.getClickedBlock();
-        if(SignLockManager.LOCKABLE_CONTAINERS.contains(block.getType())){
+        if(LOCKABLE_CONTAINERS.contains(block.getType())){
 
             Location blockLoc = Util.centerSignLockLocation(block.getLocation());
             if(SignLockManager.isSignLockLocation(blockLoc)){
@@ -141,6 +153,22 @@ public class SignLockEvents implements Listener {
 
         }
 
+    }
+
+    // Prevent items from being removed from a locked container
+    @EventHandler
+    public void signLockInventoryMoveEvent(InventoryMoveItemEvent event){
+
+        // The purpose of this is to prevent items from being remove from a locked container.
+        // We shouldn't need to bother with players, since a player without access can't interact with a locked container..
+        if(event.getDestination().getHolder() instanceof Hopper){
+
+            // See if this is a locked location
+            Location eventLocation = Util.centerSignLockLocation(event.getSource().getLocation());
+            if(SignLockManager.isSignLockLocation(eventLocation)){
+                event.setCancelled(true);
+            }
+        }
     }
 
 }

@@ -15,15 +15,6 @@ import java.util.UUID;
 public class SignLockManager {
 
     private static HashMap<UUID, SignLockPlayerInfo> playerInfoMap = new HashMap<>();
-    public static ArrayList<Material> LOCKABLE_CONTAINERS = new ArrayList<Material>(){{
-        add(Material.CHEST);
-        add(Material.TRAPPED_CHEST);
-        add(Material.FURNACE);
-        add(Material.HOPPER);
-        add(Material.DISPENSER);
-        add(Material.DROPPER);
-    }};
-
 
     // Initialize
     public static void initializeSignLocks(){
