@@ -213,4 +213,9 @@ public class SignLockPlayerInfo {
         lock.addSharedPlayer(playerId, fileConfiguration, file);
     }
 
+    // Remove access from a player for the given sign lock
+    public void removeSharedPlayerFromLock(SignLock lock, UUID playerId){
+        lock.removeSharedPlayer(playerId, fileConfiguration, file);
+    }
+
 }

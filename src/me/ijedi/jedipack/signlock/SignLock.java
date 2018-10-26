@@ -121,4 +121,25 @@ public class SignLock {
             MessageTypeEnum.SignLockMessage.logMessage(e.toString());
         }
     }
+
+    // Remove access from this lock for the given player id.
+    public void removeSharedPlayer(UUID playerId, FileConfiguration configuration, File file){
+
+        if(!hasContainerAccess(playerId)){
+            return;
+        }
+        sharedIds.remove(playerId.toString());
+
+        String lockKey = lockId.toString();
+        String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
+        configuration.set(lockPath + SignLockPlayerInfo.SHARED, sharedIds.toArray(new String[sharedIds.size()]));
+
+        try{
+            configuration.save(file);
+        } catch (IOException e) {
+            String message = String.format("Error saving configuration file for lock $s.", lockKey);
+            MessageTypeEnum.SignLockMessage.logMessage(message);
+            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
+        }
+    }
 }
