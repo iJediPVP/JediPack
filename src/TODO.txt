@@ -24,3 +24,5 @@ TODO LIST:
     - Allow locking of doors
     - Help text
     - Tab complete for commands
+
+- Shop system ??
