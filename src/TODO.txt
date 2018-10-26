@@ -1,24 +1,26 @@
 TODO LIST:
 - Misc:
-
+    - Smite:
+        - Rename command
+    Create "how to"
 - Parkour:
-    - Create "how to" in the README.
     - Tab complete for commands
     - Really need to unload and load the course when disabling and enabling the plugin.
+    - Rename command
 
 - TabMessage:
     - Tab complete for commands
-    - Create "how to"
+    - Rename command
 
 - MOTD:
-    - Create "how to"
+    - Rename command
 
 - Sign locks:
     - Use / commands to control locks.
         - Command permissions (make an override permission to open anything)
         - Enable hopper placement next to locked containers
-        - Revoke access for another player
         - Prevent TNT and redstone stuff from interacting with hoppers. Also creepers..
     - Allow locking of double chests
     - Allow locking of doors
     - Help text
+    - Tab complete for commands
