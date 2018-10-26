@@ -37,17 +37,9 @@ public class SignLockManager {
 
         // Register events
         JavaPlugin plugin = JediPackMain.getThisPlugin();
-        plugin.getServer().getPluginManager().registerEvents(new SignLockChangeEvent(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new SignLockBreakEvent(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new SignLockInteractEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new SignLockEvents(), plugin);
 
         // Load player data
-        /*for(Player player : Bukkit.getOnlinePlayers()){
-            SignLockPlayerInfo info = new SignLockPlayerInfo(player.getUniqueId());
-            info.loadPlayerFile();
-            playerInfoMap.put(player.getUniqueId(), info);
-        }*/
-
         File playerDataFolder = new File(JediPackMain.getThisPlugin().getDataFolder() + "/signLocks");
         if(!playerDataFolder.exists()){
             playerDataFolder.mkdirs();

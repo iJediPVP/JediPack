@@ -17,4 +17,5 @@ TODO LIST:
     - Use / commands to control locks.
         - Enable hopper placement next to locked containers
         - Give/revoke access for another player
+        - Prevent TNT and redstone stuff from interacting with hoppers. Also creepers..
     - Allow locking of double chests
