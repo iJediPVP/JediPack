@@ -18,6 +18,7 @@ TODO LIST:
 - Sign locks:
     - Use / commands to control locks.
         - Command permissions (make an override permission to open anything)
+        - Toggle sign visibility
     - Help text
     - Tab complete for commands
 

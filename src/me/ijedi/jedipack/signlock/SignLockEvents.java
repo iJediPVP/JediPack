@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -230,6 +231,20 @@ public class SignLockEvents implements Listener {
 
         // Remove the blocks we want to save
         event.blockList().removeAll(blocksToRemove);
+    }
+
+    // Prevent redstone from affecting locked doors
+    @EventHandler
+    public void signLockRedstoneEvent(BlockRedstoneEvent event){
+
+        // Prevent redstone from interacting with locked doors
+        Block block = event.getBlock();
+        if(LOCKABLE_DOORS.contains(block.getType())){
+            Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+            if(SignLockManager.isSignLockLocation(blockLoc)){
+                event.setNewCurrent(event.getOldCurrent());
+            }
+        }
     }
 
 }
