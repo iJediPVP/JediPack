@@ -14,11 +14,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SignLockEvents implements Listener {
 
@@ -183,6 +185,27 @@ public class SignLockEvents implements Listener {
                 }
             }
         }
+    }
+
+    // Prevent sign locked locations from exploding
+    @EventHandler
+    public void signLockExplodeEvent(EntityExplodeEvent event){
+
+        // Loop through the blocks being destroyed
+        List<Block> explodingBlocks = event.blockList();
+        ArrayList<Block> blocksToRemove = new ArrayList<Block>();
+        for(Block block : explodingBlocks){
+
+            // If it's a sign lock location, remove the block
+            Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+            if(SignLockManager.isSignLockLocation(blockLoc)){
+                blocksToRemove.add(block);
+            }
+
+        }
+
+        // Remove the blocks we want to save
+        event.blockList().removeAll(blocksToRemove);
     }
 
 }
