@@ -4,11 +4,8 @@ import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.DoubleChest;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.block.Chest;
 
@@ -109,13 +106,20 @@ public class SignLock {
         Block lockedContainer = Util.getBlockFromPlacedSign(lockLocation.getBlock());
         Location lockedLocation = Util.centerSignLockLocation(lockedContainer.getLocation());
 
-        if(Util.DoLocationsEqual(testLocation, lockLocation, false)
-                ||Util.DoLocationsEqual(testLocation, lockedLocation, false)) {
+        // Handle doors
+        Block testBlock = testLocation.getBlock();
+        if(SignLockEvents.LOCKABLE_DOORS.contains(testBlock.getType())
+                && (Util.doLocationsEqual(testLocation, lockedLocation, false, true)
+                    || Util.doLocationsEqual(testLocation, lockedLocation, true, false))) {
+            return true;
+
+        } else if(Util.doLocationsEqual(testLocation, lockLocation, false, false)
+                ||Util.doLocationsEqual(testLocation, lockedLocation, false, false)) {
+            // Handle single containers
             return true;
 
         } else {
             // Handle double chests
-            Block testBlock = testLocation.getBlock();
             if(testBlock.getState() instanceof Chest && lockedContainer.getState() instanceof Chest){
 
                 Chest lockedChest = (Chest) lockedContainer.getState();
@@ -129,7 +133,7 @@ public class SignLock {
                     // If our locked container location equals the test block's location, return true.
                     DoubleChest lockedDouble = (DoubleChest) lockedHolder;
                     DoubleChest testDouble = (DoubleChest) testHolder;
-                    if(Util.DoLocationsEqual(lockedDouble.getLocation(), testDouble.getLocation(), false)){
+                    if(Util.doLocationsEqual(lockedDouble.getLocation(), testDouble.getLocation(), false, false)){
                         return true;
                     }
                 }

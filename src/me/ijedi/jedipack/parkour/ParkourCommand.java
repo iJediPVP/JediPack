@@ -91,16 +91,16 @@ public class ParkourCommand implements CommandExecutor {
         Player player = (Player) commandSender;
 
         // Sse if we have args
-        if(args.length > 0 && !Util.IsNullOrEmpty(args[0])){
-            String firstArg = Util.ToLower(args[0]);
+        if(args.length > 0 && !Util.isNullOrEmpty(args[0])){
+            String firstArg = Util.toLower(args[0]);
 
             // Check for a course id. Anything except commands required for this plugin will be allowed.
             if(!ArrayUtils.contains(FIRST_ARG_BLACKLIST, firstArg)){
                 // At this point "firstArg" is our course id.
 
                 // Check for our second argument.
-                if(args.length > 1 && !Util.IsNullOrEmpty(args[1])){
-                    String secondArg = Util.ToLower(args[1]);
+                if(args.length > 1 && !Util.isNullOrEmpty(args[1])){
+                    String secondArg = Util.toLower(args[1]);
 
                     // Handle create
                     if(secondArg.equals(CREATE)) {
@@ -170,7 +170,7 @@ public class ParkourCommand implements CommandExecutor {
 
                         // Check for third argument
                         if(args.length > 2){
-                            String thirdArg = Util.ToLower(args[2]);
+                            String thirdArg = Util.toLower(args[2]);
                             // Add a checkpoint
                             if(thirdArg.equals(ADD)){
 
@@ -201,7 +201,7 @@ public class ParkourCommand implements CommandExecutor {
                                 if(args.length > 3){
 
                                     String pointStr = args[3];
-                                    if(Util.IsInteger(pointStr)){
+                                    if(Util.isInteger(pointStr)){
 
                                         // Remove the point
                                         int pointInt = Integer.parseInt(pointStr);

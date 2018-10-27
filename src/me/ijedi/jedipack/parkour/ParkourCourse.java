@@ -194,7 +194,7 @@ public class ParkourCourse {
         }
 
         // If the config path did not get set, return false
-        if (!Util.IsNullOrEmpty(baseConfigPath)) {
+        if (!Util.isNullOrEmpty(baseConfigPath)) {
 
             // Store config info
             CourseConfiguration.set(baseConfigPath + WORLDID, worldId);
@@ -261,7 +261,7 @@ public class ParkourCourse {
         Iterator<String> keys = PointLocations.keySet().iterator();
         while(keys.hasNext()){
             String nextKeyStr = keys.next();
-            if(Util.IsInteger(nextKeyStr)){
+            if(Util.isInteger(nextKeyStr)){
                 int keyInt = Integer.parseInt(nextKeyStr);
                 removePoint(keyInt, false);
                 keys.remove();
@@ -312,7 +312,7 @@ public class ParkourCourse {
     public int getNextCheckpointNumber(){
         ArrayList<Integer> pointList = new ArrayList<>();
         for(String key : PointLocations.keySet()){
-            if(Util.IsInteger(key)){
+            if(Util.isInteger(key)){
                 pointList.add(Integer.parseInt(key));
             }
         }
@@ -330,7 +330,7 @@ public class ParkourCourse {
         // Make an arraylist so we can sort it
         ArrayList<Integer> pointIntList = new ArrayList<>();
         for(String pointKey : PointLocations.keySet()){
-            if(Util.IsInteger(pointKey)){
+            if(Util.isInteger(pointKey)){
                 pointIntList.add(Integer.parseInt(pointKey));
             }
         }
@@ -399,7 +399,7 @@ public class ParkourCourse {
     public int getCheckpointFromLocation(Location playerLocation){
         for(String pointKey : PointLocations.keySet()){
 
-            if(Util.DoLocationsEqual(PointLocations.get(pointKey), playerLocation, false)){
+            if(Util.doLocationsEqual(PointLocations.get(pointKey), playerLocation, false, false)){
                 return Integer.parseInt(pointKey);
             }
         }

@@ -34,13 +34,22 @@ public class SignLockEvents implements Listener {
         add(Material.DROPPER);
     }};
 
+    public static ArrayList<Material> LOCKABLE_DOORS = new ArrayList<Material>(){{
+        add(Material.SPRUCE_DOOR);
+        add(Material.DARK_OAK_DOOR);
+        add(Material.ACACIA_DOOR);
+        add(Material.BIRCH_DOOR);
+        add(Material.JUNGLE_DOOR);
+        add(Material.OAK_DOOR);
+    }};
+
     // Event for handling when sign locks are broken.
     @EventHandler
     public void onSignLockBreak(BlockBreakEvent event){
 
         Block block = event.getBlock();
 
-        if(!block.getType().equals(Material.WALL_SIGN) && !LOCKABLE_CONTAINERS.contains(block.getType())){
+        if(!block.getType().equals(Material.WALL_SIGN) && !LOCKABLE_CONTAINERS.contains(block.getType()) && !LOCKABLE_DOORS.contains(block.getType())){
             return;
         }
 
@@ -50,13 +59,20 @@ public class SignLockEvents implements Listener {
         if(SignLockManager.isSignLockLocation(blockLoc)){
             Player player = event.getPlayer();
 
+            String containerType;
+            if(LOCKABLE_CONTAINERS.contains(block.getType())){
+                containerType = "container";
+            } else {
+                containerType = "door";
+            }
+
             // See if the player can break this block
             SignLock lock = SignLockManager.getLockFromLocation(blockLoc);
             if(lock.hasBreakableAccess(player.getUniqueId())){
 
                 // If it's not a wall sign, warn the player
                 if(!block.getType().equals(Material.WALL_SIGN)){
-                    MessageTypeEnum.SignLockMessage.sendMessage("You must break this lock on this container first!", player, true);
+                    MessageTypeEnum.SignLockMessage.sendMessage("You must break this lock on this " + containerType + " first!", player, true);
                     event.setCancelled(true);
                     return;
 
@@ -70,7 +86,7 @@ public class SignLockEvents implements Listener {
             if(event.getBlock().getType().equals(Material.WALL_SIGN)){
                 MessageTypeEnum.SignLockMessage.sendMessage("This sign lock cannot be broken!", player, true);
             } else {
-                MessageTypeEnum.SignLockMessage.sendMessage("This container is locked by a player!", player, true);
+                MessageTypeEnum.SignLockMessage.sendMessage("This " + containerType + " is locked by a player!", player, true);
             }
             event.setCancelled(true);
         }
@@ -96,7 +112,7 @@ public class SignLockEvents implements Listener {
                 return;
             }
             Material placedType = placedOnBlock.getType();
-            if(LOCKABLE_CONTAINERS.contains(placedType)){
+            if(LOCKABLE_CONTAINERS.contains(placedType) || LOCKABLE_DOORS.contains(placedType)){
 
                 Player player = event.getPlayer();
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
@@ -139,7 +155,7 @@ public class SignLockEvents implements Listener {
 
         // If this block can be locked, check if it is locked and see if this player has permission.
         Block block = event.getClickedBlock();
-        if(LOCKABLE_CONTAINERS.contains(block.getType())){
+        if(LOCKABLE_CONTAINERS.contains(block.getType()) || LOCKABLE_DOORS.contains(block.getType())){
 
             Location blockLoc = Util.centerSignLockLocation(block.getLocation());
             if(SignLockManager.isSignLockLocation(blockLoc)){
@@ -147,7 +163,15 @@ public class SignLockEvents implements Listener {
 
                 Player player = event.getPlayer();
                 if(!lock.hasContainerAccess(player.getUniqueId())){
-                    MessageTypeEnum.SignLockMessage.sendMessage("You do not have permission to use this container!", player, true);
+
+                    String message;
+                    if(LOCKABLE_CONTAINERS.contains(block.getType())){
+                        message = "You do not have permission to use this container!";
+                    } else {
+                        message = "You do not have permission to use this door!";
+                    }
+
+                    MessageTypeEnum.SignLockMessage.sendMessage(message, player, true);
                     event.setCancelled(true);
                 }
 

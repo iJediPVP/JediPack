@@ -88,7 +88,7 @@ public class ParkourMenuEvent implements Listener {
                             // Get the point number
                             itemName = itemName.replace("#", "");
                             String[] checkpointArray = itemName.split(" ");
-                            if(checkpointArray.length > 1 && Util.IsInteger(checkpointArray[1])){
+                            if(checkpointArray.length > 1 && Util.isInteger(checkpointArray[1])){
                                 int pointNum = Integer.parseInt(checkpointArray[1]);
 
                                 // Make sure course exists
@@ -135,7 +135,7 @@ public class ParkourMenuEvent implements Listener {
         // Make an arraylist so we can sort it
         ArrayList<Integer> pointIntList = new ArrayList<>();
         for(String pointKey : course.getPointLocations().keySet()){
-            if(Util.IsInteger(pointKey)){
+            if(Util.isInteger(pointKey)){
                 pointIntList.add(Integer.parseInt(pointKey));
             }
         }

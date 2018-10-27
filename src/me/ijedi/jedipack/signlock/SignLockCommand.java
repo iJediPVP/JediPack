@@ -51,7 +51,7 @@ public class SignLockCommand implements CommandExecutor {
                     String lockStr = args[1];
 
                     // Validate
-                    if(!Util.IsInteger(lockStr)){
+                    if(!Util.isInteger(lockStr)){
                         MessageTypeEnum.SignLockMessage.sendMessage("Invalid lock number specified.", player, true);
                         return true;
                     }
@@ -161,7 +161,7 @@ public class SignLockCommand implements CommandExecutor {
                     String lockStr = args[1];
 
                     // Validate
-                    if(!Util.IsInteger(lockStr)){
+                    if(!Util.isInteger(lockStr)){
                         MessageTypeEnum.SignLockMessage.sendMessage("Invalid lock number specified.", player, true);
                         return true;
                     }
@@ -270,7 +270,7 @@ public class SignLockCommand implements CommandExecutor {
                     String lockStr = args[1];
 
                     // Validate
-                    if(!Util.IsInteger(lockStr)){
+                    if(!Util.isInteger(lockStr)){
                         MessageTypeEnum.SignLockMessage.sendMessage("Invalid lock number specified.", player, true);
                         return true;
                     }

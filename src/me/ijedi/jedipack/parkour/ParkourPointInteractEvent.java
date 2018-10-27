@@ -33,7 +33,7 @@ public class ParkourPointInteractEvent implements Listener {
 
             // Check for a course id
             String courseId = ParkourManager.getCourseIdFromLocation(location);
-            if(!Util.IsNullOrEmpty(courseId)){
+            if(!Util.isNullOrEmpty(courseId)){
                 ParkourCourse course = ParkourManager.getCourse(courseId);
 
 

@@ -5,7 +5,6 @@ import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import me.ijedi.jedipack.menu.Menu;
 import me.ijedi.jedipack.menu.MenuManager;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -72,7 +71,7 @@ public class ParkourManager {
 
     // Determine if a course exists.
     public static boolean doesCourseExist(String courseId){
-        if(ParkourCourses.containsKey(Util.ToLower(courseId))){
+        if(ParkourCourses.containsKey(Util.toLower(courseId))){
             return true;
         }
         return false;
@@ -85,7 +84,7 @@ public class ParkourManager {
             ParkourCourse newCourse = new ParkourCourse(courseId);
 
             ParkourCourses.put(courseId, newCourse);
-            String[] courseKeys = Util.HashMapToKeyArray(ParkourCourses);
+            String[] courseKeys = Util.hashMapToKeyArray(ParkourCourses);
 
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
@@ -106,7 +105,7 @@ public class ParkourManager {
 
             // Remove it from the manager
             ParkourCourses.remove(courseId);
-            String[] courseKeys = Util.HashMapToKeyArray(ParkourCourses);
+            String[] courseKeys = Util.hashMapToKeyArray(ParkourCourses);
             ParkourConfiguration.set(COURSE_PATH, courseKeys);
             saveConfiguration();
 
@@ -291,10 +290,10 @@ public class ParkourManager {
 
             Location courseLoc = courseToCheck.getStartLocation();
             if(courseLoc != null){
-                if(Util.DoLocationsEqual(courseLoc, location, false)){
+                if(Util.doLocationsEqual(courseLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(courseLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(courseLoc, location, true, false)){
                     return true;
                 }
             }
@@ -307,10 +306,10 @@ public class ParkourManager {
 
             Location startLoc = course.getStartLocation();
             if(startLoc != null){
-                if(Util.DoLocationsEqual(startLoc, location, false)){
+                if(Util.doLocationsEqual(startLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(startLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(startLoc, location, true, false)){
                     return true;
                 }
             }
@@ -327,10 +326,10 @@ public class ParkourManager {
 
             Location courseLoc = courseToCheck.getFinishLocation();
             if(courseLoc != null){
-                if(Util.DoLocationsEqual(courseLoc, location, false)){
+                if(Util.doLocationsEqual(courseLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(courseLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(courseLoc, location, true, false)){
                     return true;
                 }
             }
@@ -343,10 +342,10 @@ public class ParkourManager {
 
             Location finishLoc = course.getFinishLocation();
             if(finishLoc != null){
-                if(Util.DoLocationsEqual(finishLoc, location, false)){
+                if(Util.doLocationsEqual(finishLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(finishLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(finishLoc, location, true, false)){
                     return true;
                 }
             }
@@ -362,10 +361,10 @@ public class ParkourManager {
         if(courseToCheck != null){
 
             for(Location pointLoc : courseToCheck.getPointLocations().values()){
-                if(Util.DoLocationsEqual(pointLoc, location, false)){
+                if(Util.doLocationsEqual(pointLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(pointLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(pointLoc, location, true, false)){
                     return true;
                 }
             }
@@ -376,10 +375,10 @@ public class ParkourManager {
         // Loop through courses and check finish location
         for(ParkourCourse course : ParkourCourses.values()){
             for(Location pointLoc : course.getPointLocations().values()){
-                if(Util.DoLocationsEqual(pointLoc, location, false)){
+                if(Util.doLocationsEqual(pointLoc, location, false, false)){
                     return true;
                 }
-                if(checkBelow && Util.DoLocationsEqual(pointLoc, location, true)){
+                if(checkBelow && Util.doLocationsEqual(pointLoc, location, true, false)){
                     return true;
                 }
             }

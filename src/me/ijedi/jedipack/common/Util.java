@@ -10,14 +10,14 @@ public class Util {
 
     // I need some of these because C# has spoiled me.
 
-    public static boolean IsNullOrEmpty(String str){
+    public static boolean isNullOrEmpty(String str){
         if(str == null || str.trim().isEmpty()){
             return true;
         }
         return false;
     }
 
-    public static String SafeTrim(String str){
+    public static String safeTrim(String str){
         if(str == null){
             str = "";
         }
@@ -25,13 +25,13 @@ public class Util {
         return str;
     }
 
-    public static String ToLower(String str){
+    public static String toLower(String str){
         str = str.trim();
         str = str.toLowerCase();
         return str;
     }
 
-    public static boolean IsInteger(String str){
+    public static boolean isInteger(String str){
         try{
             int returnInt = Integer.parseInt(str);
             return true;
@@ -40,7 +40,7 @@ public class Util {
         }
     }
 
-    public static String[] HashMapToKeyArray(HashMap<String,?> hashSet){
+    public static String[] hashMapToKeyArray(HashMap<String,?> hashSet){
         String[] returnArray = new String[hashSet.size()];
         int x = 0;
         for (String str : hashSet.keySet()){
@@ -52,7 +52,7 @@ public class Util {
     }
 
     // The checkBelowLoc1 parameter subtracts 1 from loc1 Y before comparing.
-    public static boolean DoLocationsEqual(Location loc1, Location loc2, boolean checkBelowLoc1){
+    public static boolean doLocationsEqual(Location loc1, Location loc2, boolean checkBelowLoc1, boolean checkAboveBlockLoc1){
         if(loc1 != null || loc2 != null){
 
             // Compare world ids, x, y and z
@@ -63,6 +63,8 @@ public class Util {
                 double y1 = loc1.getY();
                 if(checkBelowLoc1){
                     y1 = loc1.getY() - 1;
+                } else if(checkAboveBlockLoc1){
+                    y1 = loc1.getY() + 1;
                 }
 
                 if(y1 == loc2.getY()){

@@ -219,7 +219,7 @@ public class TabMessageManager {
         }
 
         // World times
-        if(str.contains(WORLD_TIME_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+        if(str.contains(WORLD_TIME_ARG) && !Util.isNullOrEmpty(worldNameForTime)){
             // 12 hour time
             World worldForTime = Bukkit.getWorld(worldNameForTime);
 
@@ -229,7 +229,7 @@ public class TabMessageManager {
                 str = str.replace(WORLD_TIME_ARG, formatted);
             }
 
-        } else if(str.contains(WORLD_TIME24_ARG) && !Util.IsNullOrEmpty(worldNameForTime)){
+        } else if(str.contains(WORLD_TIME24_ARG) && !Util.isNullOrEmpty(worldNameForTime)){
             // 24 hour time
             World worldForTime = Bukkit.getWorld(worldNameForTime);
 
