@@ -11,10 +11,7 @@ import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -245,6 +242,30 @@ public class SignLockEvents implements Listener {
                 event.setNewCurrent(event.getOldCurrent());
             }
         }
+    }
+
+    @EventHandler
+    public void signLockPistonExtendEvent(BlockPistonExtendEvent event){
+
+        // Cancel the event if any of the blocks are a locked location
+        event.setCancelled(shouldCancelPistonEvent(event.getBlocks()));
+    }
+
+    @EventHandler
+    public void signLockPistonRetractEvent(BlockPistonRetractEvent event){
+
+        // Cancel the event if any of the blocks are a locked location
+        event.setCancelled(shouldCancelPistonEvent(event.getBlocks()));
+    }
+
+    private boolean shouldCancelPistonEvent(List<Block> blocks){
+        // Cancel the event if any of the blocks are a locked location
+        for(Block block : blocks){
+            if(SignLockManager.isSignLockLocation(Util.centerSignLockLocation(block.getLocation()))){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
