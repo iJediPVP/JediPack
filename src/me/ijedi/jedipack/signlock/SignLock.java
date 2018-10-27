@@ -4,7 +4,13 @@ import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.block.Chest;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,6 +112,28 @@ public class SignLock {
         if(Util.DoLocationsEqual(testLocation, lockLocation, false)
                 ||Util.DoLocationsEqual(testLocation, lockedLocation, false)) {
             return true;
+
+        } else {
+            // Handle double chests
+            Block testBlock = testLocation.getBlock();
+            if(testBlock.getState() instanceof Chest && lockedContainer.getState() instanceof Chest){
+
+                Chest lockedChest = (Chest) lockedContainer.getState();
+                InventoryHolder lockedHolder = lockedChest.getInventory().getHolder();
+                Chest chest = (Chest) testBlock.getState();
+                InventoryHolder testHolder = chest.getInventory().getHolder();
+
+                // Make sure both are double chests
+                if(lockedHolder instanceof DoubleChest && testHolder instanceof DoubleChest){
+
+                    // If our locked container location equals the test block's location, return true.
+                    DoubleChest lockedDouble = (DoubleChest) lockedHolder;
+                    DoubleChest testDouble = (DoubleChest) testHolder;
+                    if(Util.DoLocationsEqual(lockedDouble.getLocation(), testDouble.getLocation(), false)){
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;
