@@ -30,6 +30,7 @@ public class SignLockManager {
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new SignLockEvents(), plugin);
         plugin.getCommand(SignLockCommand.BASE_COMMAND).setExecutor(new SignLockCommand());
+        plugin.getCommand(SignLockCommand.BASE_COMMAND).setTabCompleter(new SignLockCommand());
 
         // Load player data
         File playerDataFolder = new File(JediPackMain.getThisPlugin().getDataFolder() + "/signLocks");

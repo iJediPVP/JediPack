@@ -8,12 +8,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public class SignLockCommand implements CommandExecutor {
+public class SignLockCommand implements TabExecutor {
 
     public static final String BASE_COMMAND = "signlock";
     public static final String SHARE = "share";
@@ -29,7 +31,7 @@ public class SignLockCommand implements CommandExecutor {
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + SHARE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Grants access to the specified players for the specified lock number.");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + REVOKE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Revokes access from the specified players for the specified lock number.");
-        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + HOPPERS + "<lockNumber>" + ChatColor.GREEN + ": Toggles if hoppers can interact with the locked container.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + HOPPERS + " <lockNumber>" + ChatColor.GREEN + ": Toggles if hoppers can interact with the locked container.");
     }};
 
     /*
@@ -329,5 +331,49 @@ public class SignLockCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        List<String> results = new ArrayList<String>();
+
+        // Only return for players
+        if(commandSender instanceof Player){
+            Player player = (Player) commandSender;
+
+            // Figure out what to return
+            int argsLength = strings.length;
+            if(argsLength == 1){
+
+                // Return first args
+                results.add(SHARE);
+                results.add(REVOKE);
+                results.add(HOPPERS);
+
+            } else if(argsLength == 2) {}
+
+            switch(argsLength){
+                case 1:
+                    // Add first args
+                    results.add(SHARE);
+                    results.add(REVOKE);
+                    results.add(HOPPERS);
+                    break;
+                case 2:
+                    //Add second args - numbers of the sign locks this player has
+                    SignLockPlayerInfo info = SignLockManager.getPlayerInfo(player.getUniqueId());
+                    for(SignLock lock : info.getSignLocks().values()){
+                        results.add(Integer.toString(lock.getLockNumber()));
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+
+        }
+
+        return results;
     }
 }

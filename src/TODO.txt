@@ -1,7 +1,7 @@
 TODO LIST:
 - Misc:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
-    - Tab Complete for: Parkour, TabMessage, Sighn Locks
+    - Tab Complete for: Parkour
 - Parkour:
     - Really need to unload and load the course when disabling and enabling the plugin.
 
