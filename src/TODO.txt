@@ -1,6 +1,5 @@
 TODO LIST:
 - Misc:
-    - Update to spigot 1.13.2
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
 - Parkour:
