@@ -6,5 +6,6 @@ TODO LIST:
 - Parkour:
     - Really need to unload and load the course when disabling and enabling the plugin.
     - Prevent parkour blocks from exploding or being moved by pistons. (Like sign locks)
+    - Prevent double checkpoint message when creating a checkpoint.. The cooldown doesn't seem to work anymore.
 
 - Shop system ??
