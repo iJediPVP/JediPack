@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +23,9 @@ public class ParkourManager {
     private static HashMap<String, ParkourCourse> ParkourCourses = new HashMap<>();
     private static final String COURSE_PATH = "courses";
     private static final String CONFIG_NAME = "parkourConfig.yml";
-    private static final String PERMS_ENABLED = "enabledPermissions";
     private static FileConfiguration ParkourConfiguration;
     private static File ParkourFile;
     private static HashMap<UUID, ParkourPlayerInfo> PlayerInfos = new HashMap<>();
-
-    private static boolean permsEnabled;
 
     // Load the parkour courses from the configuratoin files.
     public static void initializeCourses(){
@@ -41,6 +39,7 @@ public class ParkourManager {
 
         // Initialize parkour commands
         plugin.getCommand(ParkourCommand.BASE_COMMAND).setExecutor(new ParkourCommand());
+        plugin.getCommand(ParkourCommand.BASE_COMMAND).setTabCompleter(new ParkourCommand());
 
         // Initialize events
         plugin.getServer().getPluginManager().registerEvents(new ParkourEvents(), plugin);
@@ -61,10 +60,6 @@ public class ParkourManager {
                 }
             }
         } // Else no courses to load.
-    }
-
-    public static boolean getPermsEnabled(){
-        return permsEnabled;
     }
 
     // Determine if a course exists.
@@ -251,7 +246,6 @@ public class ParkourManager {
             ParkourFile.getParentFile().mkdirs();
             FileConfiguration config = YamlConfiguration.loadConfiguration(ParkourFile);
             config.set(COURSE_PATH, new String[0]);
-            config.set(PERMS_ENABLED, false);
             try{
                 config.save(ParkourFile);
             }catch(IOException e){
@@ -262,7 +256,6 @@ public class ParkourManager {
 
         }else{
             FileConfiguration config = YamlConfiguration.loadConfiguration(ParkourFile);
-            permsEnabled = config.getBoolean(PERMS_ENABLED);
             return config;
         }
     }
@@ -402,6 +395,7 @@ public class ParkourManager {
 
         return null;
     }
+
 
 
     // Return a ParkourPlayerInfo for the given player and course.

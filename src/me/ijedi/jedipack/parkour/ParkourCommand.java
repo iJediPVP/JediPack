@@ -6,13 +6,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ParkourCommand implements CommandExecutor {
+public class ParkourCommand implements TabExecutor {
 
     public static final String BASE_COMMAND = "parkour";
     private final String RESTART = "restart";
@@ -27,6 +28,7 @@ public class ParkourCommand implements CommandExecutor {
     private final String ADD = "add";
     private final String REMOVE = "remove";
     private final String EDIT = "edit";
+    private final String COURSEID = "<courseId>";
 
     // Admin permissions
     private final String PKPERM_ADMIN_CREATE = "jp.parkour.admin.create";
@@ -312,6 +314,53 @@ public class ParkourCommand implements CommandExecutor {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        List<String> results = new ArrayList<String>();
 
+        // Only fill results for a player
+        if(commandSender instanceof Player){
+
+            // Figure out what to return
+            int argsLength = strings.length;
+            switch(argsLength){
+                case 1:
+                    // First args
+                    results.add(RESTART);
+                    results.add(CHECKPOINT);
+                    results.add(COURSEID);
+                    break;
+
+                case 2:
+                    // Second args - only add these if restart and checkpoint wasn't selected
+                    String firstArg = strings[0].toLowerCase();
+                    if(!firstArg.equals(RESTART) && !firstArg.equals(CHECKPOINT)){
+                        results.add(CREATE);
+                        results.add(DELETE);
+                        results.add(START);
+                        results.add(END);
+                        results.add(CREATE);
+                        results.add(EDIT);
+                        results.add(CHECKPOINT);
+                    }
+
+                    break;
+
+                case 3:
+                    // This arg is based on the previous arg
+                    if(strings[1].toLowerCase().equals(CHECKPOINT)){
+                        results.add(ADD);
+                        results.add(REMOVE);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        return results;
+    }
 
 }
