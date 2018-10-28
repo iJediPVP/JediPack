@@ -400,6 +400,9 @@ public class ParkourCourse {
 
     // Returns the checkpoint number from the given location. If not found, returns 0.
     public int getCheckpointFromLocation(Location playerLocation){
+
+        playerLocation = Util.getCenteredBlockLocation(playerLocation);
+
         for(String pointKey : PointLocations.keySet()){
 
             if(Util.doLocationsEqual(PointLocations.get(pointKey), playerLocation, false, false)){

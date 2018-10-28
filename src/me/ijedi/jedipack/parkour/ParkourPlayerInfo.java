@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.parkour;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -77,7 +78,6 @@ public class ParkourPlayerInfo {
         String fileName = folder + "/" + playerId.toString() + ".yml";
         File file = new File(fileName);
         String recordTimePath = courseId + "." + RECORDTIME;
-        JediPackMain.getThisPlugin().getLogger().info(recordTimePath);
 
         // If the player file doesn't exist, create it and save the current time.
         if(!file.exists()){
@@ -96,17 +96,17 @@ public class ParkourPlayerInfo {
             FileConfiguration config = YamlConfiguration.loadConfiguration(file);
             long storedRecord = config.getLong(recordTimePath);
             if(storedRecord > courseTime || storedRecord == 0) {
-                JediPackMain.getThisPlugin().getLogger().info("stored > coursetime");
+
                 config.set(recordTimePath, courseTime);
                 try {
                     config.save(file);
                 } catch (IOException e) {
-                    JediPackMain.getThisPlugin().getLogger().info("Error saving parkour player file for player id " + playerId.toString());
+                    MessageTypeEnum.ParkourMessage.logMessage("Error saving parkour player file for player id " + playerId.toString());
+                    MessageTypeEnum.ParkourMessage.logMessage(e.toString());
                 }
                 return true;
 
             } else {
-                JediPackMain.getThisPlugin().getLogger().info("stored <= coursetime");
                 recordTime = storedRecord;
                 return false;
             }
