@@ -16,9 +16,9 @@ commands:
   jpmotd:
     description: "Reloads the configuration for MOTD."
     usage: /jpmotd reload
-  jpsmite:
+  smite:
     description: "Smites the specified player."
-    usage: /jpsmite <player>
+    usage: /smite <player>
   signlock:
     description: "Interact with Sign Locks."
     usage: /signlock

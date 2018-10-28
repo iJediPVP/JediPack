@@ -11,7 +11,8 @@ public enum MessageTypeEnum {
     TabMessage("[TabMessage]", ChatColor.GOLD, ChatColor.BOLD, null),
     MOTDMessage("[MOTD]", ChatColor.GOLD, ChatColor.BOLD, null),
     ParkourMessage("[Parkour]", ChatColor.GOLD, ChatColor.BOLD, null),
-    SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, null);
+    SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, null),
+    SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, null);
 
 
 
