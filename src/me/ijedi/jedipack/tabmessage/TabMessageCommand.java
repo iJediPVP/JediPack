@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class TabMessageCommand implements CommandExecutor {
 
-    public static final String BASE_COMMAND = "jptm";
+    public static final String BASE_COMMAND = "tabmessage";
     private static final String RELOAD_PERM = "jp.tabmessage.reload";
     private static final String RELOAD_ARG = "reload";
 
@@ -24,8 +24,8 @@ public class TabMessageCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
 
         // Check for player permission
-        if(commandSender instanceof Player && !((Player)commandSender).hasPermission(RELOAD_PERM)){
-            commandSender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+        if(!commandSender.hasPermission(RELOAD_PERM)){
+            MessageTypeEnum.TabMessage.sendMessage(ChatColor.RED + "You do not have permission to use this command.", commandSender, true);
             return true;
         }
 

@@ -10,9 +10,9 @@ commands:
   jppk:
     description: "Interact with parkour courses. Use '/jppk help' for more information."
     usage: /jppk
-  jptm:
+  tabmessage:
     description: "Reloads the configuration for Tab Messages."
-    usage: /jptm reload
+    usage: /tabmessage reload
   jpmotd:
     description: "Reloads the configuration for MOTD."
     usage: /jpmotd reload
