@@ -343,14 +343,6 @@ public class SignLockCommand implements TabExecutor {
 
             // Figure out what to return
             int argsLength = strings.length;
-            if(argsLength == 1){
-
-                // Return first args
-                results.add(SHARE);
-                results.add(REVOKE);
-                results.add(HOPPERS);
-
-            } else if(argsLength == 2) {}
 
             switch(argsLength){
                 case 1:
