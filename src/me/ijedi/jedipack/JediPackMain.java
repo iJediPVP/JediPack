@@ -40,6 +40,7 @@ public class JediPackMain extends JavaPlugin {
 
         // Initialize tab messages
         getCommand(TabMessageCommand.BASE_COMMAND).setExecutor(new TabMessageCommand());
+        getCommand(TabMessageCommand.BASE_COMMAND).setTabCompleter(new TabMessageCommand());
         TabMessageManager.intializeTabMessages(false);
 
         // Initialize motd
