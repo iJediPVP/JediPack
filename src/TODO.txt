@@ -4,11 +4,6 @@ TODO LIST:
     - Tab Complete for: Parkour, TabMessage, MOTD, Sighn Locks
 - Parkour:
     - Really need to unload and load the course when disabling and enabling the plugin.
-    - Rename command
-
-- TabMessage:
-    - Tab complete for commands
-    - Rename command
 
 - MOTD:
     - Rename command

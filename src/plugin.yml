@@ -7,9 +7,9 @@ api-version: 1.13
 
 
 commands:
-  jppk:
-    description: "Interact with parkour courses. Use '/jppk help' for more information."
-    usage: /jppk
+  parkour:
+    description: "Interact with parkour courses. Use '/parkour help' for more information."
+    usage: /parkour
   tabmessage:
     description: "Reloads the configuration for Tab Messages."
     usage: /tabmessage reload

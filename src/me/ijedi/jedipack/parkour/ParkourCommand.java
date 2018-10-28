@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class ParkourCommand implements CommandExecutor {
 
-    public static final String BASE_COMMAND = "jppk";
+    public static final String BASE_COMMAND = "parkour";
     private final String RESTART = "restart";
     private final String CHECKPOINT = "checkpoint";
     private final String[] FIRST_ARG_BLACKLIST = {RESTART, CHECKPOINT};
