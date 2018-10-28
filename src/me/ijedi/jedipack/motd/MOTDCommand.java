@@ -5,11 +5,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MOTDCommand implements CommandExecutor {
+public class MOTDCommand implements TabExecutor {
 
     public static final String BASE_COMMAND = "motd";
     private static final String RELOAD_PERM = "jp.motd.reload";
@@ -43,4 +45,11 @@ public class MOTDCommand implements CommandExecutor {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        List<String> results = new ArrayList<String>(){{
+            add(RELOAD_ARG);
+        }};
+        return results;
+    }
 }

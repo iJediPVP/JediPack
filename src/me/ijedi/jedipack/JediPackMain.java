@@ -44,6 +44,7 @@ public class JediPackMain extends JavaPlugin {
 
         // Initialize motd
         getCommand(MOTDCommand.BASE_COMMAND).setExecutor(new MOTDCommand());
+        getCommand(MOTDCommand.BASE_COMMAND).setTabCompleter(new MOTDCommand());
         MOTDManager.initializeMOTD(false);
 
         // Initialize sign locks
