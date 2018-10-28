@@ -1,7 +1,9 @@
 package me.ijedi.jedipack.common;
 
+import me.ijedi.jedipack.parkour.ParkourManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Sign;
 
 import java.util.HashMap;
@@ -149,5 +151,14 @@ public class Util {
         location.setX(location.getX() + .5);
         location.setZ(location.getZ() + .5);
         return location;
+    }
+
+
+    public static boolean hasNoPerms(Player player, String permission, MessageTypeEnum messageTypeEnum){
+        if(!player.hasPermission(permission)){
+            messageTypeEnum.sendMessage("You need permission to use this command!", player, true);
+            return true;
+        }
+        return false;
     }
 }

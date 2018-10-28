@@ -54,3 +54,10 @@ permissions:
 
   jp.smite:
     description: "Gives permission to the command '/jpsmite'."
+
+  jp.signlock.share:
+    description: "Gives permission to the command '/signlock share ...'"
+  jp.signlock.revoke:
+    description: "Gives permission to the command '/signlock revoke ...'"
+  jp.signlock.hoppers:
+    description: "Gives permission to the command '/signlock hoppers ...'"

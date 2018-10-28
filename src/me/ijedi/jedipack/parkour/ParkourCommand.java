@@ -106,7 +106,7 @@ public class ParkourCommand implements CommandExecutor {
                     if(secondArg.equals(CREATE)) {
 
                         // Check perms
-                        if(hasNoPerms(player, PKPERM_ADMIN_CREATE)){
+                        if(Util.hasNoPerms(player, PKPERM_ADMIN_CREATE, MessageTypeEnum.ParkourMessage)){
                             return true;
                         }
 
@@ -117,7 +117,7 @@ public class ParkourCommand implements CommandExecutor {
                     }else if(secondArg.equals(DELETE)){ // Handle delete
 
                         // Check perms
-                        if(hasNoPerms(player, PKPERM_ADMIN_DELETE)){
+                        if(Util.hasNoPerms(player, PKPERM_ADMIN_DELETE, MessageTypeEnum.ParkourMessage)){
                             return true;
                         }
 
@@ -128,7 +128,7 @@ public class ParkourCommand implements CommandExecutor {
                     }else if(secondArg.equals(START)){ // Handle start
 
                         // Check perms
-                        if(hasNoPerms(player, PKPERM_ADMIN_START)){
+                        if(Util.hasNoPerms(player, PKPERM_ADMIN_START, MessageTypeEnum.ParkourMessage)){
                             return true;
                         }
 
@@ -152,7 +152,7 @@ public class ParkourCommand implements CommandExecutor {
                     if(secondArg.equals(END)) { // Handle end
 
                         // Check perms
-                        if(hasNoPerms(player, PKPERM_ADMIN_FINISH)){
+                        if(Util.hasNoPerms(player, PKPERM_ADMIN_FINISH, MessageTypeEnum.ParkourMessage)){
                             return true;
                         }
 
@@ -175,7 +175,7 @@ public class ParkourCommand implements CommandExecutor {
                             if(thirdArg.equals(ADD)){
 
                                 // Check perms
-                                if(hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_ADD)){
+                                if(Util.hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_ADD, MessageTypeEnum.ParkourMessage)){
                                     return true;
                                 }
 
@@ -193,7 +193,7 @@ public class ParkourCommand implements CommandExecutor {
                             } else if(thirdArg.equals(REMOVE)){ // Remove a checkpoint
 
                                 // Check perms
-                                if(hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_REMOVE)){
+                                if(Util.hasNoPerms(player, PKPERM_ADMIN_CHECKPOINT_REMOVE, MessageTypeEnum.ParkourMessage)){
                                     return true;
                                 }
 
@@ -224,7 +224,7 @@ public class ParkourCommand implements CommandExecutor {
                     } else if(secondArg.equals(EDIT)){
 
                         // Check perms
-                        if(hasNoPerms(player, PKPERM_ADMIN_EDIT)){
+                        if(Util.hasNoPerms(player, PKPERM_ADMIN_EDIT, MessageTypeEnum.ParkourMessage)){
                             return true;
                         }
 
@@ -239,7 +239,7 @@ public class ParkourCommand implements CommandExecutor {
             } else if(firstArg.equals(RESTART)) {
 
                 // Check perms
-                if(hasNoPerms(player, PKPERM_PARKOUR_RESTART)){
+                if(Util.hasNoPerms(player, PKPERM_PARKOUR_RESTART, MessageTypeEnum.ParkourMessage)){
                     return true;
                 }
 
@@ -263,7 +263,7 @@ public class ParkourCommand implements CommandExecutor {
             } else if (firstArg.equals(CHECKPOINT)){
 
                 // Check perms
-                if(hasNoPerms(player, PKPERM_PARKOUR_CHECKPOINT)){
+                if(Util.hasNoPerms(player, PKPERM_PARKOUR_CHECKPOINT, MessageTypeEnum.ParkourMessage)){
                     return true;
                 }
 
@@ -313,11 +313,5 @@ public class ParkourCommand implements CommandExecutor {
     }
 
 
-    public boolean hasNoPerms(Player player, String permission){
-        if(ParkourManager.getPermsEnabled() && !player.hasPermission(permission)){
-            MessageTypeEnum.ParkourMessage.sendMessage("You need permission to use this command!", player, true);
-            return true;
-        }
-        return false;
-    }
+
 }

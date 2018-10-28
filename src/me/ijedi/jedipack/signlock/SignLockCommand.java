@@ -3,6 +3,7 @@ package me.ijedi.jedipack.signlock;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,11 +20,23 @@ public class SignLockCommand implements CommandExecutor {
     public static final String REVOKE = "revoke";
     public static final String HOPPERS = "hoppers";
 
+    // Permissions
+    private final String SIGNLOCKPERM_SHARE = "jp.signlock.share";
+    private final String SIGNLOCKPERM_REVOKE = "jp.signlock.revoke";
+    private final String SIGNLOCKPERM_HOPPERS = "jp.signlock.hoppers";
+
+    private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
+        add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + SHARE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Grants access to the specified players for the specified lock number.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + REVOKE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Revokes access from the specified players for the specified lock number.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + HOPPERS + "<lockNumber>" + ChatColor.GREEN + ": Toggles if hoppers can interact with the locked container.");
+    }};
+
     /*
     Commands:
     /signlock share <lockNumber> <playerName>...    : Give access to another player
     /signlock revoke <lockNumber> <playerName>...   : Remove access from a player
-    /signlock hopppers <lockNumber>                 : Toggle if hoppers can interact with the locked container
+    /signlock hoppers <lockNumber>                 : Toggle if hoppers can interact with the locked container
 
     * */
 
@@ -37,14 +50,18 @@ public class SignLockCommand implements CommandExecutor {
         }
 
 
-
         // Check for args
+        Player player = (Player)commandSender;
         if(args.length > 0){
-            Player player = (Player)commandSender;
             String firstArg = args[0].toLowerCase();
 
             if(firstArg.equals(SHARE)){
                 ////// Give access to a container
+
+                // Check perms
+                if(Util.hasNoPerms(player, SIGNLOCKPERM_SHARE, MessageTypeEnum.SignLockMessage)){
+                    return true;
+                }
 
                 // Check for a lock number
                 if(args.length > 1){
@@ -156,6 +173,11 @@ public class SignLockCommand implements CommandExecutor {
             } else if(firstArg.equals(REVOKE)){
                 ////// Revoke access to a container
 
+                // Check perms
+                if(Util.hasNoPerms(player, SIGNLOCKPERM_REVOKE, MessageTypeEnum.SignLockMessage)){
+                    return true;
+                }
+
                 // Check for a lock number
                 if(args.length > 1){
                     String lockStr = args[1];
@@ -265,6 +287,12 @@ public class SignLockCommand implements CommandExecutor {
 
             } else if(firstArg.equals(HOPPERS)){
                 ////// Toggle hoppers
+
+                // Check perms
+                if(Util.hasNoPerms(player, SIGNLOCKPERM_HOPPERS, MessageTypeEnum.SignLockMessage)){
+                    return true;
+                }
+
                 // Check for a lock number
                 if(args.length > 1){
                     String lockStr = args[1];
@@ -296,7 +324,10 @@ public class SignLockCommand implements CommandExecutor {
             }
         }
 
-        // TODO: Help text
-        return false;
+        for(String msg : HELP_LIST){
+            player.sendMessage(msg);
+        }
+
+        return true;
     }
 }
