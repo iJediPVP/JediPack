@@ -104,7 +104,7 @@ public class SignLock {
     public boolean isLockedLocation(Location testLocation){
         // Get the block locked by the sign
         Block lockedContainer = Util.getBlockFromPlacedSign(lockLocation.getBlock());
-        Location lockedLocation = Util.centerSignLockLocation(lockedContainer.getLocation());
+        Location lockedLocation = Util.getCenteredBlockLocation(lockedContainer.getLocation());
 
         // Handle doors
         Block testBlock = testLocation.getBlock();

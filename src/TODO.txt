@@ -1,8 +1,10 @@
 TODO LIST:
 - Misc:
+    - Update to spigot 1.13.2
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
 - Parkour:
     - Really need to unload and load the course when disabling and enabling the plugin.
+    - Prevent parkour blocks from exploding or being moved by pistons. (Like sign locks)
 
 - Shop system ??

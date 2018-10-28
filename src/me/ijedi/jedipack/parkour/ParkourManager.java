@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -264,6 +263,7 @@ public class ParkourManager {
 
     // Returns if the given location belongs to a parkour course
     public static Boolean isParkourBlockLocation(Location location){
+
         // Check start, finish, and checkpoints
         if(isStartLocation(location, true, null)
                 || isFinishLocation(location, true, null)
@@ -275,6 +275,8 @@ public class ParkourManager {
 
     // Returns if the given location is a starting point.
     public static boolean isStartLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
+
+        location = Util.getCenteredBlockLocation(location);
 
         // Check the given course
         if(courseToCheck != null){
@@ -312,6 +314,8 @@ public class ParkourManager {
     // Returns if the given location is a finishing point.
     public static boolean isFinishLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
 
+        location = Util.getCenteredBlockLocation(location);
+
         // Check the given course
         if(courseToCheck != null){
 
@@ -348,10 +352,12 @@ public class ParkourManager {
     // Return if the given location is a checkpoint.
     public static boolean isCheckpointLocation(Location location, boolean checkBelow, ParkourCourse courseToCheck){
 
+        location = Util.getCenteredBlockLocation(location);
+
         // Check the given course
         if(courseToCheck != null){
-
             for(Location pointLoc : courseToCheck.getPointLocations().values()){
+
                 if(Util.doLocationsEqual(pointLoc, location, false, false)){
                     return true;
                 }
@@ -365,6 +371,7 @@ public class ParkourManager {
 
         // Loop through courses and check finish location
         for(ParkourCourse course : ParkourCourses.values()){
+
             for(Location pointLoc : course.getPointLocations().values()){
                 if(Util.doLocationsEqual(pointLoc, location, false, false)){
                     return true;

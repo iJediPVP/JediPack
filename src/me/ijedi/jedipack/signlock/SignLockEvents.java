@@ -51,7 +51,7 @@ public class SignLockEvents implements Listener {
             return;
         }
 
-        Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+        Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
 
         // If this location is locked, don't allow it to be broken.
         if(SignLockManager.isSignLockLocation(blockLoc)){
@@ -114,8 +114,8 @@ public class SignLockEvents implements Listener {
 
                 Player player = event.getPlayer();
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
-                Location blockLocation = Util.centerSignLockLocation(eventBlock.getLocation());
-                Location placedOnBlockLocation = Util.centerSignLockLocation(placedOnBlock.getLocation());
+                Location blockLocation = Util.getCenteredBlockLocation(eventBlock.getLocation());
+                Location placedOnBlockLocation = Util.getCenteredBlockLocation(placedOnBlock.getLocation());
 
                 if(playerInfo.hasLockAtLocation(blockLocation, placedOnBlockLocation)){
                     MessageTypeEnum.SignLockMessage.sendMessage("There is already a sign lock on this location.", player, true);
@@ -155,7 +155,7 @@ public class SignLockEvents implements Listener {
         Block block = event.getClickedBlock();
         if(LOCKABLE_CONTAINERS.contains(block.getType()) || LOCKABLE_DOORS.contains(block.getType())){
 
-            Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+            Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
             if(SignLockManager.isSignLockLocation(blockLoc)){
                 SignLock lock = SignLockManager.getLockFromLocation(blockLoc);
 
@@ -188,7 +188,7 @@ public class SignLockEvents implements Listener {
         if(event.getDestination().getHolder() instanceof Hopper){
 
             // See if this is a locked location
-            Location eventLocation = Util.centerSignLockLocation(event.getSource().getLocation());
+            Location eventLocation = Util.getCenteredBlockLocation(event.getSource().getLocation());
             if(SignLockManager.isSignLockLocation(eventLocation)){
                 SignLock lock = SignLockManager.getLockFromLocation(eventLocation);
                 if(!lock.isHoppersEnabled()){
@@ -199,7 +199,7 @@ public class SignLockEvents implements Listener {
         } else if(event.getSource().getHolder() instanceof Hopper){
 
             // See if this is a locked location
-            Location eventLocation = Util.centerSignLockLocation(event.getDestination().getLocation());
+            Location eventLocation = Util.getCenteredBlockLocation(event.getDestination().getLocation());
             if(SignLockManager.isSignLockLocation(eventLocation)){
                 SignLock lock = SignLockManager.getLockFromLocation(eventLocation);
                 if(!lock.isHoppersEnabled()){
@@ -219,7 +219,7 @@ public class SignLockEvents implements Listener {
         for(Block block : explodingBlocks){
 
             // If it's a sign lock location, remove the block
-            Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+            Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
             if(SignLockManager.isSignLockLocation(blockLoc)){
                 blocksToRemove.add(block);
             }
@@ -237,7 +237,7 @@ public class SignLockEvents implements Listener {
         // Prevent redstone from interacting with locked doors
         Block block = event.getBlock();
         if(LOCKABLE_DOORS.contains(block.getType())){
-            Location blockLoc = Util.centerSignLockLocation(block.getLocation());
+            Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
             if(SignLockManager.isSignLockLocation(blockLoc)){
                 event.setNewCurrent(event.getOldCurrent());
             }
@@ -261,7 +261,7 @@ public class SignLockEvents implements Listener {
     private boolean shouldCancelPistonEvent(List<Block> blocks){
         // Cancel the event if any of the blocks are a locked location
         for(Block block : blocks){
-            if(SignLockManager.isSignLockLocation(Util.centerSignLockLocation(block.getLocation()))){
+            if(SignLockManager.isSignLockLocation(Util.getCenteredBlockLocation(block.getLocation()))){
                 return true;
             }
         }

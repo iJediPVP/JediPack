@@ -45,7 +45,7 @@ public class ParkourStand {
         location.getBlock().setType(isStartingPoint || isFinishingPoint ? Material.LIGHT_WEIGHTED_PRESSURE_PLATE : Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
 
         // Center the location, and raise up the stand so it doesn't interfere with the pressure plate below it.
-        Location centeredLocation = Util.centerParkourLocation(location);
+        Location centeredLocation = location;
         centeredLocation.setY(centeredLocation.getY() + .25);
 
         // Spawn the footer stand

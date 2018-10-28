@@ -1,6 +1,5 @@
 package me.ijedi.jedipack.common;
 
-import me.ijedi.jedipack.parkour.ParkourManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -61,12 +60,12 @@ public class Util {
             if(loc1.getWorld().getUID().equals(loc2.getWorld().getUID())
             && loc1.getX() == loc2.getX() && loc1.getZ() == loc2.getZ()) {
 
-                // See if we should check above location 1.
-                double y1 = loc1.getY();
+                // See if we should check above or below location 1.
+                double y1 = loc1.getBlockY();
                 if(checkBelowLoc1){
-                    y1 = loc1.getY() - 1;
+                    y1 = loc1.getBlockY() - 1;
                 } else if(checkAboveBlockLoc1){
-                    y1 = loc1.getY() + 1;
+                    y1 = loc1.getBlockY() + 1;
                 }
 
                 if(y1 == loc2.getY()){
@@ -78,22 +77,6 @@ public class Util {
         }
 
         return false;
-    }
-
-    public static Location centerParkourLocation(Location location){
-
-        // Center the X and Z
-        double origX = location.getX();
-        double newX = origX - (origX % 1); // Get the whole number
-        newX = origX < 0 ? newX - .5 : newX + .5; // Add or subtract .5
-
-        double origZ = location.getZ();
-        double newZ = origZ - (origZ % 1); // Get the whole number
-        newZ = origZ < 0 ? newZ - .5 : newZ + .5; // Add or subtract .5
-
-
-        Location centeredLoc = new Location(location.getWorld(), newX, location.getY(), newZ);
-        return centeredLoc;
     }
 
 
@@ -141,16 +124,8 @@ public class Util {
     }
 
     public static Location getCenteredBlockLocation(Location location){
-        location.setX(location.getX() + .5);
-        location.setZ(location.getZ() - .5);
-        return location;
-    }
-
-    public static Location centerSignLockLocation(Location location){
-
-        location.setX(location.getX() + .5);
-        location.setZ(location.getZ() + .5);
-        return location;
+        Location newLoc = new Location(location.getWorld(), location.getX() + .5, location.getY(), location.getZ() + .5);
+        return newLoc;
     }
 
 

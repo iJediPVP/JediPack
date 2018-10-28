@@ -252,7 +252,6 @@ public class ParkourCommand implements TabExecutor {
                     // Get the start location of the course and teleport the player there.
                     ParkourCourse course = ParkourManager.getCourse(info.getCourseId());
                     Location startLoc = course.getStartLocation();
-                    startLoc = Util.centerParkourLocation(startLoc);
                     startLoc.setYaw(player.getLocation().getYaw());
                     player.teleport(startLoc);
                     MessageTypeEnum.ParkourMessage.sendMessage(String.format("You have been teleported back to the start of course '%s'!", info.getCourseId()), player, false);
@@ -290,7 +289,6 @@ public class ParkourCommand implements TabExecutor {
                     }
 
                     checkpointLoc.setYaw(player.getLocation().getYaw());
-                    checkpointLoc = Util.centerParkourLocation(checkpointLoc);
                     player.teleport(checkpointLoc);
                     MessageTypeEnum.ParkourMessage.sendMessage(String.format("Returned to checkpoint #%s!", info.getCurrentCheckpoint()), player, false);
                     info.beginCheckpointMessageCoolDown(info.getCurrentCheckpoint());

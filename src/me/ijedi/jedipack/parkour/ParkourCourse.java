@@ -76,9 +76,9 @@ public class ParkourCourse {
             UUID worldId = UUID.fromString(worldIdStr);
             World world = Bukkit.getWorld(worldId);
 
-            int x = startSection.getInt(X);
-            int y = startSection.getInt(Y);
-            int z = startSection.getInt(Z);
+            double x = startSection.getDouble(X);
+            double y = startSection.getDouble(Y);
+            double z = startSection.getDouble(Z);
 
             StartLocation = new Location(world, x, y, z);
         }
@@ -92,9 +92,9 @@ public class ParkourCourse {
             UUID worldId = UUID.fromString(worldIdStr);
             World world = Bukkit.getWorld(worldId);
 
-            int x = finishSection.getInt(X);
-            int y = finishSection.getInt(Y);
-            int z = finishSection.getInt(Z);
+            double x = finishSection.getDouble(X);
+            double y = finishSection.getDouble(Y);
+            double z = finishSection.getDouble(Z);
 
             FinishLocation = new Location(world, x, y, z);
         }
@@ -113,9 +113,9 @@ public class ParkourCourse {
                     UUID worldId = UUID.fromString(worldIdStr);
                     World world = Bukkit.getWorld(worldId);
 
-                    int x = configSection.getInt(X);
-                    int y = configSection.getInt(Y);
-                    int z = configSection.getInt(Z);
+                    double x = configSection.getDouble(X);
+                    double y = configSection.getDouble(Y);
+                    double z = configSection.getDouble(Z);
 
                     if(PointLocations.containsKey(pointKey)){
                         continue;
@@ -148,8 +148,11 @@ public class ParkourCourse {
             return msg;
         }
 
+        // Base our saved location off the center of the block of the given location
+        Location saveLocation = Util.getCenteredBlockLocation(location.getBlock().getLocation());
+
         // Verify that the block under the point is a solid.
-        Location belowLocation = new Location(location.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+        Location belowLocation = new Location(saveLocation.getWorld(), saveLocation.getX(), saveLocation.getY() - 1, saveLocation.getZ());
         if(!belowLocation.getBlock().getType().isSolid()){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage("A parkour point must be placed on a solid block!", true, true);
             return msg;
@@ -157,11 +160,10 @@ public class ParkourCourse {
 
 
         // Get location info
-        String worldId = location.getWorld().getUID().toString();
-        int x = location.getBlockX();
-        int y = location.getBlockY();
-        int z = location.getBlockZ();
-        Location saveLocation = new Location(location.getWorld(), x, y, z);
+        String worldId = saveLocation.getWorld().getUID().toString();
+        double x = saveLocation.getX();
+        double y = saveLocation.getY();
+        double z = saveLocation.getZ();
 
         // Determine config path
         String baseConfigPath = "";
@@ -190,6 +192,7 @@ public class ParkourCourse {
                 output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId), true, true);
                 return output;
             }
+
             PointLocations.put(pointStr, saveLocation);
         }
 
@@ -203,7 +206,7 @@ public class ParkourCourse {
             CourseConfiguration.set(baseConfigPath + Z, z);
 
             // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
-            ParkourStand stand = ParkourStand.SpawnStand(location, isStart, isFinish, pointNumber);
+            ParkourStand stand = ParkourStand.SpawnStand(saveLocation, isStart, isFinish, pointNumber);
             UUID footerId = stand.getFooterStandId();
             UUID headerId = stand.getHeaderStandId();
 
