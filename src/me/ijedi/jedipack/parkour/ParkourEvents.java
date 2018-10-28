@@ -6,23 +6,25 @@ import me.ijedi.jedipack.menu.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class ParkourMenuEvent implements Listener {
+public class ParkourEvents implements Listener {
 
     public static final String MENU_PREFIX = "Edit";
 
+    // Handle when a player clicks on an inventory for a parkour course.
     @EventHandler
     public void invClick(InventoryClickEvent event){
 
@@ -203,5 +205,149 @@ public class ParkourMenuEvent implements Listener {
         lore.add(ChatColor.GREEN + "Y: " + ChatColor.GOLD + location.getY());
         lore.add(ChatColor.GREEN + "Z: " + ChatColor.GOLD + location.getZ());
         return lore;
+    }
+
+
+    // Handle when someone tries to break a parkour point.
+    @EventHandler
+    public void onParkourBlockBreak(BlockBreakEvent event){
+
+        // See if the block location matches one of our parkour points
+        Location blockLocation = event.getBlock().getLocation();
+        if(ParkourManager.isParkourBlockLocation(blockLocation)){
+            Player player = event.getPlayer();
+            if(player != null){
+                MessageTypeEnum.ParkourMessage.sendMessage("You cannot break this. It's part of a parkour course!", player, true);
+            }
+            event.setCancelled(true);
+        }
+    }
+
+
+    // Handle when a player steps on a parkour pressure plate.
+    @EventHandler
+    public void onPointInteract(PlayerInteractEvent event){
+
+        // Only check physical action types
+        if(event.getAction() == Action.PHYSICAL){
+
+            // Get the block location
+            Block block = event.getClickedBlock();
+            Location location = block.getLocation();
+            Player player = event.getPlayer();
+
+            /*// See if the player has perms
+            if(ParkourManager.getPermsEnabled() && !player.hasPermission(ParkourCommand.PKPERM_PARKOUR)){
+                player.sendMessage(ParkourManager.formatParkourString("You do not have permission to use this!", true));
+                return;
+            }*/
+
+            // Check for a course id
+            String courseId = ParkourManager.getCourseIdFromLocation(location);
+            if(!Util.isNullOrEmpty(courseId)){
+                ParkourCourse course = ParkourManager.getCourse(courseId);
+
+
+                // Starting point
+                if(ParkourManager.isStartLocation(location, false, course)){
+
+                    // Get the player info for this player from the parkour manager
+                    ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
+
+                    // See if there is a start cool down
+                    if(info.hasStartMessageCoolDown()){
+                        return;
+                    }
+
+                    // If the player has already started, reset their start date.
+                    if(info.hasStartedThisCourse(courseId)){
+                        Date startDate = new Date();
+                        info.setStartDate(startDate, courseId);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("Restarting course '%s'!", courseId), player,false);
+
+                    } else {
+                        // Else we haven't started this course. So we should start it.
+                        Date startDate = new Date();
+                        info.setStartDate(startDate, courseId);
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("Course '%s' started!", courseId), player, false);
+                    }
+                    info.beginStartMessageCoolDown();
+
+
+                } else if(ParkourManager.isFinishLocation(location, false, course)){
+
+                    // Get the player info for this player from the parkour manager
+                    ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
+
+                    // See if there is a finish cool down
+                    if(info.hasFinishMessageCoolDown()){
+                        return;
+                    }
+
+                    // If the player hasn't started this course, send them a warning.
+                    if(!info.hasStartedThisCourse(courseId)){
+                        MessageTypeEnum.ParkourMessage.sendMessage(String.format("You haven't started course '%s' yet!", courseId), player,true);
+
+                    } else {
+
+                        // They finished!
+                        long courseTime = info.getCourseTime(new Date());
+                        boolean isNewRecord = info.checkForCourseRecord();
+                        String timeStr = info.formatTime(courseTime);
+                        if(isNewRecord){
+                            MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a new record time of '%s'!", courseId, timeStr), player,false);
+
+                        } else {
+                            long prevRecordTime = info.getRecordTime();
+                            if(prevRecordTime == 0){
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a time of %s!", courseId, timeStr), player,false);
+                            } else {
+                                String prevRecordTimeStr = info.formatTime(prevRecordTime);
+                                MessageTypeEnum.ParkourMessage.sendMessage(String.format("Congratulations! You have finished course '%s' with a time of %s! Your personal best is %s!", courseId, timeStr, prevRecordTimeStr), player,false);
+                            }
+                            info.finishedCourse();
+                        }
+
+                        info.beginFinishMessageCoolDown(true);
+                        return;
+                    }
+                    info.beginFinishMessageCoolDown(false);
+
+                } else if(ParkourManager.isCheckpointLocation(location, false, course)){
+                    // Checkpoint location
+
+                    // See if the player has started the course yet
+                    ParkourPlayerInfo info = ParkourManager.getPlayerInfo(player, courseId);
+                    if(!info.hasStartedThisCourse(courseId)){
+                        int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
+                        if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
+                            MessageTypeEnum.ParkourMessage.sendMessage("You haven't started this course yet!", player,true);
+                            info.beginCheckpointMessageCoolDown(activatedCheckpoint);
+                        }
+
+                        return;
+                    }
+
+                    // See if the player has already hit this checkpoint
+                    int currentCheckpoint = info.getCurrentCheckpoint();
+                    int activatedCheckpoint = course.getCheckpointFromLocation(event.getClickedBlock().getLocation());
+                    if(!info.hasCheckpointMessageCoolDown(activatedCheckpoint)){
+                        if(activatedCheckpoint > currentCheckpoint){
+                            MessageTypeEnum.ParkourMessage.sendMessage("Checkpoint reached!", player,false);
+                            info.setCurrentCheckpoint(activatedCheckpoint);
+
+                        } else {
+                            MessageTypeEnum.ParkourMessage.sendMessage("You've already reached this checkpoint!", player, true);
+                        }
+                        info.beginCheckpointMessageCoolDown(activatedCheckpoint);
+                    }
+                    //info.beginCheckpointMessageCoolDown();
+                    return;
+                }
+            }
+
+
+        }
+
     }
 }

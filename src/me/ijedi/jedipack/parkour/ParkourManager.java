@@ -43,9 +43,7 @@ public class ParkourManager {
         plugin.getCommand(ParkourCommand.BASE_COMMAND).setExecutor(new ParkourCommand());
 
         // Initialize events
-        plugin.getServer().getPluginManager().registerEvents(new ParkourBlockBreakEvent(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new ParkourMenuEvent(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new ParkourPointInteractEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ParkourEvents(), plugin);
 
         // Get the config section
         ParkourFile = getFile();
@@ -202,7 +200,7 @@ public class ParkourManager {
     public static void openCourseMenu(String courseId, Player player){
         try{
             ParkourCourse course = getCourse(courseId);
-            Menu menu = ParkourMenuEvent.getMenuFromCourse(courseId, course);
+            Menu menu = ParkourEvents.getMenuFromCourse(courseId, course);
             player.openInventory(new MenuManager().getMenu(menu.getName()));
         }
         catch (NullPointerException e){
