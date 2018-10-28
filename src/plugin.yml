@@ -13,9 +13,9 @@ commands:
   tabmessage:
     description: "Reloads the configuration for Tab Messages."
     usage: /tabmessage reload
-  jpmotd:
+  motd:
     description: "Reloads the configuration for MOTD."
-    usage: /jpmotd reload
+    usage: /motd reload
   smite:
     description: "Smites the specified player."
     usage: /smite <player>
@@ -42,18 +42,18 @@ permissions:
   jp.parkour.user.course:
     description: "Gives permission to a player to use a parkour course."
   jp.parkour.user.restart:
-    description: "Gives permission to the command '/jppk restart'."
+    description: "Gives permission to the command '/parkour restart'."
   jp.parkour.user.checkpoint:
-    description: "Gives permission to the command '/jppk checkpoint'."
+    description: "Gives permission to the command '/parkour checkpoint'."
 
   jp.tabmessage.reload:
-    description: "Gives permission to the command '/jptm reload'."
+    description: "Gives permission to the command '/tabmessage reload'."
 
   jp.motd.reload:
-    description: "Gives permission to the command '/jpmotd reload'."
+    description: "Gives permission to the command '/motd reload'."
 
   jp.smite:
-    description: "Gives permission to the command '/jpsmite'."
+    description: "Gives permission to the command '/smite'."
 
   jp.signlock.share:
     description: "Gives permission to the command '/signlock share ...'"

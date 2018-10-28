@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class MOTDCommand implements CommandExecutor {
 
-    public static final String BASE_COMMAND = "jpmotd";
+    public static final String BASE_COMMAND = "motd";
     private static final String RELOAD_PERM = "jp.motd.reload";
     private static final String RELOAD_ARG = "reload";
 

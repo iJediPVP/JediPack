@@ -5,7 +5,4 @@ TODO LIST:
 - Parkour:
     - Really need to unload and load the course when disabling and enabling the plugin.
 
-- MOTD:
-    - Rename command
-
 - Shop system ??
