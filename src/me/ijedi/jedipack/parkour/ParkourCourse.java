@@ -24,9 +24,9 @@ public class ParkourCourse {
     private HashMap<String, Location> PointLocations = new HashMap<>();
 
     private final String WORLDID = "worldId";
-    private final String START = "start";
-    private final String FINISH = "finish";
-    private final String POINT = "point";
+    public static final String START = "start";
+    public static final String FINISH = "finish";
+    public static final String POINT = "point";
     private final String X = "x";
     private final String Y = "y";
     private final String Z = "z";
@@ -129,21 +129,21 @@ public class ParkourCourse {
     }
 
     // Set the location of a specified point for this ParkourCourse.
-    public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber) {
+    public String setPointLocation(Location location, boolean isStart, boolean isFinish, int pointNumber, boolean isLoadOnly) {
 
-        if(isStart && StartLocation != null){
+        if(isStart && StartLocation != null && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A starting point for course '%s' has already been set!", CourseId), true, true);
             return msg;
         } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
 
-        if(isFinish && FinishLocation != null){
+        if(isFinish && FinishLocation != null && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A finishing point for course '%s' has already been set!", CourseId), true, true);
             return  msg;
         } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
 
 
         // Make sure the block the player's feet is in is AIR.
-        if(!location.getBlock().getType().equals(Material.AIR)){
+        if(!location.getBlock().getType().equals(Material.AIR) && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage("A parkour point cannot be placed here!", true, true);
             return msg;
         }
@@ -153,7 +153,7 @@ public class ParkourCourse {
 
         // Verify that the block under the point is a solid.
         Location belowLocation = new Location(saveLocation.getWorld(), saveLocation.getX(), saveLocation.getY() - 1, saveLocation.getZ());
-        if(!belowLocation.getBlock().getType().isSolid()){
+        if(!belowLocation.getBlock().getType().isSolid() && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage("A parkour point must be placed on a solid block!", true, true);
             return msg;
         }
@@ -172,13 +172,17 @@ public class ParkourCourse {
         if (isStart) {
             baseConfigPath = START + ".";
             output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("The starting point for course '%s' has been set!", CourseId), true, false);
-            StartLocation = saveLocation;
+            if(!isLoadOnly) {
+                StartLocation = saveLocation;
+            }
             pointName = "Parkour Start";
 
         } else if (isFinish) {
             baseConfigPath = FINISH + ".";
             output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("The finishing point for course '%s' has been set!", CourseId), true, false);
-            FinishLocation = saveLocation;
+            if(!isLoadOnly) {
+                FinishLocation = saveLocation;
+            }
             pointName = "Parkour Finish";
 
         } else if (pointNumber > 0) {
@@ -188,22 +192,26 @@ public class ParkourCourse {
 
             // If we don't already have this point, add it.
             String pointStr = Integer.toString(pointNumber);
-            if(PointLocations.containsKey(pointStr)){
+            if(PointLocations.containsKey(pointStr) && !isLoadOnly){
                 output = MessageTypeEnum.ParkourMessage.formatMessage(String.format("Point '#%s' already exists for course '%s'.", pointNumber, CourseId), true, true);
                 return output;
             }
 
-            PointLocations.put(pointStr, saveLocation);
+            if(!isLoadOnly) {
+                PointLocations.put(pointStr, saveLocation);
+            }
         }
 
         // If the config path did not get set, return false
         if (!Util.isNullOrEmpty(baseConfigPath)) {
 
             // Store config info
-            CourseConfiguration.set(baseConfigPath + WORLDID, worldId);
-            CourseConfiguration.set(baseConfigPath + X, x);
-            CourseConfiguration.set(baseConfigPath + Y, y);
-            CourseConfiguration.set(baseConfigPath + Z, z);
+            if(!isLoadOnly){
+                CourseConfiguration.set(baseConfigPath + WORLDID, worldId);
+                CourseConfiguration.set(baseConfigPath + X, x);
+                CourseConfiguration.set(baseConfigPath + Y, y);
+                CourseConfiguration.set(baseConfigPath + Z, z);
+            }
 
             // Use the original location here to prevent weird things from happening.. AKA the stands shift over to the next block.
             ParkourStand stand = ParkourStand.SpawnStand(saveLocation, isStart, isFinish, pointNumber);
@@ -289,7 +297,7 @@ public class ParkourCourse {
     }
 
     // Remove the armor stand
-    private void removeArmorStandEntity(String configPath, Location location){
+    public void removeArmorStandEntity(String configPath, Location location){
         ConfigurationSection configSection = CourseConfiguration.getConfigurationSection(configPath);
 
         if(configSection != null){

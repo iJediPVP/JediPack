@@ -1,6 +1,5 @@
 package me.ijedi.jedipack.parkour;
 
-import me.ijedi.jedipack.common.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

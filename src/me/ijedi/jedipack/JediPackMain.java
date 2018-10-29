@@ -63,6 +63,8 @@ public class JediPackMain extends JavaPlugin {
         // Executed when the plugin is disabled.
         this.getLogger().info("Disabling JediPack..");
 
+        ParkourManager.cleanup();
+
         this.getLogger().info("JediPack is disabled!");
     }
 

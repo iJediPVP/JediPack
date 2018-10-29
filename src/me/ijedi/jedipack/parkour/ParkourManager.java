@@ -6,6 +6,7 @@ import me.ijedi.jedipack.common.Util;
 import me.ijedi.jedipack.menu.Menu;
 import me.ijedi.jedipack.menu.MenuManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -56,9 +57,75 @@ public class ParkourManager {
                     MessageTypeEnum.ParkourMessage.logMessage("Loading course: " + courseName);
                     ParkourCourse course = new ParkourCourse(courseName);
                     ParkourCourses.put(courseName, course);
+
+                    // Spawn armor stands
+                    if(course.getStartLocation() != null){
+                        Location startLoc = course.getStartLocation();
+                        Location belowLoc = new Location(startLoc.getWorld(), startLoc.getX(), startLoc.getY() - 1, startLoc.getZ());
+                        if(belowLoc.getBlock().getType().equals(Material.AIR)){
+                            belowLoc.getBlock().setType(Material.STONE);
+                        }
+                        course.setPointLocation(startLoc, true, false, 0, true);
+                    }
+                    if(course.getFinishLocation() != null){
+                        Location finishLoc = course.getFinishLocation();
+                        Location belowLoc = new Location(finishLoc.getWorld(), finishLoc.getX(), finishLoc.getY() - 1, finishLoc.getZ());
+                        if(belowLoc.getBlock().getType().equals(Material.AIR)){
+                            belowLoc.getBlock().setType(Material.STONE);
+                        }
+                        course.setPointLocation(finishLoc, false, true, 0, true);
+                    }
+                    for(String checkpointStr : course.getPointLocations().keySet()){
+                        if(Util.isInteger(checkpointStr)){
+
+                            Location checkpointLoc = course.getPointLocations().get(checkpointStr);
+                            Location belowLoc = new Location(checkpointLoc.getWorld(), checkpointLoc.getX(), checkpointLoc.getY() - 1, checkpointLoc.getZ());
+                            if(belowLoc.getBlock().getType().equals(Material.AIR)){
+                                belowLoc.getBlock().setType(Material.STONE);
+                            }
+
+                            int checkpointNum = Integer.parseInt(checkpointStr);
+                            course.setPointLocation(checkpointLoc, false, false, checkpointNum, true);
+                        }
+                    }
                 }
             }
         } // Else no courses to load.
+    }
+
+    // Remove the armor stands and pressure plates for parkour courses
+    public static void cleanup(){
+
+        // See if parkour is enabled
+        if(!JediPackMain.isParkourEnabled){
+            MessageTypeEnum.ParkourMessage.logMessage("Parkour is not enabled!");
+            return;
+        }
+
+        // Remove the armor stands and pressure plates from all courses
+        for(ParkourCourse course : ParkourCourses.values()){
+
+            // Start
+            if(course.getStartLocation() != null){
+                course.removeArmorStandEntity(ParkourCourse.START, course.getStartLocation());
+                course.getStartLocation().getBlock().setType(Material.AIR);
+            }
+
+            // Finish
+            if(course.getFinishLocation() != null){
+                course.removeArmorStandEntity(ParkourCourse.FINISH, course.getFinishLocation());
+                course.getFinishLocation().getBlock().setType(Material.AIR);
+            }
+
+            // Checkpoints
+            for(String checkpointStr : course.getPointLocations().keySet()){
+                Location checkpointLoc = course.getPointLocations().get(checkpointStr);
+                course.removeArmorStandEntity(ParkourCourse.POINT + "." + checkpointStr, checkpointLoc);
+                checkpointLoc.getBlock().setType(Material.AIR);
+            }
+
+        }
+
     }
 
     // Determine if a course exists.
@@ -121,7 +188,7 @@ public class ParkourManager {
         if(doesCourseExist(courseId)){
 
             ParkourCourse course = ParkourCourses.get(courseId);
-            String output = course.setPointLocation(location, true, false, 0);
+            String output = course.setPointLocation(location, true, false, 0, false);
 
             return output;
         }
@@ -133,7 +200,7 @@ public class ParkourManager {
         if(doesCourseExist(courseId)){
 
             ParkourCourse course = ParkourCourses.get(courseId);
-            String output = course.setPointLocation(location, false, true, 0);
+            String output = course.setPointLocation(location, false, true, 0, false);
 
             return output;
         }
@@ -145,7 +212,7 @@ public class ParkourManager {
         if(doesCourseExist(courseId)){
             ParkourCourse course = ParkourCourses.get(courseId);
             int pointNumber = course.getNextCheckpointNumber();
-            String output = course.setPointLocation(location, false, false, pointNumber);
+            String output = course.setPointLocation(location, false, false, pointNumber, false);
 
             return output;
         }
