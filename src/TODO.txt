@@ -3,6 +3,5 @@ TODO LIST:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
 - Parkour:
-    - Fix pressure plates not working..
 
 - Shop system ??
