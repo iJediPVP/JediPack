@@ -1,5 +1,6 @@
 package me.ijedi.jedipack;
 
+import me.ijedi.jedipack.common.CommonEvents;
 import me.ijedi.jedipack.menu.MenuListener;
 import me.ijedi.jedipack.misc.SmiteCommand;
 import me.ijedi.jedipack.motd.MOTDCommand;
@@ -34,6 +35,7 @@ public class JediPackMain extends JavaPlugin {
         // Initialize all the things
         initConfig();
         getServer().getPluginManager().registerEvents(new MenuListener(this), this);
+        getServer().getPluginManager().registerEvents(new CommonEvents(), this);
 
         // Initialize parkour
         ParkourManager.initializeCourses();

@@ -12,13 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SignLockEvents implements Listener {
 
@@ -209,27 +207,6 @@ public class SignLockEvents implements Listener {
         }
     }
 
-    // Prevent sign locked locations from exploding
-    @EventHandler
-    public void signLockExplodeEvent(EntityExplodeEvent event){
-
-        // Loop through the blocks being destroyed
-        List<Block> explodingBlocks = event.blockList();
-        ArrayList<Block> blocksToRemove = new ArrayList<Block>();
-        for(Block block : explodingBlocks){
-
-            // If it's a sign lock location, remove the block
-            Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
-            if(SignLockManager.isSignLockLocation(blockLoc)){
-                blocksToRemove.add(block);
-            }
-
-        }
-
-        // Remove the blocks we want to save
-        event.blockList().removeAll(blocksToRemove);
-    }
-
     // Prevent redstone from affecting locked doors
     @EventHandler
     public void signLockRedstoneEvent(BlockRedstoneEvent event){
@@ -243,29 +220,4 @@ public class SignLockEvents implements Listener {
             }
         }
     }
-
-    @EventHandler
-    public void signLockPistonExtendEvent(BlockPistonExtendEvent event){
-
-        // Cancel the event if any of the blocks are a locked location
-        event.setCancelled(shouldCancelPistonEvent(event.getBlocks()));
-    }
-
-    @EventHandler
-    public void signLockPistonRetractEvent(BlockPistonRetractEvent event){
-
-        // Cancel the event if any of the blocks are a locked location
-        event.setCancelled(shouldCancelPistonEvent(event.getBlocks()));
-    }
-
-    private boolean shouldCancelPistonEvent(List<Block> blocks){
-        // Cancel the event if any of the blocks are a locked location
-        for(Block block : blocks){
-            if(SignLockManager.isSignLockLocation(Util.getCenteredBlockLocation(block.getLocation()))){
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

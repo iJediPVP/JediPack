@@ -3,6 +3,6 @@ TODO LIST:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
 - Parkour:
-    - Prevent parkour blocks from exploding or being moved by pistons. (Like sign locks)
+    - Prevent pistons from moving armor stands
 
 - Shop system ??
