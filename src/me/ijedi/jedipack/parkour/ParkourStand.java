@@ -45,7 +45,7 @@ public class ParkourStand {
 
         // Center the location, and raise up the stand so it doesn't interfere with the pressure plate below it.
         Location centeredLocation = location;
-        centeredLocation.setY(centeredLocation.getY() + .25);
+        centeredLocation.setY(centeredLocation.getY() + 2.25); // Up 2 because the hitbox is small. Up .25 to be above the player head.
 
         // Spawn the footer stand
         ArmorStand armorStand = world.spawn(centeredLocation, ArmorStand.class);
@@ -53,6 +53,7 @@ public class ParkourStand {
         armorStand.setCustomNameVisible(true);
         armorStand.setGravity(false);
         armorStand.setVisible(false);
+        armorStand.setMarker(true);
 
         // Spawn the header stand
         centeredLocation.setY(centeredLocation.getY() + .25);
@@ -61,6 +62,7 @@ public class ParkourStand {
         headerStand.setCustomNameVisible(true);
         headerStand.setGravity(false);
         headerStand.setVisible(false);
+        headerStand.setMarker(true);
 
         return new ParkourStand(armorStand.getUniqueId(), headerStand.getUniqueId());
     }
