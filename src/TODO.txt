@@ -2,6 +2,4 @@ TODO LIST:
 - Misc:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
-- Parkour:
-
-- Shop system ??
+    - Add sound effects to actions

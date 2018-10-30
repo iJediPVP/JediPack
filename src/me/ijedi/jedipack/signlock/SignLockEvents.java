@@ -28,6 +28,24 @@ public class SignLockEvents implements Listener {
         add(Material.HOPPER);
         add(Material.DISPENSER);
         add(Material.DROPPER);
+
+        add(Material.SHULKER_BOX);
+        add(Material.BLACK_SHULKER_BOX);
+        add(Material.BLUE_SHULKER_BOX);
+        add(Material.BROWN_SHULKER_BOX);
+        add(Material.CYAN_SHULKER_BOX);
+        add(Material.GRAY_SHULKER_BOX);
+        add(Material.GREEN_SHULKER_BOX);
+        add(Material.LIGHT_BLUE_SHULKER_BOX);
+        add(Material.LIGHT_GRAY_SHULKER_BOX);
+        add(Material.LIME_SHULKER_BOX);
+        add(Material.MAGENTA_SHULKER_BOX);
+        add(Material.ORANGE_SHULKER_BOX);
+        add(Material.PINK_SHULKER_BOX);
+        add(Material.PURPLE_SHULKER_BOX);
+        add(Material.RED_SHULKER_BOX);
+        add(Material.WHITE_SHULKER_BOX);
+        add(Material.YELLOW_SHULKER_BOX);
     }};
 
     public static ArrayList<Material> LOCKABLE_DOORS = new ArrayList<Material>(){{
