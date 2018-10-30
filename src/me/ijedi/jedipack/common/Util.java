@@ -1,8 +1,12 @@
 package me.ijedi.jedipack.common;
 
+import net.minecraft.server.v1_13_R2.NBTTagCompound;
+import net.minecraft.server.v1_13_R2.NBTTagString;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
 
 import java.util.HashMap;
@@ -135,5 +139,27 @@ public class Util {
             return true;
         }
         return false;
+    }
+
+    public static String getNBTTagString(ItemStack item, String tagName){
+
+        // Cast to NMS & get the tag compound
+        net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound nbtTag = nmsItem.getTag();
+        String currentValue = "";
+        if(nbtTag != null){
+            currentValue = nbtTag.getString(tagName);
+        }
+        return currentValue;
+    }
+
+    public static ItemStack setNBTTagString(ItemStack item, String tagName, String tagValue){
+
+        // Cast to NMS & get the tag compound
+        net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound nbtCompound = nmsItem.getOrCreateTag();
+        nbtCompound.set(tagName, new NBTTagString(tagValue));
+        item = CraftItemStack.asBukkitCopy(nmsItem);
+        return item;
     }
 }

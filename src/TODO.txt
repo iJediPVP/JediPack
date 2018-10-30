@@ -3,3 +3,12 @@ TODO LIST:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
     - Add sound effects to actions
+
+- Sign Locks:
+    - '/signlock info' - returns info about the player's locks
+    - Allow portable sign locks for shulker boxes:
+        - NBT Tag: signLock: <lockId>
+        - Command: /signlock mobile create/remove
+            - When creaing: check for custom nbt tag, if not exists then add the custom tag, else error
+            - When removing: check for custom nbt tag, if not exists then error
+            - Add help text

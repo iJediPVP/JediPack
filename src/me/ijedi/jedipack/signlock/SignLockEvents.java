@@ -21,14 +21,7 @@ import java.util.ArrayList;
 public class SignLockEvents implements Listener {
 
     private final String SIGNLOCK = "[SignLock]";
-    public static ArrayList<Material> LOCKABLE_CONTAINERS = new ArrayList<Material>(){{
-        add(Material.CHEST);
-        add(Material.TRAPPED_CHEST);
-        add(Material.FURNACE);
-        add(Material.HOPPER);
-        add(Material.DISPENSER);
-        add(Material.DROPPER);
-
+    public static ArrayList<Material> SHULKER_BOXES = new ArrayList<Material>(){{
         add(Material.SHULKER_BOX);
         add(Material.BLACK_SHULKER_BOX);
         add(Material.BLUE_SHULKER_BOX);
@@ -46,6 +39,15 @@ public class SignLockEvents implements Listener {
         add(Material.RED_SHULKER_BOX);
         add(Material.WHITE_SHULKER_BOX);
         add(Material.YELLOW_SHULKER_BOX);
+    }};
+    public static ArrayList<Material> LOCKABLE_CONTAINERS = new ArrayList<Material>(){{
+        add(Material.CHEST);
+        add(Material.TRAPPED_CHEST);
+        add(Material.FURNACE);
+        add(Material.HOPPER);
+        add(Material.DISPENSER);
+        add(Material.DROPPER);
+        addAll(SHULKER_BOXES);
     }};
 
     public static ArrayList<Material> LOCKABLE_DOORS = new ArrayList<Material>(){{
@@ -161,6 +163,19 @@ public class SignLockEvents implements Listener {
     // Event for handling when a player interacts with a sign lock.
     @EventHandler
     public void onSignLockInteract(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+
+        /*
+        // Check for a shulker box in the main hand
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        if(SHULKER_BOXES.contains(itemInHand.getType())){
+            player.sendMessage("SHULKER BOX!!");
+            player.sendMessage(Util.getNBTTagString(itemInHand, "signLock"));
+            itemInHand = Util.setNBTTagString(itemInHand, "signLock", "test value here");
+            player.sendMessage(Util.getNBTTagString(itemInHand, "signLock"));
+
+        }
+        */
 
         // We only care about right clicks
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
@@ -172,10 +187,10 @@ public class SignLockEvents implements Listener {
         if(LOCKABLE_CONTAINERS.contains(block.getType()) || LOCKABLE_DOORS.contains(block.getType())){
 
             Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
+
             if(SignLockManager.isSignLockLocation(blockLoc)){
                 SignLock lock = SignLockManager.getLockFromLocation(blockLoc);
 
-                Player player = event.getPlayer();
                 if(!lock.hasContainerAccess(player.getUniqueId())){
 
                     String message;
