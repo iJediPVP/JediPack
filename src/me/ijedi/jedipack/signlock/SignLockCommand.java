@@ -38,9 +38,8 @@ public class SignLockCommand implements TabExecutor {
     Commands:
     /signlock share <lockNumber> <playerName>...    : Give access to another player
     /signlock revoke <lockNumber> <playerName>...   : Remove access from a player
-    /signlock hoppers <lockNumber>                  : Toggle if hoppers can interact with the locked container
-    /signlock mobile create                         : Create a mobile lock for the held container
-    /signlock mobile remove <lockNumber>            : Remove a mobile lock for the held container
+    /signlock hoppers <lockNumber>                 : Toggle if hoppers can interact with the locked container
+
     * */
 
     @Override
