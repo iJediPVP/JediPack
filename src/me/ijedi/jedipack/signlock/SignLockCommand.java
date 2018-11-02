@@ -31,6 +31,9 @@ public class SignLockCommand implements TabExecutor {
     private final String SIGNLOCKPERM_HOPPERS = "jp.signlock.hoppers";
     public static final String SIGNLOCKPERM_LIMIT_BYPASS = "jp.signlock.limitBypass";
     public static final String SIGNLOCKPERM_LIMIT_SET = "jp.signlock.limitSet";
+    public static final String SIGNLOCKPERM_BYPASS = "jp.signlock.bypass";
+    public static final String SIGNLOCKPERM_CREATE = "jp.signlock.create";
+    public static final String SIGNLOCKPERM_REMOVE = "jp.signlock.remove";
 
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{

@@ -74,6 +74,13 @@ public class SignLockEvents implements Listener {
         if(SignLockManager.isSignLockLocation(blockLoc)){
             Player player = event.getPlayer();
 
+            // Check perms
+            if(!player.hasPermission(SignLockCommand.SIGNLOCKPERM_REMOVE) && !player.hasPermission(SignLockCommand.SIGNLOCKPERM_BYPASS)){
+                MessageTypeEnum.SignLockMessage.sendMessage("You need permission to do this!", player, true);
+                event.setCancelled(true);
+                return;
+            }
+
             String containerType;
             if(LOCKABLE_CONTAINERS.contains(block.getType())){
                 containerType = "container";
@@ -129,7 +136,16 @@ public class SignLockEvents implements Listener {
             Material placedType = placedOnBlock.getType();
             if(LOCKABLE_CONTAINERS.contains(placedType) || LOCKABLE_DOORS.contains(placedType)){
 
+                // Check for perms
                 Player player = event.getPlayer();
+                if(!player.hasPermission(SignLockCommand.SIGNLOCKPERM_CREATE)){
+                    MessageTypeEnum.SignLockMessage.sendMessage("You need permission to do this!", player, true);
+                    event.setCancelled(true);
+                    returnSignToPlayer(eventBlock, player);
+                    return;
+                }
+
+
                 SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
                 Location blockLocation = Util.getCenteredBlockLocation(eventBlock.getLocation());
                 Location placedOnBlockLocation = Util.getCenteredBlockLocation(placedOnBlock.getLocation());
@@ -181,7 +197,7 @@ public class SignLockEvents implements Listener {
                 SignLock lock = SignLockManager.getLockFromLocation(blockLoc);
 
                 Player player = event.getPlayer();
-                if(!lock.hasContainerAccess(player.getUniqueId())){
+                if(!player.hasPermission(SignLockCommand.SIGNLOCKPERM_BYPASS) && !lock.hasContainerAccess(player.getUniqueId())){
 
                     String message;
                     if(LOCKABLE_CONTAINERS.contains(block.getType())){

@@ -65,3 +65,9 @@ permissions:
     description: "Gives permission to exceed the number of allowed sign locks."
   jp.signlock.limitSet:
     description: "Gives permission to update the sign lock limit."
+  jp.signlock.bypass:
+    description: "Allows player to open or break any locked container."
+  jp.signlock.create:
+    description: "Allows player to create a sign lock."
+  jp.signlock.remove:
+    description: "Allows player to break a sign lock."
