@@ -3,4 +3,4 @@ parkourEnabled: false
 motdEnabled: false
 tabMessageEnabled: false
 signLocksEnabled: false
-
+playerSignLockLimit: 20

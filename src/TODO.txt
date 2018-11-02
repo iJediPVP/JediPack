@@ -5,5 +5,5 @@ TODO LIST:
     - Add sound effects to actions
 - Sign Lock:
     - /signlock info <player> - just info shows your own info. Specifiy a player (requires permission) show's info for that player.
-    - Sign lock limit per player - add permission to go over
+    - /signlock limit <num> - missing number returns the current limit
     - Add override permission to open anything

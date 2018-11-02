@@ -21,9 +21,11 @@ public class JediPackMain extends JavaPlugin {
     private static final String MOTD_ENABLED = "motdEnabled";
     private static final String TABMESSAGE_ENABLED = "tabMessageEnabled";
     private static final String SIGNLOCKS_ENABLED = "signLocksEnabled";
+    private static final String SIGNLOCKS_LIMIT = "playerSignLockLimit";
 
     // Config values
     public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled;
+    public static int playerSignLockLimit;
 
 
     @Override
@@ -82,6 +84,7 @@ public class JediPackMain extends JavaPlugin {
         isMotdEnabled = config.getBoolean(MOTD_ENABLED);
         isTabMessageEnabled = config.getBoolean(TABMESSAGE_ENABLED);
         isSignLocksEnabled = config.getBoolean(SIGNLOCKS_ENABLED);
+        playerSignLockLimit = config.getInt(SIGNLOCKS_LIMIT);
     }
 
 }

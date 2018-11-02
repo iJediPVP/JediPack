@@ -26,6 +26,8 @@ public class SignLockCommand implements TabExecutor {
     private final String SIGNLOCKPERM_SHARE = "jp.signlock.share";
     private final String SIGNLOCKPERM_REVOKE = "jp.signlock.revoke";
     private final String SIGNLOCKPERM_HOPPERS = "jp.signlock.hoppers";
+    public static final String SIGNLOCKPERM_LIMIT_BYPASS = "jp.signlock.limitBypass";
+
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");

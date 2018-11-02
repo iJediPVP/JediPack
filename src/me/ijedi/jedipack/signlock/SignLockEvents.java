@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.signlock;
 
+import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.ChatColor;
@@ -136,14 +137,18 @@ public class SignLockEvents implements Listener {
                 if(playerInfo.hasLockAtLocation(blockLocation, placedOnBlockLocation)){
                     MessageTypeEnum.SignLockMessage.sendMessage("There is already a sign lock on this location.", player, true);
                     event.setCancelled(true);
-
-                    // Set to air and give the player their sing back.
-                    eventBlock.getLocation().getBlock().setType(Material.AIR);
-                    if(player.getGameMode().equals(GameMode.SURVIVAL)){
-                        player.getInventory().addItem(new ItemStack(Material.SIGN));
-                    }
+                    returnSignToPlayer(eventBlock, player);
 
                 } else {
+
+                    // Make sure the player isn't over their limit.
+                    if(playerInfo.getNextSignLockNumber() > JediPackMain.playerSignLockLimit && !player.hasPermission(SignLockCommand.SIGNLOCKPERM_LIMIT_BYPASS)){
+                        MessageTypeEnum.SignLockMessage.sendMessage("You have already used all of your sign locks!", player, true);
+                        event.setCancelled(true);
+                        returnSignToPlayer(eventBlock, player);
+                        return;
+                    }
+
                     // Create the lock and update the sign text
                     SignLock newLock = playerInfo.addNewLock(null, 0, blockLocation, false, true);
                     int lockNum = newLock.getLockNumber();
@@ -236,6 +241,15 @@ public class SignLockEvents implements Listener {
             if(SignLockManager.isSignLockLocation(blockLoc)){
                 event.setNewCurrent(event.getOldCurrent());
             }
+        }
+    }
+
+
+    private void returnSignToPlayer(Block eventBlock, Player player){
+        // Set to air and give the player their sing back.
+        eventBlock.getLocation().getBlock().setType(Material.AIR);
+        if(player.getGameMode().equals(GameMode.SURVIVAL)){
+            player.getInventory().addItem(new ItemStack(Material.SIGN));
         }
     }
 }
