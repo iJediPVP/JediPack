@@ -63,3 +63,5 @@ permissions:
     description: "Gives permission to the command '/signlock hoppers ...'"
   jp.signlock.limitBypass:
     description: "Gives permission to exceed the number of allowed sign locks."
+  jp.signlock.limitSet:
+    description: "Gives permission to update the sign lock limit."

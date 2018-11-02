@@ -21,7 +21,7 @@ public class JediPackMain extends JavaPlugin {
     private static final String MOTD_ENABLED = "motdEnabled";
     private static final String TABMESSAGE_ENABLED = "tabMessageEnabled";
     private static final String SIGNLOCKS_ENABLED = "signLocksEnabled";
-    private static final String SIGNLOCKS_LIMIT = "playerSignLockLimit";
+    public static final String SIGNLOCKS_LIMIT = "playerSignLockLimit";
 
     // Config values
     public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled;
