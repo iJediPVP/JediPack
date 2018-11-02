@@ -3,6 +3,7 @@ package me.ijedi.jedipack.signlock;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -240,6 +241,70 @@ public class SignLockPlayerInfo {
     // Toggle if hoppers are enabled for the given lock
     public boolean toggleHoppersForLock(SignLock lock){
         return lock.toggleHoppers(fileConfiguration, file);
+    }
+
+    // Return info for the player's sign locks
+    public List<String> getSignLockInfo(int page){
+        ArrayList<String> infos = new ArrayList<>();
+        if(signLocks.size() == 0){
+            infos.add(MessageTypeEnum.SignLockMessage.formatMessage("You do not have any sign locks!", true, false));
+            return infos;
+        }
+
+
+        infos.add(MessageTypeEnum.SignLockMessage.getListHeader());
+
+        // Get all the lock numbers and their locations
+        HashMap<Integer, Location> lockInfos = new HashMap<>();
+        for(SignLock lock : getSignLocks().values()){
+            lockInfos.put(lock.getLockNumber(), lock.getLockLocation());
+        }
+
+        // Sort the numbers
+        ArrayList<Integer> lockNums = new ArrayList<>(lockInfos.keySet());
+        Collections.sort(lockNums);
+
+        // Figure out the pages
+        int pageSize = 10;
+        int pageCount = (int)Math.floor(lockNums.size() / pageSize);
+        if(lockNums.size() % pageSize > 0){
+            pageCount++;
+        }
+
+        // Verify page number
+        if(page == 0 || page > pageCount){
+            infos.add(ChatColor.RED + "Invalid page number!");
+            return infos;
+        }
+
+        // Fill in the info
+        int currentPageMin = (page - 1) * pageSize;
+        int currentPageMax = currentPageMin + pageSize - 1;
+        for(int x : lockNums){
+
+            // Verify this lock number is on the current page
+            if(x < currentPageMin){
+                continue;
+            }
+            if(x > currentPageMax){
+                break;
+            }
+
+            Location lockLoc = lockInfos.get(x);
+            String msg = ChatColor.GOLD + "" + ChatColor.BOLD + "Lock #" + x + ": " +
+                    ChatColor.AQUA + lockLoc.getWorld().getName() + ChatColor.GREEN + " -" +
+                    ChatColor.AQUA + " X: " + ChatColor.GREEN + lockLoc.getX() +
+                    ChatColor.AQUA + " Y: " + ChatColor.GREEN + lockLoc.getY() +
+                    ChatColor.AQUA + " Z: " + ChatColor.GREEN + lockLoc.getZ();
+            infos.add(msg);
+        }
+
+        // Add next page number
+        if(pageCount > page){
+            infos.add(ChatColor.GREEN + "Next page: " + ChatColor.AQUA + "/" + SignLockCommand.BASE_COMMAND + " " + SignLockCommand.INFO + " " + (page + 1));
+        }
+
+        return infos;
     }
 
 }

@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 public enum MessageTypeEnum {
 
     // Declare enums
-    TabMessage("[TabMessage]", ChatColor.GOLD, ChatColor.BOLD, null),
-    MOTDMessage("[MOTD]", ChatColor.GOLD, ChatColor.BOLD, null),
-    ParkourMessage("[Parkour]", ChatColor.GOLD, ChatColor.BOLD, null),
-    SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, null),
-    SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, null);
+    TabMessage("[TabMessage]", ChatColor.GOLD, ChatColor.BOLD, ""),
+    MOTDMessage("[MOTD]", ChatColor.GOLD, ChatColor.BOLD, ""),
+    ParkourMessage("[Parkour]", ChatColor.GOLD, ChatColor.BOLD, ""),
+    SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " ======="),
+    SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, "");
 
 
 
@@ -20,16 +20,20 @@ public enum MessageTypeEnum {
     private String header;
     private ChatColor headerColor1;
     private ChatColor headerColor2;
-    private ChatColor headerColor3;
+    private String listHeader;
 
     private static ChatColor messageColor = ChatColor.GREEN;
     private static ChatColor errorColor = ChatColor.RED;
 
-    MessageTypeEnum(String header, ChatColor headerColor1, ChatColor headerColor2, ChatColor headerColor3){
+    MessageTypeEnum(String header, ChatColor headerColor1, ChatColor headerColor2, String listHeader){
         this.header = header;
         this.headerColor1 = headerColor1;
         this.headerColor2 = headerColor2;
-        this.headerColor3 = headerColor3;
+        this.listHeader = listHeader;
+    }
+
+    public String getListHeader(){
+        return listHeader;
     }
 
     // Sends a message to the given sender.
@@ -60,11 +64,11 @@ public enum MessageTypeEnum {
         if(useColors){
 
             // Build the colored message
-            String coloredMessage = String.format("%s%s%s%s %s%s",
+            String coloredMessage = String.format("%s%s%s %s%s",
                     // Build header
                     (headerColor1 != null ? headerColor1.toString() : ""),
                     (headerColor2 != null ? headerColor2.toString() : ""),
-                    (headerColor3 != null ? headerColor3.toString() : ""),
+                    //(headerColor3 != null ? headerColor3.toString() : ""),
                     header,
 
                     // Build message

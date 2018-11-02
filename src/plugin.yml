@@ -71,3 +71,5 @@ permissions:
     description: "Allows player to create a sign lock."
   jp.signlock.remove:
     description: "Allows player to break a sign lock."
+  jp.signlock.info:
+    description: "Allows player to see info about their sing locks."

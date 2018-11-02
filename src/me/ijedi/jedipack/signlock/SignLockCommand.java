@@ -24,6 +24,7 @@ public class SignLockCommand implements TabExecutor {
     public static final String REVOKE = "revoke";
     public static final String HOPPERS = "hoppers";
     public static final String LIMIT = "limit";
+    public static final String INFO = "info";
 
     // Permissions
     private final String SIGNLOCKPERM_SHARE = "jp.signlock.share";
@@ -34,14 +35,16 @@ public class SignLockCommand implements TabExecutor {
     public static final String SIGNLOCKPERM_BYPASS = "jp.signlock.bypass";
     public static final String SIGNLOCKPERM_CREATE = "jp.signlock.create";
     public static final String SIGNLOCKPERM_REMOVE = "jp.signlock.remove";
+    public static final String SIGNLOCKPERM_INFO = "jp.signlock.info";
 
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
-        add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
+        add(MessageTypeEnum.SignLockMessage.getListHeader());
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + SHARE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Grants access to the specified players for the specified lock number.");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + REVOKE + " <lockNumber> <playerName>..." + ChatColor.GREEN + ": Revokes access from the specified players for the specified lock number.");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + HOPPERS + " <lockNumber>" + ChatColor.GREEN + ": Toggles if hoppers can interact with the locked container.");
         add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + LIMIT + " <newLimit>" + ChatColor.GREEN + ": If a new limit is given, updates the number of sign locks allowed per player.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + INFO + ChatColor.GREEN + ": Returns info about your sign locks.");
     }};
 
     /*
@@ -50,6 +53,7 @@ public class SignLockCommand implements TabExecutor {
     /signlock revoke <lockNumber> <playerName>...   : Remove access from a player
     /signlock hoppers <lockNumber>                  : Toggle if hoppers can interact with the locked container
     /signlock limit <newLimit>                      : If a new limit is given, updates the number of sign locks allowed per player
+    /signlock info                                  : Returns info about your sign locks
     * */
 
     @Override
@@ -374,6 +378,36 @@ public class SignLockCommand implements TabExecutor {
                 }
                 //endregion
 
+            } else if(firstArg.equals(INFO)){
+                //region INFO
+                // Check perms
+                if(Util.hasNoPerms(player, SIGNLOCKPERM_INFO, MessageTypeEnum.SignLockMessage)){
+                    return true;
+                }
+
+                // Get the page number
+                int page = 1;
+                String secondArg;
+                if(args.length > 1){
+                    secondArg = args[1];
+                    if(!Util.isInteger(secondArg)){
+                        MessageTypeEnum.SignLockMessage.sendMessage("Invalid page number!", player, true);
+                        return true;
+
+                    } else {
+                        page = Integer.parseInt(secondArg);
+                    }
+                }
+
+                // Get the info
+                SignLockPlayerInfo playerInfo = SignLockManager.getPlayerInfo(player.getUniqueId());
+                List<String> lockInfos = playerInfo.getSignLockInfo(page);
+                for(String str : lockInfos){
+                    player.sendMessage(str);
+                }
+                return true;
+                //endregion
+
             }
         }
 
@@ -402,11 +436,12 @@ public class SignLockCommand implements TabExecutor {
                     results.add(REVOKE);
                     results.add(HOPPERS);
                     results.add(LIMIT);
+                    results.add(INFO);
                     break;
                 case 2:
                     // Don't return anything if LIMIT was given before this
                     String secondArg = strings[0].toLowerCase();
-                    if(secondArg.equals(LIMIT)){
+                    if(secondArg.equals(LIMIT) || secondArg.equals(INFO)){
                         break;
                     }
 
