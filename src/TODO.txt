@@ -3,3 +3,7 @@ TODO LIST:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
     - Tab Complete for:
     - Add sound effects to actions
+- Sign Lock:
+    - /signlock info <player> - just info shows your own info. Specifiy a player (requires permission) show's info for that player.
+    - Sign lock limit per player - add permission to go over
+    - Add override permission to open anything

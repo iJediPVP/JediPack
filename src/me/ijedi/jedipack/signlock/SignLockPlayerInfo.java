@@ -169,12 +169,30 @@ public class SignLockPlayerInfo {
 
     // Get the number for the next sign lock.
     public int getNextSignLockNumber(){
+
+        // Get all of the used numbers
+        ArrayList<Integer> usedNumbers = new ArrayList<>();
         int maxNumber = 0;
         for(SignLock lock : signLocks.values()){
-            if(lock.getLockNumber() > maxNumber){
-                maxNumber = lock.getLockNumber();
-            }
+            int lockNum = lock.getLockNumber();
+            usedNumbers.add(lockNum);
+            maxNumber = lockNum > maxNumber ? lockNum : maxNumber;
         }
+
+        // Get the actual sum of the used numbers
+        int totalSum = 0;
+        for(int x : usedNumbers){
+            totalSum += x;
+        }
+
+        // If expected - total is not 0, then return the missing number.
+        int expectedSum = (maxNumber * (1 + maxNumber)) / 2;
+        int diff = expectedSum - totalSum;
+        if(diff > 0){
+            return diff;
+        }
+
+        // Else return the next number.
         return maxNumber + 1;
     }
 
