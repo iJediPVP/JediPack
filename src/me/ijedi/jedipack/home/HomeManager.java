@@ -26,6 +26,7 @@ public class HomeManager {
         // Set up commands
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getCommand(HomeCommand.BASE_COMMAND).setExecutor(new HomeCommand());
+        plugin.getCommand(HomeCommand.BASE_COMMAND).setTabCompleter(new HomeCommand());
     }
 
     // Returns the HomePlayerInfo for the given player id.

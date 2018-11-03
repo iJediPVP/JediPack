@@ -163,9 +163,30 @@ public class HomeCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        return null;
+
+        ArrayList<String> results = new ArrayList<>();
+        if(!(commandSender instanceof Player)){
+            return results;
+        }
+
+        switch(args.length){
+            case 0:
+            case 1:
+                results.add(SET);
+                results.add(UNSET);
+                results.add(LIMIT);
+                results.add(HELP);
+
+                Player player = (Player) commandSender;
+                HomePlayerInfo info = HomeManager.getPlayerInfo(player.getUniqueId());
+                results.addAll(info.getHomeNames());
+            default:
+                break;
+        }
+        return results;
     }
 
+    // Method to send the player home
     private void sendPlayerHome(Player player, HomePlayerInfo info, String homeName){
 
         // See if the player has any homes set
@@ -174,6 +195,5 @@ public class HomeCommand implements TabExecutor {
         } else {
             info.teleportHome(player, homeName);
         }
-
     }
 }

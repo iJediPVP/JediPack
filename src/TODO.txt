@@ -5,7 +5,7 @@ TODO LIST:
     - Add sound effects to actions
 - Home:
     - /home list - list out the homes to the player
-    - perms 
+    - perms
 
 - TP?:
     - /teleport (tp) player - send request to player
