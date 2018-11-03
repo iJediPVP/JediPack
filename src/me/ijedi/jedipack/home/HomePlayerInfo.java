@@ -2,7 +2,7 @@ package me.ijedi.jedipack.home;
 
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
-import me.ijedi.jedipack.common.confighelper.ConfigHelper;
+import me.ijedi.jedipack.common.ConfigHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;

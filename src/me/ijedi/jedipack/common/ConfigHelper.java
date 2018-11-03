@@ -1,4 +1,4 @@
-package me.ijedi.jedipack.common.confighelper;
+package me.ijedi.jedipack.common;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
