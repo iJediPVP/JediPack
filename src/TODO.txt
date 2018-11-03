@@ -4,7 +4,6 @@ TODO LIST:
     - Tab Complete for: Home, TP
     - Add sound effects to actions
 - Home:
-    - /home list - list out the homes to the player
     - perms
 
 - TP?:

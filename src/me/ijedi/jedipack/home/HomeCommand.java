@@ -19,12 +19,14 @@ public class HomeCommand implements TabExecutor {
     private static final String UNSET = "unset";
     private static final String LIMIT = "limit";
     private static final String HELP = "help";
+    private static final String LIST = "list";
 
     // Permissions
     private static final String HOMEPERM_USE = "jp.home.use";
     private static final String HOMEPERM_SET = "jp.home.set";
     private static final String HOMEPERM_UNSET = "jp.home.unset";
     private static final String HOMEPERM_LIMIT = "jp.home.limit";
+    private static final String HOMEPERM_LIST = "jp.home.list";
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Homes" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
@@ -128,12 +130,30 @@ public class HomeCommand implements TabExecutor {
 
                 //endregion
 
-            } else if(firstArg.equals(HELP)){
-
+            } else if(firstArg.equals(HELP)) {
                 //region HELP LIST
-                for(String str : HELP_LIST){
+                for (String str : HELP_LIST) {
                     player.sendMessage(str);
                 }
+                return true;
+                //endregion
+
+            }else if(firstArg.equals(LIST)){
+
+                //region LIST
+                // Return a list of home names for this player
+                if(playerInfo.getHomeCount() == 0){
+                    MessageTypeEnum.HomeMessage.sendMessage("You don't have any homes set!", player, true);
+                    return true;
+                }
+
+                ArrayList<String> homeNames = playerInfo.getHomeNames();
+                String msg = "Homes: ";
+                for(String str : homeNames){
+                    msg += str + ", ";
+                }
+                msg = msg.substring(0, msg.length() - 2);
+                MessageTypeEnum.HomeMessage.sendMessage(msg, player, false);
                 return true;
                 //endregion
 
@@ -176,6 +196,7 @@ public class HomeCommand implements TabExecutor {
                 results.add(UNSET);
                 results.add(LIMIT);
                 results.add(HELP);
+                results.add(LIST);
 
                 Player player = (Player) commandSender;
                 HomePlayerInfo info = HomeManager.getPlayerInfo(player.getUniqueId());
