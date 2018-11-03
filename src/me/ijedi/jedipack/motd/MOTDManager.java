@@ -46,11 +46,7 @@ public class MOTDManager {
     // Load MOTD configs.
     public static void initializeMOTD(boolean reload){
 
-        // Get the config
-        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, CONFIG_NAME);
-        File file = ConfigHelper.getFile(fileName);
-        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
-
+        // Check if MOTD is enabled
         if(!JediPackMain.isMotdEnabled){
             MessageTypeEnum.MOTDMessage.logMessage("MOTD is disabled!");
             return;
@@ -60,6 +56,10 @@ public class MOTDManager {
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new MOTDPingEvent(), plugin);
 
+        // Load the config
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, CONFIG_NAME);
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
         loadConfiguration(config, file, reload);
     }
 
