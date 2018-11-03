@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.motd;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public class MOTDManager {
     * */
 
     // Config names
+    public static final String DIRECTORY = "motd";
     private static final String CONFIG_NAME = "motdConfig.yml";
     private static final String TOPLINE = "topLine";
     private static final String BOTTOMLINE = "bottomLine";
@@ -34,12 +36,8 @@ public class MOTDManager {
     private static final String WORLD_TIME24_ARG = "<wt2>";
     private static final String WEATHER_ARG = "<weather>";
 
-    // Configs
-    private static FileConfiguration motdConfiguration;
-    private static File motdFile;
-    private static World worldForTime;
-
     // Current values
+    private static World worldForTime;
     private static String topLineMessage;
     private static String bottomLineMessage;
     private static char colorSymbol = '$';
@@ -48,9 +46,10 @@ public class MOTDManager {
     // Load MOTD configs.
     public static void initializeMOTD(boolean reload){
 
-        // Load configs
-        motdFile = getFile();
-        motdConfiguration = getFileConfiguration(reload);
+        // Get the config
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, CONFIG_NAME);
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
 
         if(!JediPackMain.isMotdEnabled){
             MessageTypeEnum.MOTDMessage.logMessage("MOTD is disabled!");
@@ -61,80 +60,57 @@ public class MOTDManager {
         JavaPlugin plugin = JediPackMain.getThisPlugin();
         plugin.getServer().getPluginManager().registerEvents(new MOTDPingEvent(), plugin);
 
-        worldForTime = Bukkit.getServer().getWorld(worldNameForTime);
-    }
-
-
-    // Get the File object for the MOTDManager.
-    private static File getFile(){
-
-        if(motdFile != null){
-            return motdFile;
-        }
-
-        String folder = JediPackMain.getThisPlugin().getDataFolder() + "/motd";
-        String fileName = CONFIG_NAME;
-        File configFile = new File(folder, fileName);
-
-        return configFile;
+        loadConfiguration(config, file, reload);
     }
 
     // Get the FileConfiguration object for the MOTDManager
-    private static FileConfiguration getFileConfiguration(boolean reload){
+    // Returns the formatted MOTD string.
 
-        if(motdConfiguration != null && !reload){
-            return motdConfiguration;
+    private static void loadConfiguration(FileConfiguration configuration, File file, boolean reload){
+
+        // Clear out values for reload
+        if(reload){
+            worldForTime = null;
+            topLineMessage = null;
+            bottomLineMessage = null;
+            colorSymbol = '$';
+            worldNameForTime = null;
         }
 
-        // Create the file if it doesn't exist.
-        if(!motdFile.exists()){
-            motdFile.getParentFile().mkdirs();
-            FileConfiguration config = YamlConfiguration.loadConfiguration(motdFile);
-
-            // Defaults
-            //isEnabled = false;
-            //config.set(ENABLED, isEnabled);
-
+        // See if we need to defaults
+        if(!configuration.contains(TOPLINE)){
             topLineMessage = "Default Top Line";
-            config.set(TOPLINE, topLineMessage);
+            configuration.set(TOPLINE, topLineMessage);
 
             bottomLineMessage = "Default Bottom Line";
-            config.set(BOTTOMLINE, bottomLineMessage);
+            configuration.set(BOTTOMLINE, bottomLineMessage);
 
             colorSymbol = '$';
-            config.set(COLOR_SYMBOL, colorSymbol);
+            configuration.set(COLOR_SYMBOL, colorSymbol);
 
             worldNameForTime = "world";
-            config.set(WORLD_NAME, worldNameForTime);
+            configuration.set(WORLD_NAME, worldNameForTime);
 
-            try{
-                config.save(motdFile);
-            }
-            catch(IOException e){
-                MessageTypeEnum.MOTDMessage.logMessage("Error saving configuration file.");
-                MessageTypeEnum.MOTDMessage.logMessage(e.toString());
-            }
-            return config;
+            worldForTime = Bukkit.getServer().getWorld(worldNameForTime);
+
+            ConfigHelper.saveFile(file, configuration);
 
         } else {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(motdFile);
 
             // Read config
-            //isEnabled = config.getBoolean(ENABLED);
-            topLineMessage = config.getString(TOPLINE);
-            bottomLineMessage = config.getString(BOTTOMLINE);
-            colorSymbol = config.getString(COLOR_SYMBOL).toCharArray()[0];
-            worldNameForTime = config.getString(WORLD_NAME);
+            topLineMessage = configuration.getString(TOPLINE);
+            bottomLineMessage = configuration.getString(BOTTOMLINE);
+            colorSymbol = configuration.getString(COLOR_SYMBOL).toCharArray()[0];
+            worldNameForTime = configuration.getString(WORLD_NAME);
+            worldForTime = Bukkit.getServer().getWorld(worldNameForTime);
 
             // Translate colors
             topLineMessage = ChatColor.translateAlternateColorCodes(colorSymbol, topLineMessage);
             bottomLineMessage = ChatColor.translateAlternateColorCodes(colorSymbol, bottomLineMessage);
-
-            return config;
         }
     }
 
-    // Returns the formatted MOTD string.
+    // Returns the string to be displayed in the server list.
     public static String getMotd(){
         String motd = String.format("%s\n%s", MOTDManager.topLineMessage, MOTDManager.bottomLineMessage);
 
