@@ -76,3 +76,14 @@ permissions:
     description: "Allows player to break a sign lock."
   jp.signlock.info:
     description: "Allows player to see info about their sing locks."
+
+  jp.home.use:
+    description: "Access /home <home>"
+  jp.home.set:
+    description: "Access /home set"
+  jp.home.unset:
+    description: "Access /home unset"
+  jp.home.limit:
+    description: "Access /home limit <newLimit>"
+  jp.home.list:
+    description: "Access /home list"

@@ -55,6 +55,12 @@ public class HomeCommand implements TabExecutor {
             if(firstArg.equals(SET)){
                 //region SET HOME
 
+                // Check perms
+                if(!player.hasPermission(HOMEPERM_SET)){
+                    MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+                    return true;
+                }
+
                 // Check the second arg
                 if(args.length > 1){
                     String homeName = args[1];
@@ -87,6 +93,12 @@ public class HomeCommand implements TabExecutor {
             } else if(firstArg.equals(UNSET)){
                 //region UNSET HOME
 
+                // Check perms
+                if(!player.hasPermission(HOMEPERM_UNSET)){
+                    MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+                    return true;
+                }
+
                 // Check for second arg
                 if(args.length > 1){
                     String homeName = args[1];
@@ -110,6 +122,12 @@ public class HomeCommand implements TabExecutor {
 
             } else if(firstArg.equals(LIMIT)) {
                 //region LIMIT
+
+                // Check perms
+                if(!player.hasPermission(HOMEPERM_LIMIT)){
+                    MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+                    return true;
+                }
 
                 // If a second arg was given, update the limit. Else return the current limit.
                 if (args.length > 1) {
@@ -141,6 +159,13 @@ public class HomeCommand implements TabExecutor {
             }else if(firstArg.equals(LIST)){
 
                 //region LIST
+
+                // Check perms
+                if(!player.hasPermission(HOMEPERM_LIST)){
+                    MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+                    return true;
+                }
+
                 // Return a list of home names for this player
                 if(playerInfo.getHomeCount() == 0){
                     MessageTypeEnum.HomeMessage.sendMessage("You don't have any homes set!", player, true);
@@ -159,6 +184,13 @@ public class HomeCommand implements TabExecutor {
 
             } else {
                 //region TP to the specified home
+
+                // Check perms
+                if(!player.hasPermission(HOMEPERM_USE)){
+                    MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+                    return true;
+                }
+
                 // See if the home exists
                 if(!playerInfo.hasHome(firstArg)){
                     MessageTypeEnum.HomeMessage.sendMessage("You do not have a home named '" + firstArg + "'.", player, true);
@@ -171,12 +203,20 @@ public class HomeCommand implements TabExecutor {
             }
         }
 
+        //region TP to the default home
+        // Check perms
+        if(!player.hasPermission(HOMEPERM_USE)){
+            MessageTypeEnum.HomeMessage.sendMessage("You do not have permission to use this command!", player, true);
+            return true;
+        }
+
         // Else no args were given.. If they have more than 1 home set, warn them, else send to their only home.
         if(playerInfo.getHomeCount() > 1){
             MessageTypeEnum.HomeMessage.sendMessage("You must specify a home!", player, true);
         } else {
             sendPlayerHome(player, playerInfo, "");
         }
+        //endregion
 
         return true;
     }

@@ -1,10 +1,8 @@
 TODO LIST:
 - Misc:
-    - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
-    - Tab Complete for: Home, TP
+    - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks, Homes
+    - Tab Complete for: TP
     - Add sound effects to actions
-- Home:
-    - perms
 
 - TP?:
     - /teleport (tp) player - send request to player
