@@ -4,3 +4,5 @@ motdEnabled: false
 tabMessageEnabled: false
 signLocksEnabled: false
 playerSignLockLimit: 20
+homesEnabled: false
+homesLimit: 3

@@ -1,6 +1,7 @@
 package me.ijedi.jedipack;
 
 import me.ijedi.jedipack.common.CommonEvents;
+import me.ijedi.jedipack.home.HomeManager;
 import me.ijedi.jedipack.menu.MenuListener;
 import me.ijedi.jedipack.misc.SmiteCommand;
 import me.ijedi.jedipack.motd.MOTDCommand;
@@ -22,10 +23,12 @@ public class JediPackMain extends JavaPlugin {
     private static final String TABMESSAGE_ENABLED = "tabMessageEnabled";
     private static final String SIGNLOCKS_ENABLED = "signLocksEnabled";
     public static final String SIGNLOCKS_LIMIT = "playerSignLockLimit";
+    private static final String HOMES_ENABLED = "homesEnabled";
+    public static final String HOMES_LIMIT = "homesLimit";
 
     // Config values
-    public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled;
-    public static int playerSignLockLimit;
+    public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled, isHomesEnabled;
+    public static int playerSignLockLimit, homesLimit;
 
 
     @Override
@@ -55,6 +58,8 @@ public class JediPackMain extends JavaPlugin {
         // Initialize sign locks
         SignLockManager.initializeSignLocks();
 
+        // Homes
+        HomeManager.initialize();
 
         // Initialize misc
         getCommand(SmiteCommand.BASE_COMMAND).setExecutor(new SmiteCommand());
@@ -85,6 +90,8 @@ public class JediPackMain extends JavaPlugin {
         isTabMessageEnabled = config.getBoolean(TABMESSAGE_ENABLED);
         isSignLocksEnabled = config.getBoolean(SIGNLOCKS_ENABLED);
         playerSignLockLimit = config.getInt(SIGNLOCKS_LIMIT);
+        isHomesEnabled = config.getBoolean(HOMES_ENABLED);
+        homesLimit = config.getInt(HOMES_LIMIT);
     }
 
 }

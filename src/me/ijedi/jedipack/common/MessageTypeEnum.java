@@ -8,11 +8,13 @@ import org.bukkit.entity.Player;
 public enum MessageTypeEnum {
 
     // Declare enums
+    GeneralMessage("[JediPack]", ChatColor.GOLD, ChatColor.BOLD, ""),
     TabMessage("[TabMessage]", ChatColor.GOLD, ChatColor.BOLD, ""),
     MOTDMessage("[MOTD]", ChatColor.GOLD, ChatColor.BOLD, ""),
     ParkourMessage("[Parkour]", ChatColor.GOLD, ChatColor.BOLD, ""),
     SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " ======="),
-    SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, "");
+    SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, ""),
+    HomeMessage("[Home]", ChatColor.GOLD, ChatColor.BOLD, "");
 
 
 

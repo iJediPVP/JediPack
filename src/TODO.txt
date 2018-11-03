@@ -1,5 +1,20 @@
 TODO LIST:
 - Misc:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks
-    - Tab Complete for:
+    - Tab Complete for: Home, TP
     - Add sound effects to actions
+- Home:
+    - /home - return to home or error if home isn't set
+    - /home <homeName> return to specified home name or error if home doesn't exist
+    - /home set <homeName> - set the current location as the player's home
+    - /home limit <newLimit> - update the home limit or return the current limit if the new limit is not specified
+    - /home list - list out the homes to the player
+    - perms and help text
+
+- TP?:
+    - /teleport (tp) player - send request to player
+    - /teleport accept - accept a tp request
+    - perms and help text
+- Mailbox:
+    - Allow players to send "mail" to other players
+    - This could include items..
