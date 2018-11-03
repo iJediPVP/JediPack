@@ -3,11 +3,13 @@ package me.ijedi.jedipack.home;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeCommand implements TabExecutor {
@@ -23,6 +25,15 @@ public class HomeCommand implements TabExecutor {
     private static final String HOMEPERM_SET = "jp.home.set";
     private static final String HOMEPERM_UNSET = "jp.home.unset";
     private static final String HOMEPERM_LIMIT = "jp.home.limit";
+
+    private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
+        add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Homes" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " <homeName>" + ChatColor.GREEN + ": Teleport to the specified home.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + SET  + " <homeName>" + ChatColor.GREEN + ": Set a new home for the current location.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + UNSET  + " <homeName>" + ChatColor.GREEN + ": Removes the specified home.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + LIMIT  + " <newLimit>" + ChatColor.GREEN + ": Update the home limit.");
+        add(ChatColor.AQUA + "/" + BASE_COMMAND + " " + HELP + ChatColor.GREEN + ": Shows this help text.");
+    }};
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -95,13 +106,13 @@ public class HomeCommand implements TabExecutor {
 
                 //endregion
 
-            } else if(firstArg.equals(LIMIT)){
+            } else if(firstArg.equals(LIMIT)) {
                 //region LIMIT
 
                 // If a second arg was given, update the limit. Else return the current limit.
-                if(args.length > 1){
+                if (args.length > 1) {
                     String limitStr = args[1];
-                    if(!Util.isInteger(limitStr)){
+                    if (!Util.isInteger(limitStr)) {
                         MessageTypeEnum.HomeMessage.sendMessage("Invalid limit specified!", player, true);
                         return true;
                     }
@@ -117,8 +128,16 @@ public class HomeCommand implements TabExecutor {
 
                 //endregion
 
-            } else {
+            } else if(firstArg.equals(HELP)){
 
+                //region HELP LIST
+                for(String str : HELP_LIST){
+                    player.sendMessage(str);
+                }
+                return true;
+                //endregion
+
+            } else {
                 //region TP to the specified home
                 // See if the home exists
                 if(!playerInfo.hasHome(firstArg)){
@@ -128,6 +147,7 @@ public class HomeCommand implements TabExecutor {
                 }
                 return true;
                 //endregion
+
             }
         }
 

@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -130,6 +131,15 @@ public class HomePlayerInfo {
                 return;
             }
         }
+    }
+
+    // Returns a list of home names
+    public ArrayList<String> getHomeNames(){
+        ArrayList<String> homeNames = new ArrayList<>();
+        for(String homeName : homeInfos.keySet()){
+            homeNames.add(homeName);
+        }
+        return homeNames;
     }
 
 }
