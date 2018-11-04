@@ -8,10 +8,13 @@ TODO LIST:
     - /teleport (tp) player - send request to player
     - /teleport accept - accept a tp request
     - perms and help text
-- Sleep:
-    - Allow one player on the server to trigger "sleeping"
+
 - Mailbox:
     - Allow players to send "mail" to other players
     - This could include items..
 
-    - /mail send <playerName> <message> attach <itemName> <amount>
+    - /mail send <playerName> <message> attach <itemName> <amount> - sends a message (with possible attachments) to the specified player
+    - /mail read <messageNumber> - open the given message
+    - /mail block <playerName> - block someone from sending you a message
+    - /mail block list - list blocked players
+    - /mail list <page> - lists items in mail box

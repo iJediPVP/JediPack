@@ -15,7 +15,8 @@ public enum MessageTypeEnum {
     SignLockMessage("[SignLock]", ChatColor.GOLD, ChatColor.BOLD, ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Sign Locks" + ChatColor.GREEN + "" + ChatColor.BOLD + " ======="),
     SmiteMessage("[Smite]", ChatColor.GOLD, ChatColor.BOLD, ""),
     HomeMessage("[Home]", ChatColor.GOLD, ChatColor.BOLD, ""),
-    SleepMessage("[Sleep]", ChatColor.GOLD, ChatColor.BOLD, "");
+    SleepMessage("[Sleep]", ChatColor.GOLD, ChatColor.BOLD, ""),
+    MailMessage("[Mail]", ChatColor.GOLD, ChatColor.BOLD, ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Mail" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
 
 
 

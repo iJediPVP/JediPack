@@ -7,3 +7,4 @@ playerSignLockLimit: 20
 homesEnabled: false
 homesLimit: 3
 sleepSkipEnabled: false
+milEnabled: false

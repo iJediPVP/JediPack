@@ -23,8 +23,10 @@ commands:
     description: "Interact with Sign Locks."
     usage: /signlock
   home:
-      description: "Interact with Homes."
-      usage: /home
+    description: "Interact with Homes."
+    usage: /home
+  mail:
+    usage: /mail
 
 
 permissions:
