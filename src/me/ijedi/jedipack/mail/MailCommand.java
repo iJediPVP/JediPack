@@ -4,6 +4,7 @@ import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +21,7 @@ public class MailCommand implements TabExecutor {
     private static final String SEND = "send";
     public static final String INFO = "info";
     public static final String READ = "read";
+    public static final String DELETE = "delete";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -35,9 +37,8 @@ public class MailCommand implements TabExecutor {
         if(args.length > 0){
             String firstArg = args[0].toLowerCase();
 
-            //region SEND
             if(firstArg.equals(SEND)){
-
+                //region SEND
                 // Check for player name
                 if(args.length > 1){
                     String recipientName = args[1];
@@ -78,7 +79,7 @@ public class MailCommand implements TabExecutor {
                     MessageTypeEnum.MailMessage.sendMessage("Use this book to send mail to " + recipient.getName() + "!", player, false);
                     return true;
                 }
-            //endregion
+                //endregion
 
             } else if(firstArg.equals(INFO)){
                 //region INFO
@@ -131,6 +132,35 @@ public class MailCommand implements TabExecutor {
                 return true;
                 //endregion
 
+            } else if(firstArg.equals(DELETE)){
+
+                // Check for mail number
+                if(args.length < 2){
+                    MessageTypeEnum.MailMessage.sendMessage("You must specify a number to delete!", player, true);
+                    return true;
+                }
+
+                // Make sure it's an int
+                String mailNumStr = args[1];
+                if(!Util.isInteger(mailNumStr)){
+                    MessageTypeEnum.MailMessage.sendMessage("Invalid number!", player, true);
+                    return true;
+                }
+                int mailNumber = Integer.parseInt(mailNumStr);
+
+                // See if this player has a mail with this number.
+                MailPlayerInfo playerInfo = MailManager.getMailPlayerInfo(player.getUniqueId());
+                if(!playerInfo.hasMailNumber(mailNumber)){
+                    MessageTypeEnum.MailMessage.sendMessage("You do not have a mail #" + mailNumber + "!", player, true);
+                    return true;
+                }
+
+                // Delete mail
+                MailInfo info = playerInfo.getMailInfo(mailNumber);
+                playerInfo.deleteMail(info);
+                String msg = "'" + info.getSubject() + "' from " + info.getSenderName() + " has been deleted!";
+                MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
+                return true;
             }
 
         }

@@ -131,6 +131,7 @@ public class MailPlayerInfo {
 
     // Delete the given mail object.
     public void deleteMail(MailInfo info){
+        // TODO: reorder numbers..
         // Get the config
         String fileName = ConfigHelper.getFullFilePath(MailManager.DIRECTORY, getFileName());
         File file = ConfigHelper.getFile(fileName);
@@ -226,8 +227,8 @@ public class MailPlayerInfo {
 
             // Base message
             MailInfo currentInfo = mailInfos.get(x);
-            String msg = ChatColor.YELLOW + Integer.toString(currentInfo.getMailNumber()) + ") "
-                    + ChatColor.AQUA + currentInfo.getSenderName() + ChatColor.YELLOW + " - "
+            String msg = /*ChatColor.YELLOW + Integer.toString(currentInfo.getMailNumber()) + ") "
+                    + */ChatColor.AQUA + currentInfo.getSenderName() + ChatColor.YELLOW + " - "
                     + ChatColor.GOLD + (currentInfo.isRead() ? "" : ChatColor.BOLD) + currentInfo.getSubject() + " ";
             TextComponent msgComponent = new TextComponent(msg);
 
@@ -240,8 +241,7 @@ public class MailPlayerInfo {
             // Delete command - TODO: Actually code a delete command
             ComponentBuilder deleteBuilder = new ComponentBuilder(ChatColor.RED + "" + ChatColor.BOLD + "[DELETE]");
             deleteBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.RED + "Click to delete!" ).create() ));
-            String deleteCommand = "/mail info";
-            //String deleteCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.READ, currentInfo.getMailNumber());
+            String deleteCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.DELETE, currentInfo.getMailNumber());
             deleteBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, deleteCommand));
 
 
