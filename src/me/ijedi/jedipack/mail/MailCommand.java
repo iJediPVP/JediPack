@@ -55,9 +55,25 @@ public class MailCommand implements TabExecutor {
                         return true;
                     }*/
 
+                    // Make sure the player has an open slot
+                    int openSlot = 0;
+                    boolean hasFreeSlot = false;
+                    for(int x = 0; x < 9; x++){
+                        ItemStack item = player.getInventory().getItem(x);
+                        if(item == null){
+                            openSlot = x;
+                            hasFreeSlot = true;
+                            break;
+                        }
+                    }
+                    if(!hasFreeSlot){
+                        MessageTypeEnum.MailMessage.sendMessage("You must have an open spot on your hotbat!", player, true);
+                        return true;
+                    }
+
                     // Give the player a book to write in
                     ItemStack book = new MailManager().getNewWritableBook(recipient.getName());
-                    player.getInventory().setItemInMainHand(book);
+                    player.getInventory().setItem(openSlot, book);
                     MessageTypeEnum.MailMessage.sendMessage("Use this book to send mail to " + recipient.getName() + "!", player, false);
                     return true;
                 }
