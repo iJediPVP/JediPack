@@ -1,12 +1,19 @@
 package me.ijedi.jedipack.mail;
 
+import io.netty.buffer.Unpooled;
+import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import net.minecraft.server.v1_13_R2.EnumHand;
+import net.minecraft.server.v1_13_R2.MinecraftKey;
+import net.minecraft.server.v1_13_R2.PacketDataSerializer;
+import net.minecraft.server.v1_13_R2.PacketPlayOutCustomPayload;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -222,5 +229,33 @@ public class MailPlayerInfo {
         }
 
         return infos;
+    }
+
+    // Returns the mail info for the given mail number.
+    public MailInfo getMailInfo(int mailNumber){
+        return mailInfos.get(mailNumber);
+    }
+
+    // Opens the specified mail info
+    public void openMail(Player player, MailInfo mailInfo){
+
+        // Get the book representing the mail and the player's current held item.
+        ItemStack book = mailInfo.getBook();
+        int slot = player.getInventory().getHeldItemSlot();
+        ItemStack oldItem = player.getInventory().getItem(slot);
+
+        // Give the player the book and open it.
+        player.getInventory().setItemInMainHand(book);
+        final PacketPlayOutCustomPayload packet = new PacketPlayOutCustomPayload(MinecraftKey.a("minecraft:book_open"), new PacketDataSerializer(Unpooled.buffer()).a(EnumHand.MAIN_HAND));
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+
+        // Give back their item
+        player.getInventory().setItem(slot, oldItem);
+
+        // Set to read
+        if(!mailInfo.isRead()){
+            mailInfo.setRead(true);
+            updateMail(mailInfo);
+        }
     }
 }

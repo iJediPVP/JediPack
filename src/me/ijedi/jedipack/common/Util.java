@@ -162,4 +162,20 @@ public class Util {
         item = CraftItemStack.asBukkitCopy(nmsItem);
         return item;
     }
+
+    public static String centerString(String str, int width){
+
+        int diff = width - str.length();
+        if(diff > 0){
+            for(int x = 0; x < diff; x++){
+                if(x == 0 || x % 2 == 0){
+                    str = " " + str;
+                } else {
+                    str = str + " ";
+                }
+            }
+        }
+
+        return str;
+    }
 }

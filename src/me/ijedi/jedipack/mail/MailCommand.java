@@ -64,7 +64,7 @@ public class MailCommand implements TabExecutor {
             //endregion
 
             } else if(firstArg.equals(INFO)){
-
+                //region INFO
                 // Check for a page number
                 int pageNumber = 1;
                 if(args.length > 1){
@@ -82,6 +82,37 @@ public class MailCommand implements TabExecutor {
                     player.sendMessage(msg);
                 }
                 return true;
+                //endregion
+
+            } else if(firstArg.equals(READ)){
+                //region READ
+                // Check for mail number
+                if(args.length < 2){
+                    MessageTypeEnum.MailMessage.sendMessage("You must specify a number to open!", player, true);
+                    return true;
+                }
+
+                // Make sure it's an int
+                String mailNumStr = args[1];
+                if(!Util.isInteger(mailNumStr)){
+                    MessageTypeEnum.MailMessage.sendMessage("Invalid number!", player, true);
+                    return true;
+                }
+                int mailNumber = Integer.parseInt(mailNumStr);
+
+                // See if this player has a mail with this number.
+                MailPlayerInfo playerInfo = MailManager.getMailPlayerInfo(player.getUniqueId());
+                if(!playerInfo.hasMailNumber(mailNumber)){
+                    MessageTypeEnum.MailMessage.sendMessage("You do not have a mail #" + mailNumber + "!", player, true);
+                    return true;
+                }
+
+                // Build and open the book for this mail.
+                MailInfo mailInfo = playerInfo.getMailInfo(mailNumber);
+                playerInfo.openMail(player, mailInfo);
+                return true;
+                //endregion
+
             }
 
         }

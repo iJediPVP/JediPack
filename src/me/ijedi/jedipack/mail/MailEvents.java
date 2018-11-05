@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.mail;
 
+import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
@@ -11,9 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
-
-import java.util.Map;
-import java.util.UUID;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class MailEvents implements Listener {
 
@@ -37,13 +36,11 @@ public class MailEvents implements Listener {
 
         // Get the recipient info
         String recipientName = Util.getNBTTagString(heldItem, MailManager.RECIPIENT_TAG);
-        //MessageTypeEnum.MailMessage.sendMessage(recipientId, player, false);
 
         // Get the book's info
         BookMeta bookMeta = event.getNewBookMeta();
         String[] bookLines = bookMeta.getPages().toArray(new String[bookMeta.getPages().size()]);
         String subject = bookMeta.getTitle();
-        UUID senderId = player.getUniqueId();
         @SuppressWarnings("deprecation")
         OfflinePlayer recipientPlayer = Bukkit.getOfflinePlayer(recipientName);
         String senderName = player.getName();
@@ -57,10 +54,17 @@ public class MailEvents implements Listener {
         info.setSenderName(senderName);
         recipientInfo.updateMail(info);
 
-        // Delete this item from the sender's inventory
-        player.getInventory().setItem(bookSlot, null);
-
+        // Alert the player and cancel the event
         MessageTypeEnum.MailMessage.sendMessage("Your mail has been sent to " + recipientPlayer.getName() + "!", player, false);
         event.setCancelled(true);
+
+        // Remove the item 1 tick later.. Else the item will reappear in the inventory..
+        new BukkitRunnable(){
+            @Override
+            public void run(){
+                player.getInventory().setItem(bookSlot, new ItemStack(Material.AIR));
+                this.cancel();
+            }
+        }.runTaskLater(JediPackMain.getThisPlugin(), 1L);
     }
 }
