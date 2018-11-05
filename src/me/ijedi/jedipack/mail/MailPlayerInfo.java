@@ -5,6 +5,10 @@ import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_13_R2.EnumHand;
 import net.minecraft.server.v1_13_R2.MinecraftKey;
 import net.minecraft.server.v1_13_R2.PacketDataSerializer;
@@ -174,19 +178,21 @@ public class MailPlayerInfo {
     public void alertPlayer(){
         Player player = Bukkit.getPlayer(playerId);
         if(player != null && player.isOnline()){
-            MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /mail to see your inbox!", player, false);
+            MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " to see your inbox!", player, false);
         }
     }
 
     // Return info for the player's sign locks
-    public List<String> getMailInfoPage(int page){
-        ArrayList<String> infos = new ArrayList<>();
+    public List<TextComponent> getMailInfoPage(int page){
+
+        ArrayList<TextComponent> infos = new ArrayList<>();
         if(mailInfos.size() == 0){
-            infos.add(MessageTypeEnum.MailMessage.formatMessage("You do not have any mail!", true, false));
+            TextComponent errorComponent = new TextComponent(MessageTypeEnum.MailMessage.formatMessage("You do not have any mail!", true, false));
+            infos.add(errorComponent);
             return infos;
         }
 
-        infos.add(MessageTypeEnum.MailMessage.getListHeader());
+        infos.add(new TextComponent(MessageTypeEnum.MailMessage.getListHeader()));
 
         // Sort the numbers
         ArrayList<Integer> mailNumbers = new ArrayList<>(mailInfos.keySet());
@@ -201,7 +207,7 @@ public class MailPlayerInfo {
 
         // Verify page number
         if(page == 0 || page > pageCount){
-            infos.add(ChatColor.RED + "Invalid page number!");
+            infos.add(new TextComponent(ChatColor.RED + "Invalid page number!"));
             return infos;
         }
 
@@ -218,14 +224,35 @@ public class MailPlayerInfo {
                 break;
             }
 
+            // Base message
             MailInfo currentInfo = mailInfos.get(x);
-            String msg = String.format("%s) %s - %s", currentInfo.getMailNumber(), currentInfo.getSenderName(), currentInfo.getSubject());
-            infos.add(msg);
+            String msg = ChatColor.YELLOW + Integer.toString(currentInfo.getMailNumber()) + ") "
+                    + ChatColor.AQUA + currentInfo.getSenderName() + ChatColor.YELLOW + " - "
+                    + ChatColor.GOLD + (currentInfo.isRead() ? "" : ChatColor.BOLD) + currentInfo.getSubject() + " ";
+            TextComponent msgComponent = new TextComponent(msg);
+
+            // Read command
+            ComponentBuilder readBuilder = new ComponentBuilder(ChatColor.GREEN + "" + (currentInfo.isRead() ? "" : ChatColor.BOLD) + "[READ] ");
+            readBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.GREEN + "Click to read!" ).create() ));
+            String readCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.READ, currentInfo.getMailNumber());
+            readBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, readCommand));
+
+            // Delete command - TODO: Actually code a delete command
+            ComponentBuilder deleteBuilder = new ComponentBuilder(ChatColor.RED + "" + ChatColor.BOLD + "[DELETE]");
+            deleteBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.RED + "Click to delete!" ).create() ));
+            String deleteCommand = "/mail info";
+            //String deleteCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.READ, currentInfo.getMailNumber());
+            deleteBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, deleteCommand));
+
+
+            msgComponent.addExtra(readBuilder.create()[0]);
+            msgComponent.addExtra(deleteBuilder.create()[0]);
+            infos.add(msgComponent);
         }
 
-        // Add next page number
+        // Add next page number - TODO: Create Back and Next links
         if(pageCount > page){
-            infos.add(ChatColor.GREEN + "Next page: " + ChatColor.AQUA + "/" + MailCommand.BASE_COMMAND + " " + (page + 1));
+            infos.add(new TextComponent(ChatColor.GREEN + "Next page: " + ChatColor.AQUA + "/" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " " + (page + 1)));
         }
 
         return infos;

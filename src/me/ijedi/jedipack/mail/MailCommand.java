@@ -2,6 +2,7 @@ package me.ijedi.jedipack.mail;
 
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,8 +18,8 @@ public class MailCommand implements TabExecutor {
 
     public static final String BASE_COMMAND = "mail";
     private static final String SEND = "send";
-    private static final String INFO = "info";
-    private static final String READ = "read";
+    public static final String INFO = "info";
+    public static final String READ = "read";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -92,10 +93,11 @@ public class MailCommand implements TabExecutor {
                     pageNumber = Integer.parseInt(pageStr);
                 }
 
+                // See if we have mail
                 MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
-                List<String> infoMsgs = info.getMailInfoPage(pageNumber); // TODO: parse page numbers
-                for(String msg : infoMsgs){
-                    player.sendMessage(msg);
+                List<TextComponent> infoMsgs = info.getMailInfoPage(pageNumber);
+                for(TextComponent msg : infoMsgs){
+                    player.spigot().sendMessage(msg);
                 }
                 return true;
                 //endregion
