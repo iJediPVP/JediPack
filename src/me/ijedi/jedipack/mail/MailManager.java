@@ -49,6 +49,7 @@ public class MailManager {
         return playerInfos.get(playerId);
     }
 
+    // Returns a new book to write mail in
     public ItemStack getNewWritableBook(String recipientName){
         ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta bookMeta = book.getItemMeta();
@@ -57,5 +58,14 @@ public class MailManager {
         book = Util.setNBTTagString(book, RECIPIENT_TAG, recipientName);
         book = Util.setNBTTagString(book, MAIL_KEY, MAIL_KEY_VALUE);
         return book;
+    }
+
+    // Returns true if the given item is a mail book
+    public static boolean isMailBook(ItemStack item){
+        String mailKey = Util.getNBTTagString(item, MAIL_KEY);
+        if(!Util.isNullOrEmpty(mailKey)){
+            return true;
+        }
+        return false;
     }
 }
