@@ -13,8 +13,9 @@ TODO LIST:
     - Allow players to send "mail" to other players
     - This could include items..
 
-    - /mail send <playerName> <message> attach <itemName> <amount> - sends a message (with possible attachments) to the specified player
+    - Item attachments. Require items to be in the player's inventory.
     - /mail read <messageNumber> - open the given message
     - /mail block <playerName> - block someone from sending you a message
     - /mail block list - list blocked players
     - /mail list <page> - lists items in mail box
+    - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)

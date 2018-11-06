@@ -144,7 +144,7 @@ public class MailPlayerInfo {
 
     // Returns the file name for this player.
     private String getFileName(){
-        return playerId.toString() + "yml";
+        return playerId.toString() + ".yml";
     }
 
     // Return the next mail number for this player.
@@ -250,10 +250,40 @@ public class MailPlayerInfo {
             infos.add(msgComponent);
         }
 
-        // Add next page number - TODO: Create Back and Next links
-        if(pageCount > page){
-            infos.add(new TextComponent(ChatColor.GREEN + "Next page: " + ChatColor.AQUA + "/" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " " + (page + 1)));
+
+        //region Next and previous links
+        TextComponent pageComponent = new TextComponent("");
+
+        // Next
+        boolean hasNext = pageCount > page;
+        boolean hasPrevious = page > 1;
+        if(hasNext){
+            ComponentBuilder nextBuilder = new ComponentBuilder(ChatColor.GREEN + "" + ChatColor.BOLD + "[Next]");
+            nextBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.GREEN + "Click for the next page!" ).create() ));
+            String nextCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.INFO, page + 1);
+            nextBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, nextCommand));
+            pageComponent.addExtra(nextBuilder.create()[0]);
+
+            // Check for dash
+            if(hasPrevious){
+                ComponentBuilder builder = new ComponentBuilder(ChatColor.YELLOW + " - ");
+                pageComponent.addExtra(builder.create()[0]);
+            }
         }
+
+        // Previous
+        if(hasPrevious){
+            ComponentBuilder previousBuilder = new ComponentBuilder(ChatColor.GREEN + "" + ChatColor.BOLD + "[Previous]");
+            previousBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.GREEN + "Click for the previous page!" ).create() ));
+            String previousCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.INFO, page - 1);
+            previousBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, previousCommand));
+            pageComponent.addExtra(previousBuilder.create()[0]);
+        }
+
+        if(hasNext || hasPrevious){
+            infos.add(pageComponent);
+        }
+        //endregion
 
         return infos;
     }

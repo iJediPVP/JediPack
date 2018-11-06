@@ -134,6 +134,7 @@ public class MailCommand implements TabExecutor {
 
             } else if(firstArg.equals(DELETE)){
 
+                //region DELETE
                 // Check for mail number
                 if(args.length < 2){
                     MessageTypeEnum.MailMessage.sendMessage("You must specify a number to delete!", player, true);
@@ -161,6 +162,7 @@ public class MailCommand implements TabExecutor {
                 String msg = "'" + info.getSubject() + "' from " + info.getSenderName() + " has been deleted!";
                 MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
                 return true;
+                //endregion
             }
 
         }
