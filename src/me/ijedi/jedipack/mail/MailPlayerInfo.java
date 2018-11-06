@@ -16,10 +16,12 @@ import net.minecraft.server.v1_13_R2.PacketPlayOutCustomPayload;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.*;
@@ -180,6 +182,14 @@ public class MailPlayerInfo {
         Player player = Bukkit.getPlayer(playerId);
         if(player != null && player.isOnline()){
             MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " to see your inbox!", player, false);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.700f);
+            new BukkitRunnable(){
+                @Override
+                public void run(){
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.900f);
+                    this.cancel();
+                }
+            }.runTaskLater(JediPackMain.getThisPlugin(), 2L);
         }
     }
 

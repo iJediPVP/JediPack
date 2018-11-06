@@ -1,7 +1,7 @@
 TODO LIST:
 - Misc:
     - Create "how to" for: Smite, Parkour, TabMessage, MOTD, Sign Locks, Homes
-    - Tab Complete for: TP
+    - Tab Complete for: TP, Mail
     - Add sound effects to actions
 
 - TP?:
