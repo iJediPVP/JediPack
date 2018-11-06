@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class MailCommand implements TabExecutor {
     public static final String INFO = "info";
     public static final String READ = "read";
     public static final String DELETE = "delete";
+    public static final String SETTINGS = "settings";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -133,7 +135,6 @@ public class MailCommand implements TabExecutor {
                 //endregion
 
             } else if(firstArg.equals(DELETE)){
-
                 //region DELETE
                 // Check for mail number
                 if(args.length < 2){
@@ -163,6 +164,12 @@ public class MailCommand implements TabExecutor {
                 MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
                 return true;
                 //endregion
+
+            } else if(firstArg.equals(SETTINGS)){
+
+                MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                Inventory configInv = info.getConfigInventory(player);
+                player.openInventory(configInv);
             }
 
         }

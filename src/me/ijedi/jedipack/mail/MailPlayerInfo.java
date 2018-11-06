@@ -5,6 +5,8 @@ import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import me.ijedi.jedipack.menu.Menu;
+import me.ijedi.jedipack.menu.MenuManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -13,14 +15,13 @@ import net.minecraft.server.v1_13_R2.EnumHand;
 import net.minecraft.server.v1_13_R2.MinecraftKey;
 import net.minecraft.server.v1_13_R2.PacketDataSerializer;
 import net.minecraft.server.v1_13_R2.PacketPlayOutCustomPayload;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -35,13 +36,27 @@ public class MailPlayerInfo {
         attachment: <serialized itemstack> // TODO: figure this out..
     * */
 
-    // Config names
+    // Mail config names
     private static final String SENDER_NAME = "senderName";
     private static final String MESSAGE = "message";
     private static final String ATTACHMENT = "attachment";
     private static final String SUBJECT = "subject";
     private static final String IS_READ = "isRead";
     private static final String IS_ATTACH_READ = "isAttachRead";
+
+    // Player config names
+    private static final String CONFIG_DIRECTORY = "mail/playerConfig";
+    private static final String ALERTS_ENABLED = "alertsEnabled";
+    private static final String UI_ENABLED = "uiEnabled";
+
+    // Player config menu names
+    private static final String MENU_PREFIX = "Mail Settings";
+    private static final String ALERTS_NAME = "Alerts";
+    private static final String UI_NAME = "UI";
+
+
+    // Player config values
+    private boolean isAlertsEnabled, isUIEnabled;
 
 
     // Fields
@@ -55,12 +70,12 @@ public class MailPlayerInfo {
     // Load info from the player's file.
     public void loadPlayerInfo(){
 
-        // Get the config
+        // Get the mail file
         String fileName = ConfigHelper.getFullFilePath(MailManager.DIRECTORY, getFileName());
         File file = ConfigHelper.getFile(fileName);
         FileConfiguration config = ConfigHelper.getFileConfiguration(file);
 
-        // Read it
+        // Load mail
         for(String mailStr : config.getKeys(false)){
             if(Util.isInteger(mailStr)){
 
@@ -79,7 +94,30 @@ public class MailPlayerInfo {
             }
         }
 
+
+        // Get the player config
+        String playerFileName = ConfigHelper.getFullFilePath(CONFIG_DIRECTORY, getFileName());
+        File playerFile = ConfigHelper.getFile(playerFileName);
+        FileConfiguration playerConfig = ConfigHelper.getFileConfiguration(playerFile);
+
+        // Load config
+        if(!playerConfig.contains(ALERTS_ENABLED)){
+            // Defaults
+            updatePlayerConfig();
+        } else {
+            isAlertsEnabled = playerConfig.getBoolean(ALERTS_ENABLED);
+            isUIEnabled = playerConfig.getBoolean(UI_ENABLED);
+        }
     }
+
+    // Returns the file name for this player.
+    private String getFileName(){
+        return playerId.toString() + ".yml";
+    }
+
+
+
+    //region Mail Methods
 
     // Update or add the given mail info
     public void updateMail(MailInfo info){
@@ -144,11 +182,6 @@ public class MailPlayerInfo {
         mailInfos.remove(info.getMailNumber());
     }
 
-    // Returns the file name for this player.
-    private String getFileName(){
-        return playerId.toString() + ".yml";
-    }
-
     // Return the next mail number for this player.
     public int getNextMailNumber(){
         // Get all of the used numbers
@@ -175,22 +208,6 @@ public class MailPlayerInfo {
 
         // Else return the next number.
         return maxNumber + 1;
-    }
-
-    // Alert the player that they have received mail.
-    public void alertPlayer(){
-        Player player = Bukkit.getPlayer(playerId);
-        if(player != null && player.isOnline()){
-            MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " to see your inbox!", player, false);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.700f);
-            new BukkitRunnable(){
-                @Override
-                public void run(){
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.900f);
-                    this.cancel();
-                }
-            }.runTaskLater(JediPackMain.getThisPlugin(), 2L);
-        }
     }
 
     // Return info for the player's sign locks
@@ -325,4 +342,128 @@ public class MailPlayerInfo {
             updateMail(mailInfo);
         }
     }
+
+    //endregion
+
+
+
+    //region Player methods
+
+    // Toggle alerts
+    public void toggleAlertsEnabled(){
+        isAlertsEnabled = !isAlertsEnabled;
+        updatePlayerConfig();
+    }
+
+    // Toggle UI
+    public void toggleUIEnabled(){
+        isUIEnabled = !isUIEnabled;
+        updatePlayerConfig();
+    }
+
+    // Update player config
+    private void updatePlayerConfig(){
+        // Get the player config
+        String playerFileName = ConfigHelper.getFullFilePath(CONFIG_DIRECTORY, getFileName());
+        File playerFile = ConfigHelper.getFile(playerFileName);
+        FileConfiguration playerConfig = ConfigHelper.getFileConfiguration(playerFile);
+
+        // Set values
+        playerConfig.set(ALERTS_ENABLED, isAlertsEnabled);
+        playerConfig.set(UI_ENABLED, isUIEnabled);
+        ConfigHelper.saveFile(playerFile, playerConfig);
+    }
+
+    // Returns the inventory for the player's configuration settings.
+    public Inventory getConfigInventory(Player player){
+
+        // Set up menu buttons
+        ItemStack exitButton = new ItemStack(Material.SPRUCE_DOOR);
+        ItemMeta exitMeta = exitButton.getItemMeta();
+        List<String> exitLore = Arrays.asList(ChatColor.GREEN + "Click to exit.");
+        exitMeta.setLore(exitLore);
+        exitMeta.setDisplayName(ChatColor.RED + "Exit");
+        exitButton.setItemMeta(exitMeta);
+
+        ItemStack nextButton = new ItemStack(Material.ARROW);
+        ItemMeta nextMeta = nextButton.getItemMeta();
+        List<String> nextLore = Arrays.asList(ChatColor.GREEN + "Click to go to the next page.");
+        exitMeta.setLore(nextLore);
+        nextMeta.setDisplayName(ChatColor.GREEN + "Next");
+        nextButton.setItemMeta(nextMeta);
+
+        ItemStack prevButton = new ItemStack(Material.ARROW);
+        ItemMeta prevMeta = prevButton.getItemMeta();
+        List<String> prevLore = Arrays.asList(ChatColor.GREEN + "Click to go to the previous page.");
+        exitMeta.setLore(prevLore);
+        prevMeta.setDisplayName(ChatColor.GREEN + "Previous");
+        prevButton.setItemMeta(prevMeta);
+
+        // Build config items
+        ArrayList<ItemStack> configItems = new ArrayList<>();
+
+        // Alerts
+        ArrayList<String> alertLore = new ArrayList<>();
+        String alertName;
+        ItemStack alertItem = new ItemStack(Material.NOTE_BLOCK);
+        ItemMeta alertMeta = alertItem.getItemMeta();
+        if(isAlertsEnabled){
+            alertName = ChatColor.RED + ALERTS_NAME;
+            alertLore.add(ChatColor.GREEN + "Click to enable alerts.");
+        } else {
+            alertName = ChatColor.GREEN + ALERTS_NAME;
+            alertLore.add(ChatColor.RED + "Click to disable alerts.");
+        }
+        alertMeta.setDisplayName(alertName);
+        alertMeta.setLore(alertLore);
+        alertItem.setItemMeta(alertMeta);
+        configItems.add(alertItem);
+
+        // UI
+        ArrayList<String> uiLore = new ArrayList<>();
+        String uiName;
+        ItemStack uiItem = new ItemStack(Material.ITEM_FRAME);
+        ItemMeta uiMeta = uiItem.getItemMeta();
+        if(isAlertsEnabled){
+            uiName = ChatColor.RED + UI_NAME;
+            uiLore.add(ChatColor.GREEN + "Click to enable the UI.");
+        } else {
+            uiName = ChatColor.GREEN + UI_NAME;
+            uiLore.add(ChatColor.RED + "Click to disable the UI.");
+        }
+        uiMeta.setDisplayName(uiName);
+        uiMeta.setLore(uiLore);
+        uiItem.setItemMeta(uiMeta);
+        configItems.add(uiItem);
+
+
+        Menu menu = new Menu(String.format("%s %s", MENU_PREFIX, player.getName()));
+        menu.setContents(configItems.toArray(new ItemStack[configItems.size()]));
+        menu.setButtons(exitButton, prevButton, nextButton);
+        return new MenuManager().getMenu(menu.getName());
+    }
+
+    // Alert the player that they have received mail.
+    public void alertPlayer(){
+        if(!isAlertsEnabled){
+            return;
+        }
+
+        // Alerts are enabled, send a message and player a sound.
+        Player player = Bukkit.getPlayer(playerId);
+        if(player != null && player.isOnline()){
+            // TODO: Make this clickable!
+            MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " to see your inbox!", player, false);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.700f);
+            new BukkitRunnable(){
+                @Override
+                public void run(){
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.900f);
+                    this.cancel();
+                }
+            }.runTaskLater(JediPackMain.getThisPlugin(), 2L);
+        }
+    }
+
+    //endregion
 }
