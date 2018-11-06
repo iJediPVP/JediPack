@@ -50,9 +50,9 @@ public class MailPlayerInfo {
     private static final String UI_ENABLED = "uiEnabled";
 
     // Player config menu names
-    private static final String MENU_PREFIX = "Mail Settings";
-    private static final String ALERTS_NAME = "Alerts";
-    private static final String UI_NAME = "UI";
+    public static final String MENU_PREFIX = "Mail Settings";
+    public static final String ALERTS_NAME = "Alerts";
+    public static final String UI_NAME = "UI";
 
 
     // Player config values
@@ -66,6 +66,7 @@ public class MailPlayerInfo {
     public MailPlayerInfo(UUID playerId){
         this.playerId = playerId;
     }
+
 
     // Load info from the player's file.
     public void loadPlayerInfo(){
@@ -114,7 +115,6 @@ public class MailPlayerInfo {
     private String getFileName(){
         return playerId.toString() + ".yml";
     }
-
 
 
     //region Mail Methods
@@ -346,7 +346,6 @@ public class MailPlayerInfo {
     //endregion
 
 
-
     //region Player methods
 
     // Toggle alerts
@@ -424,7 +423,7 @@ public class MailPlayerInfo {
         String uiName;
         ItemStack uiItem = new ItemStack(Material.ITEM_FRAME);
         ItemMeta uiMeta = uiItem.getItemMeta();
-        if(isAlertsEnabled){
+        if(isUIEnabled){
             uiName = ChatColor.RED + UI_NAME;
             uiLore.add(ChatColor.GREEN + "Click to enable the UI.");
         } else {
@@ -437,7 +436,7 @@ public class MailPlayerInfo {
         configItems.add(uiItem);
 
 
-        Menu menu = new Menu(String.format("%s %s", MENU_PREFIX, player.getName()));
+        Menu menu = new Menu(String.format("%s: %s", MENU_PREFIX, player.getName()));
         menu.setContents(configItems.toArray(new ItemStack[configItems.size()]));
         menu.setButtons(exitButton, prevButton, nextButton);
         return new MenuManager().getMenu(menu.getName());

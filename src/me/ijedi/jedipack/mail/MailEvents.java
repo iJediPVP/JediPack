@@ -4,6 +4,7 @@ import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -81,7 +82,39 @@ public class MailEvents implements Listener {
         if(event.getClickedInventory() != null){
             Player player = (Player) event.getWhoClicked();
 
-            // Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
+
+            //region Handle clicks in a settings inventory
+            String invName = event.getClickedInventory().getTitle();
+            if(!Util.isNullOrEmpty(invName) && invName.split(":")[0].equals(MailPlayerInfo.MENU_PREFIX)){
+
+                // See what was clicked
+                if(event.getCurrentItem() != null && event.getCurrentItem().getItemMeta() != null){
+                    String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+
+                    if(itemName.equals(MailPlayerInfo.ALERTS_NAME)){
+                        // Alerts
+                        MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                        info.toggleAlertsEnabled();
+                        MessageTypeEnum.MailMessage.sendMessage("Alerts were toggled!", player, false);
+                        player.closeInventory();
+
+                    } else if(itemName.equals(MailPlayerInfo.UI_NAME)){
+                        // UI
+                        MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                        info.toggleUIEnabled();
+                        MessageTypeEnum.MailMessage.sendMessage("UI was toggled!", player, false);
+                        player.closeInventory();
+
+                    }
+
+                }
+
+                event.setCancelled(true);
+                return;
+            }
+            //endregion
+
+            //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
             ItemStack item = event.getCurrentItem();
             int hotbarButton = event.getHotbarButton();
             if(hotbarButton > -1){
@@ -99,6 +132,7 @@ public class MailEvents implements Listener {
                 player.updateInventory();
                 event.setCancelled(true);
             }
+            //endregion
         }
 
     }

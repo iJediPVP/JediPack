@@ -19,4 +19,4 @@ TODO LIST:
     - /mail block list - list blocked players
     - /mail list <page> - lists items in mail box
     - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)
-        - hook up UI to a listener and take action based on the clicked item
+        - player sounds when updating config options
