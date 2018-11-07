@@ -100,8 +100,7 @@ public class MailCommand implements TabExecutor {
                 MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
                 if(info.isUIEnabled()){
                     // Try to open the UI
-                    // Check for mail
-                    if(info.getNextMailNumber() == 1){
+                    if(!info.hasAnyMail()){
                         MessageTypeEnum.MailMessage.sendMessage("You do not have any mail!", player, true);
                         return true;
                     }

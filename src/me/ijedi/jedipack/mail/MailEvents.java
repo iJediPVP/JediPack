@@ -126,11 +126,26 @@ public class MailEvents implements Listener {
                         return;
                     }
 
-                    // Get the info by number and open the book
+                    // Get the mail info
                     int mailNumber = Integer.parseInt(mailNumberStr);
                     MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
                     MailInfo mailInfo = info.getMailInfo(mailNumber);
-                    info.openMail(player, mailInfo);
+
+                    if(event.isLeftClick()){
+                        // Left click opens
+                        info.openMail(player, mailInfo);
+
+                    } else if(event.isRightClick() && event.isShiftClick()){
+                        // Shift + Right Click deletes
+                        info.deleteMail(mailInfo);
+                        MessageTypeEnum.MailMessage.sendMessage("Mail has been deleted!", player, false);
+                        if(!info.hasAnyMail()){
+                            MessageTypeEnum.MailMessage.sendMessage("Your mail box is empty!", player, false);
+                            player.closeInventory();
+                        } else {
+                            player.openInventory(info.getMailBoxInventory(player));
+                        }
+                    }
 
                     // endregion
 

@@ -355,6 +355,11 @@ public class MailPlayerInfo {
         }
     }
 
+    // Returns true if the player has any mail.
+    public boolean hasAnyMail(){
+        return mailInfos.size() > 0;
+    }
+
     //endregion
 
 
@@ -519,12 +524,15 @@ public class MailPlayerInfo {
             MailInfo info = mailInfos.get(x);
             ItemStack item = new ItemStack(info.isRead() ? Material.BOOK : Material.ENCHANTED_BOOK);
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(ChatColor.YELLOW + info.getSubject());
+            itemMeta.setDisplayName(ChatColor.GOLD + info.getSubject());
 
             ArrayList<String> loreList = new ArrayList<>();
             loreList.add(ChatColor.GREEN + "From: " + ChatColor.GOLD + info.getSenderName());
             loreList.add(ChatColor.GREEN + "Date: " + ChatColor.AQUA + info.getMailDateString());
             loreList.add(ChatColor.GREEN + "Attachment: " + ChatColor.LIGHT_PURPLE + (info.hasAttachment() ? "Yes": "No"));
+            loreList.add("");
+            loreList.add(ChatColor.GREEN + "" + ChatColor.BOLD + "Left Click to read.");
+            loreList.add(ChatColor.RED + "" + ChatColor.BOLD + "Shift + Right Click to delete.");
             itemMeta.setLore(loreList);
             item.setItemMeta(itemMeta);
 
