@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class MailInfo {
@@ -18,6 +20,8 @@ public class MailInfo {
     private boolean isAttachmentRead;
     private String subject;
     private String senderName;
+    private long mailDateLong;
+    private Date mailDate;
 
     public MailInfo(String senderName, UUID receiverId, int mailNumber){
         this.senderName = senderName;
@@ -86,6 +90,25 @@ public class MailInfo {
 
     public void setSenderName(String senderName) {
         this.senderName = senderName;
+    }
+
+    public void setMailDate(Date mailDate){
+        this.mailDateLong = mailDate.getTime();
+        this.mailDate = mailDate;
+    }
+
+    public void setMailDate(long mailDateLong){
+        this.mailDateLong = mailDateLong;
+        this.mailDate = new Date(mailDateLong);
+    }
+
+    public long getMailDateLong() {
+        return mailDateLong;
+    }
+
+    public String getMailDateString(){
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        return format.format(mailDate);
     }
 
     //endregion

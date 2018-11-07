@@ -43,6 +43,7 @@ public class MailPlayerInfo {
     private static final String SUBJECT = "subject";
     private static final String IS_READ = "isRead";
     private static final String IS_ATTACH_READ = "isAttachRead";
+    private static final String MAILDATE = "mailDate";
 
     // Player config names
     private static final String CONFIG_DIRECTORY = "mail/playerConfig";
@@ -50,7 +51,8 @@ public class MailPlayerInfo {
     private static final String UI_ENABLED = "uiEnabled";
 
     // Player config menu names
-    public static final String MENU_PREFIX = "Mail Settings";
+    public static final String SETTINGS_PREFIX = "Mail Settings";
+    public static final String MAILBOX_PREFIX = "Mail Box";
     public static final String ALERTS_NAME = "Alerts";
     public static final String UI_NAME = "UI";
 
@@ -84,6 +86,7 @@ public class MailPlayerInfo {
                 String senderName = config.getString(mailStr + "." + SENDER_NAME);
                 List<String> messages = config.getStringList(mailStr + "." + MESSAGE);
                 String subject = config.getString(mailStr + "." + SUBJECT);
+                long mailDateLong = config.getLong(mailStr + "." + MAILDATE);
 
                 MailInfo info = new MailInfo(senderName, playerId, mailNum);
                 info.setMessage(messages.toArray(new String[messages.size()]));
@@ -91,6 +94,7 @@ public class MailPlayerInfo {
                 info.setAttachmentRead(config.getBoolean(mailStr + "." + IS_ATTACH_READ));
                 info.setItem(null); // TODO: rehydrate this
                 info.setSubject(subject);
+                info.setMailDate(mailDateLong);
                 mailInfos.put(mailNum, info);
             }
         }
@@ -135,6 +139,7 @@ public class MailPlayerInfo {
         config.set(mailNumStr + "." + IS_READ, info.isRead());
         config.set(mailNumStr + "." + IS_ATTACH_READ, info.isAttachmentRead());
         config.set(mailNumStr + "." + SUBJECT, info.getSubject());
+        config.set(mailNumStr + "." + MAILDATE, info.getMailDateLong());
         ConfigHelper.saveFile(file, config);
 
         if(!mailInfos.containsKey(info.getMailNumber())){
@@ -210,6 +215,14 @@ public class MailPlayerInfo {
         return maxNumber + 1;
     }
 
+    // Return a sorted list of mail numbers
+    private ArrayList<Integer> getSortedMailNumbers(){
+        // Sort the numbers
+        ArrayList<Integer> mailNumbers = new ArrayList<>(mailInfos.keySet());
+        Collections.sort(mailNumbers);
+        return mailNumbers;
+    }
+
     // Return info for the player's sign locks
     public List<TextComponent> getMailInfoPage(int page){
 
@@ -222,9 +235,7 @@ public class MailPlayerInfo {
 
         infos.add(new TextComponent(MessageTypeEnum.MailMessage.getListHeader()));
 
-        // Sort the numbers
-        ArrayList<Integer> mailNumbers = new ArrayList<>(mailInfos.keySet());
-        Collections.sort(mailNumbers);
+        ArrayList<Integer> mailNumbers = getSortedMailNumbers();
 
         // Figure out the pages
         int pageSize = 10;
@@ -256,7 +267,8 @@ public class MailPlayerInfo {
             MailInfo currentInfo = mailInfos.get(x);
             String msg = /*ChatColor.YELLOW + Integer.toString(currentInfo.getMailNumber()) + ") "
                     + */ChatColor.AQUA + currentInfo.getSenderName() + ChatColor.YELLOW + " - "
-                    + ChatColor.GOLD + (currentInfo.isRead() ? "" : ChatColor.BOLD) + currentInfo.getSubject() + " ";
+                    + ChatColor.GOLD + (currentInfo.isRead() ? "" : ChatColor.BOLD) + currentInfo.getSubject() + ChatColor.YELLOW + " - "
+                    + ChatColor.AQUA + currentInfo.getMailDateString() + " ";
             TextComponent msgComponent = new TextComponent(msg);
 
             // Read command
@@ -348,6 +360,14 @@ public class MailPlayerInfo {
 
     //region Player methods
 
+    public boolean isAlertsEnabled() {
+        return isAlertsEnabled;
+    }
+
+    public boolean isUIEnabled() {
+        return isUIEnabled;
+    }
+
     // Toggle alerts
     public void toggleAlertsEnabled(){
         isAlertsEnabled = !isAlertsEnabled;
@@ -436,7 +456,7 @@ public class MailPlayerInfo {
         configItems.add(uiItem);
 
 
-        Menu menu = new Menu(String.format("%s: %s", MENU_PREFIX, player.getName()));
+        Menu menu = new Menu(String.format("%s: %s", SETTINGS_PREFIX, player.getName()));
         menu.setContents(configItems.toArray(new ItemStack[configItems.size()]));
         menu.setButtons(exitButton, prevButton, nextButton);
         return new MenuManager().getMenu(menu.getName());
@@ -462,6 +482,63 @@ public class MailPlayerInfo {
                 }
             }.runTaskLater(JediPackMain.getThisPlugin(), 2L);
         }
+    }
+
+    // Returns an inventory representing the player's mail box
+    public Inventory getMailBoxInventory(Player player){
+
+        String menuName = MAILBOX_PREFIX + ": " + player.getName();
+
+        // Create a new menu
+        // Set up menu buttons
+        ItemStack exitButton = new ItemStack(Material.SPRUCE_DOOR);
+        ItemMeta exitMeta = exitButton.getItemMeta();
+        List<String> exitLore = Arrays.asList(ChatColor.GREEN + "Click to exit.");
+        exitMeta.setLore(exitLore);
+        exitMeta.setDisplayName(ChatColor.RED + "Exit");
+        exitButton.setItemMeta(exitMeta);
+
+        ItemStack nextButton = new ItemStack(Material.ARROW);
+        ItemMeta nextMeta = nextButton.getItemMeta();
+        List<String> nextLore = Arrays.asList(ChatColor.GREEN + "Click to go to the next page.");
+        exitMeta.setLore(nextLore);
+        nextMeta.setDisplayName(ChatColor.GREEN + "Next");
+        nextButton.setItemMeta(nextMeta);
+
+        ItemStack prevButton = new ItemStack(Material.ARROW);
+        ItemMeta prevMeta = prevButton.getItemMeta();
+        List<String> prevLore = Arrays.asList(ChatColor.GREEN + "Click to go to the previous page.");
+        exitMeta.setLore(prevLore);
+        prevMeta.setDisplayName(ChatColor.GREEN + "Previous");
+        prevButton.setItemMeta(prevMeta);
+
+        // Fill out menu items
+        ArrayList<ItemStack> menuItems = new ArrayList<>();
+        ArrayList<Integer> mailNumbers = getSortedMailNumbers();
+        for(int x : mailNumbers){
+            MailInfo info = mailInfos.get(x);
+            ItemStack item = new ItemStack(info.isRead() ? Material.BOOK : Material.ENCHANTED_BOOK);
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setDisplayName(ChatColor.YELLOW + info.getSubject());
+
+            ArrayList<String> loreList = new ArrayList<>();
+            loreList.add(ChatColor.GREEN + "From: " + ChatColor.GOLD + info.getSenderName());
+            loreList.add(ChatColor.GREEN + "Date: " + ChatColor.AQUA + info.getMailDateString());
+            loreList.add(ChatColor.GREEN + "Attachment: " + ChatColor.LIGHT_PURPLE + (info.hasAttachment() ? "Yes": "No"));
+            itemMeta.setLore(loreList);
+            item.setItemMeta(itemMeta);
+
+            // Tack on some NBT we'll use later
+            //item = Util.setNBTTagString(item, MailManager.MAIL_KEY, MailManager.MAIL_KEY_VALUE);
+            item = Util.setNBTTagString(item, MailManager.MAIL_NUMBER_KEY, Integer.toString(info.getMailNumber()));
+            menuItems.add(item);
+        }
+
+        // Create menu
+        Menu menu = new Menu(menuName);
+        menu.setContents(menuItems.toArray(new ItemStack[menuItems.size()]));
+        menu.setButtons(exitButton, prevButton, nextButton);
+        return new MenuManager().getMenu(menuName);
     }
 
     //endregion

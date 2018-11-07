@@ -96,12 +96,25 @@ public class MailCommand implements TabExecutor {
                     pageNumber = Integer.parseInt(pageStr);
                 }
 
-                // See if we have mail
+                // Try to open the mail box in the UI or chat
                 MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
-                List<TextComponent> infoMsgs = info.getMailInfoPage(pageNumber);
-                for(TextComponent msg : infoMsgs){
-                    player.spigot().sendMessage(msg);
+                if(info.isUIEnabled()){
+                    // Try to open the UI
+                    // Check for mail
+                    if(info.getNextMailNumber() == 1){
+                        MessageTypeEnum.MailMessage.sendMessage("You do not have any mail!", player, true);
+                        return true;
+                    }
+                    player.openInventory(info.getMailBoxInventory(player));
+
+                } else {
+                    // Else use the chat
+                    List<TextComponent> infoMsgs = info.getMailInfoPage(pageNumber);
+                    for(TextComponent msg : infoMsgs){
+                        player.spigot().sendMessage(msg);
+                    }
                 }
+
                 return true;
                 //endregion
 

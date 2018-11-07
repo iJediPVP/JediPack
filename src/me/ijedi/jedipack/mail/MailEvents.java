@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MailEvents implements Listener {
 
@@ -59,6 +61,7 @@ public class MailEvents implements Listener {
         info.setSubject(subject);
         info.setMessage(bookLines);
         info.setSenderName(senderName);
+        info.setMailDate(new Date());
         recipientInfo.updateMail(info);
 
         // Alert the player and cancel the event
@@ -80,17 +83,22 @@ public class MailEvents implements Listener {
     public void onInvClick(InventoryClickEvent event){
 
         if(event.getClickedInventory() != null){
+
             Player player = (Player) event.getWhoClicked();
-
-
-            //region Handle clicks in a settings inventory
             String invName = event.getClickedInventory().getTitle();
-            if(!Util.isNullOrEmpty(invName) && invName.split(":")[0].equals(MailPlayerInfo.MENU_PREFIX)){
+            if(!Util.isNullOrEmpty(invName) && event.getCurrentItem() != null){
 
-                // See what was clicked
-                if(event.getCurrentItem() != null && event.getCurrentItem().getItemMeta() != null){
-                    String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+                // Make sure the item meta isn't null
+                ItemStack currentItem = event.getCurrentItem();
+                if(currentItem.getItemMeta() == null){
+                    return;
+                }
+                String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+                String invPrefix = invName.split(":")[0];
 
+
+                if(invPrefix.equals(MailPlayerInfo.SETTINGS_PREFIX)){
+                    // region Handle clicks in a settings inventory
                     if(itemName.equals(MailPlayerInfo.ALERTS_NAME)){
                         // Alerts
                         MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
@@ -106,13 +114,31 @@ public class MailEvents implements Listener {
                         player.closeInventory();
 
                     }
+                    //endregion
+
+                } else if(invPrefix.equals(MailPlayerInfo.MAILBOX_PREFIX)){
+
+                    // region Handle clicks in the mail box
+
+                    // Check the item NBT for a mail number
+                    String mailNumberStr = Util.getNBTTagString(currentItem, MailManager.MAIL_NUMBER_KEY);
+                    if(Util.isNullOrEmpty(mailNumberStr) || !Util.isInteger(mailNumberStr)){
+                        return;
+                    }
+
+                    // Get the info by number and open the book
+                    int mailNumber = Integer.parseInt(mailNumberStr);
+                    MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                    MailInfo mailInfo = info.getMailInfo(mailNumber);
+                    info.openMail(player, mailInfo);
+
+                    // endregion
 
                 }
 
                 event.setCancelled(true);
                 return;
             }
-            //endregion
 
             //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
             ItemStack item = event.getCurrentItem();

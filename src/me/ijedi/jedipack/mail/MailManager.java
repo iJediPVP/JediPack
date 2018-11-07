@@ -16,6 +16,7 @@ public class MailManager {
 
     public static final String DIRECTORY = "mail";
     public static final String MAIL_KEY = "mailKey";
+    public static final String MAIL_NUMBER_KEY = "mailNumberKey";
     public static final String MAIL_KEY_VALUE = "0b93641b-7e96-4c68-8154-a4e81144bc39";
     public static final String RECIPIENT_TAG = "recipientId";
 
