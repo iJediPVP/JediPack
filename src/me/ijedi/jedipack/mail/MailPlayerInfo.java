@@ -176,7 +176,7 @@ public class MailPlayerInfo {
 
     // Delete the given mail object.
     public void deleteMail(MailInfo info){
-        // TODO: reorder numbers..
+
         // Get the config
         String fileName = ConfigHelper.getFullFilePath(MailManager.DIRECTORY, getFileName());
         File file = ConfigHelper.getFile(fileName);

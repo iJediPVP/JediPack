@@ -66,65 +66,68 @@ public class ParkourCourse {
         saveConfiguration();
 
         // Attempt to load any stored values
+        try{
 
-        // Start
-        ConfigurationSection startSection = CourseConfiguration.getConfigurationSection(START);
-        if(startSection != null){
+            // Start
+            ConfigurationSection startSection = CourseConfiguration.getConfigurationSection(START);
+            if(startSection != null){
 
-            // TODO: I should probably handle this in case it fails to parse..
-            String worldIdStr = startSection.getString(WORLDID);
-            UUID worldId = UUID.fromString(worldIdStr);
-            World world = Bukkit.getWorld(worldId);
+                String worldIdStr = startSection.getString(WORLDID);
+                UUID worldId = UUID.fromString(worldIdStr);
+                World world = Bukkit.getWorld(worldId);
 
-            double x = startSection.getDouble(X);
-            double y = startSection.getDouble(Y);
-            double z = startSection.getDouble(Z);
+                double x = startSection.getDouble(X);
+                double y = startSection.getDouble(Y);
+                double z = startSection.getDouble(Z);
 
-            StartLocation = new Location(world, x, y, z);
-        }
-
-        // Finish
-        ConfigurationSection finishSection = CourseConfiguration.getConfigurationSection(FINISH);
-        if(finishSection != null){
-
-            // TODO: I should probably handle this in case it fails to parse..
-            String worldIdStr = finishSection.getString(WORLDID);
-            UUID worldId = UUID.fromString(worldIdStr);
-            World world = Bukkit.getWorld(worldId);
-
-            double x = finishSection.getDouble(X);
-            double y = finishSection.getDouble(Y);
-            double z = finishSection.getDouble(Z);
-
-            FinishLocation = new Location(world, x, y, z);
-        }
-
-        // Points
-        ConfigurationSection pointsSection = CourseConfiguration.getConfigurationSection(POINT);
-        if(pointsSection != null){
-
-            for(String pointKey : pointsSection.getKeys(false)){
-
-                ConfigurationSection configSection = pointsSection.getConfigurationSection(pointKey);
-                if(configSection != null){
-
-                    // TODO: I should probably handle this in case it fails to parse..
-                    String worldIdStr = configSection.getString(WORLDID);
-                    UUID worldId = UUID.fromString(worldIdStr);
-                    World world = Bukkit.getWorld(worldId);
-
-                    double x = configSection.getDouble(X);
-                    double y = configSection.getDouble(Y);
-                    double z = configSection.getDouble(Z);
-
-                    if(PointLocations.containsKey(pointKey)){
-                        continue;
-                    }
-                    Location location = new Location(world, x, y, z);
-                    PointLocations.put(pointKey, location);
-                }
-
+                StartLocation = new Location(world, x, y, z);
             }
+
+            // Finish
+            ConfigurationSection finishSection = CourseConfiguration.getConfigurationSection(FINISH);
+            if(finishSection != null){
+
+                String worldIdStr = finishSection.getString(WORLDID);
+                UUID worldId = UUID.fromString(worldIdStr);
+                World world = Bukkit.getWorld(worldId);
+
+                double x = finishSection.getDouble(X);
+                double y = finishSection.getDouble(Y);
+                double z = finishSection.getDouble(Z);
+
+                FinishLocation = new Location(world, x, y, z);
+            }
+
+            // Points
+            ConfigurationSection pointsSection = CourseConfiguration.getConfigurationSection(POINT);
+            if(pointsSection != null){
+
+                for(String pointKey : pointsSection.getKeys(false)){
+
+                    ConfigurationSection configSection = pointsSection.getConfigurationSection(pointKey);
+                    if(configSection != null){
+
+                        String worldIdStr = configSection.getString(WORLDID);
+                        UUID worldId = UUID.fromString(worldIdStr);
+                        World world = Bukkit.getWorld(worldId);
+
+                        double x = configSection.getDouble(X);
+                        double y = configSection.getDouble(Y);
+                        double z = configSection.getDouble(Z);
+
+                        if(PointLocations.containsKey(pointKey)){
+                            continue;
+                        }
+                        Location location = new Location(world, x, y, z);
+                        PointLocations.put(pointKey, location);
+                    }
+
+                }
+            }
+        }catch(Exception e){
+            // We don't want to bomb just because a course fails to load
+            MessageTypeEnum.ParkourMessage.logMessage("Error loading parkour course: " + courseId);
+            MessageTypeEnum.ParkourMessage.logMessage(e.toString());
         }
     }
 
@@ -134,12 +137,12 @@ public class ParkourCourse {
         if(isStart && StartLocation != null && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A starting point for course '%s' has already been set!", CourseId), true, true);
             return msg;
-        } // TODO: Allow overriding of course start.. Remove old starting location (armor stand and pressure plate) and set new.
+        }
 
         if(isFinish && FinishLocation != null && !isLoadOnly){
             String msg = MessageTypeEnum.ParkourMessage.formatMessage(String.format("A finishing point for course '%s' has already been set!", CourseId), true, true);
             return  msg;
-        } // TODO: Allow overriding of course finish.. Remove old starting location (armor stand and pressure plate) and set new.
+        }
 
 
         // Make sure the block the player's feet is in is AIR.

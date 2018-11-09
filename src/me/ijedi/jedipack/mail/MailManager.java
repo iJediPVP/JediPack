@@ -36,7 +36,6 @@ public class MailManager {
         plugin.getCommand(MailCommand.BASE_COMMAND).setTabCompleter(new MailCommand());
         plugin.getServer().getPluginManager().registerEvents(new MailEvents(), plugin);
 
-        // TODO: Load player data here??
     }
 
     // Returns the player info for the given player id.

@@ -156,8 +156,6 @@ public class ParkourManager {
     public static String removeCourse(String courseId){
         if(doesCourseExist(courseId)){
 
-            // TODO: Save armor stand entity ids to config and remove those as well..
-
             // Remove start, finish and all points from the course.
             ParkourCourse course = ParkourCourses.get(courseId);
             course.removeEntireCourse();

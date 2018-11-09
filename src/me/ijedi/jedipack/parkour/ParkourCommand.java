@@ -234,9 +234,9 @@ public class ParkourCommand implements TabExecutor {
                         ParkourManager.openCourseMenu(firstArg, player);
                         return true;
 
-                    }// TODO: Else, handle invalid second argument.
+                    }
 
-                } // TODO: Else, handle this..
+                }
 
             } else if(firstArg.equals(RESTART)) {
 
