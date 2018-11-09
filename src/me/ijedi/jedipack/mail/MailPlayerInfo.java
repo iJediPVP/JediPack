@@ -277,7 +277,7 @@ public class MailPlayerInfo {
             String readCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.READ, currentInfo.getMailNumber());
             readBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, readCommand));
 
-            // Delete command - TODO: Actually code a delete command
+            // Delete command
             ComponentBuilder deleteBuilder = new ComponentBuilder(ChatColor.RED + "" + ChatColor.BOLD + "[DELETE]");
             deleteBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.RED + "Click to delete!" ).create() ));
             String deleteCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.DELETE, currentInfo.getMailNumber());
@@ -432,11 +432,11 @@ public class MailPlayerInfo {
         ItemStack alertItem = new ItemStack(Material.NOTE_BLOCK);
         ItemMeta alertMeta = alertItem.getItemMeta();
         if(isAlertsEnabled){
-            alertName = ChatColor.RED + ALERTS_NAME;
-            alertLore.add(ChatColor.GREEN + "Click to enable alerts.");
-        } else {
             alertName = ChatColor.GREEN + ALERTS_NAME;
             alertLore.add(ChatColor.RED + "Click to disable alerts.");
+        } else {
+            alertName = ChatColor.RED + ALERTS_NAME;
+            alertLore.add(ChatColor.GREEN + "Click to enable alerts.");
         }
         alertMeta.setDisplayName(alertName);
         alertMeta.setLore(alertLore);
@@ -449,11 +449,11 @@ public class MailPlayerInfo {
         ItemStack uiItem = new ItemStack(Material.ITEM_FRAME);
         ItemMeta uiMeta = uiItem.getItemMeta();
         if(isUIEnabled){
-            uiName = ChatColor.RED + UI_NAME;
-            uiLore.add(ChatColor.GREEN + "Click to enable the UI.");
-        } else {
             uiName = ChatColor.GREEN + UI_NAME;
             uiLore.add(ChatColor.RED + "Click to disable the UI.");
+        } else {
+            uiName = ChatColor.RED + UI_NAME;
+            uiLore.add(ChatColor.GREEN + "Click to enable the UI.");
         }
         uiMeta.setDisplayName(uiName);
         uiMeta.setLore(uiLore);
