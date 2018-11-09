@@ -1,6 +1,8 @@
 package me.ijedi.jedipack.common;
 
 import me.ijedi.jedipack.JediPackMain;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,6 +57,12 @@ public enum MessageTypeEnum {
     public void sendMessage(String msg, Player player, boolean isError){
         String newMsg = formatMessage(msg, true, isError);
         player.sendMessage(newMsg);
+    }
+
+    public void sendMessage(BaseComponent component, Player player){
+        TextComponent msg = new TextComponent(headerColor1 + "" + headerColor2 + header + " ");
+        msg.addExtra(component);
+        player.spigot().sendMessage(msg);
     }
 
     // Logs a message to the plugin console.

@@ -476,8 +476,21 @@ public class MailPlayerInfo {
         // Alerts are enabled, send a message and player a sound.
         Player player = Bukkit.getPlayer(playerId);
         if(player != null && player.isOnline()){
-            // TODO: Make this clickable!
-            MessageTypeEnum.MailMessage.sendMessage("You have mail! Use /" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO + " to see your inbox!", player, false);
+
+            // Tell the player that they have mail
+            TextComponent msgComponent = new TextComponent(ChatColor.GREEN + "You have mail! ");
+
+            // Read command
+            String command = "/" + MailCommand.BASE_COMMAND + " " + MailCommand.INFO;
+            ComponentBuilder commandBuilder = new ComponentBuilder(ChatColor.YELLOW + "" + ChatColor.BOLD + "[Click Here]");
+            commandBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.GREEN + "Click to open your mailbox!" ).create() ));
+            commandBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, command));
+
+            msgComponent.addExtra(commandBuilder.create()[0]);
+            msgComponent.addExtra(new TextComponent(ChatColor.GREEN + " to open your mailbox!"));
+            MessageTypeEnum.MailMessage.sendMessage(msgComponent, player);
+
+            // Player some sounds
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.700f);
             new BukkitRunnable(){
                 @Override
