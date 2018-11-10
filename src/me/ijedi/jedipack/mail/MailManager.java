@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.mail;
 
+import com.google.gson.Gson;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
@@ -11,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class MailManager {
@@ -21,6 +23,9 @@ public class MailManager {
     public static final String MAIL_KEY_VALUE = "0b93641b-7e96-4c68-8154-a4e81144bc39";
     public static final String RECIPIENT_TAG = "recipientId";
     public static final String ATTACHMENT_KEY = "attach";
+
+    private static final String ATTACHMENT_YES = ChatColor.GREEN + "Attachment: " + ChatColor.BOLD + ChatColor.GREEN + "Yes";
+    private static final String ATTACHMENT_NO = ChatColor.GREEN + "Attachment: " + ChatColor.BOLD + ChatColor.RED + "No";
 
     private static final HashMap<UUID, MailPlayerInfo> playerInfos = new HashMap<>();
 
@@ -58,6 +63,7 @@ public class MailManager {
         bookMeta.setDisplayName(ChatColor.GREEN + "Right Click To Write Mail");
         ArrayList<String> loreList = new ArrayList<>();
         loreList.add(ChatColor.GREEN + "Addressed to: " + ChatColor.GOLD + recipientName);
+        loreList.add(ATTACHMENT_NO);
         bookMeta.setLore(loreList);
         book.setItemMeta(bookMeta);
         book = Util.setNBTTagString(book, RECIPIENT_TAG, recipientName);
@@ -76,7 +82,23 @@ public class MailManager {
 
     public static ItemStack attachItem(ItemStack mailBook, ItemStack attachment){
         mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, attachment.serialize().toString());
+        ItemMeta mailMeta = mailBook.getItemMeta();
+        List<String> loreList = mailMeta.getLore();
+        loreList.remove(ATTACHMENT_NO);
+        loreList.add(ATTACHMENT_YES);
+        mailMeta.setLore(loreList);
+        mailBook.setItemMeta(mailMeta);
         return mailBook;
+    }
+
+    public static void removeAttachment(ItemStack mailBook){
+        mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, null);
+        ItemMeta mailMeta = mailBook.getItemMeta();
+        List<String> loreList = mailMeta.getLore();
+        loreList.remove(ATTACHMENT_YES);
+        loreList.add(ATTACHMENT_NO);
+        mailMeta.setLore(loreList);
+        mailBook.setItemMeta(mailMeta);
     }
 
     public static ItemStack getAttachedItem(ItemStack mailBook){
@@ -85,9 +107,8 @@ public class MailManager {
             return null;
         }
 
-        
-
-        return null;
+        ItemStack attachment = new Gson().fromJson(attachmentString, ItemStack.class);
+        return attachment;
     }
 
 }

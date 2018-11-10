@@ -215,7 +215,7 @@ public class MailCommand implements TabExecutor {
                 // Check for mail in inventory
                 ItemStack[] playerItems = player.getInventory().getStorageContents();
                 ItemStack bookItem = null;
-                int bookSlot;
+                int bookSlot = 0;
                 for(int x = 0; x < playerItems.length; x++){
                     ItemStack currentItem = playerItems[x];
                     if(MailManager.isMailBook(currentItem)){
@@ -263,8 +263,8 @@ public class MailCommand implements TabExecutor {
                     }
 
                     // Store the item in the book's NBT
-                    player.sendMessage(attachedItem.serialize().toString());
-
+                    bookItem = MailManager.attachItem(bookItem, attachedItem);
+                    player.getInventory().setItem(bookSlot, bookItem);
                     ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
                     String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
                     MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
