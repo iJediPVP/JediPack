@@ -213,13 +213,17 @@ public class MailCommand implements TabExecutor {
                 // region ATTACH
 
                 // Check for mail in inventory
-                boolean hasMail = false;
-                for(ItemStack item : player.getInventory().getStorageContents()){
-                    if(item != null && MailManager.isMailBook(item)){
-                        hasMail = true;
+                ItemStack[] playerItems = player.getInventory().getStorageContents();
+                ItemStack bookItem = null;
+                int bookSlot;
+                for(int x = 0; x < playerItems.length; x++){
+                    ItemStack currentItem = playerItems[x];
+                    if(MailManager.isMailBook(currentItem)){
+                        bookSlot = x;
+                        bookItem = currentItem;
                     }
                 }
-                if(!hasMail){
+                if(bookItem == null){
                     MessageTypeEnum.MailMessage.sendMessage("You must have a mail book in your inventory!", player, true);
 
                 } else{
@@ -258,10 +262,12 @@ public class MailCommand implements TabExecutor {
                         player.getInventory().setItemInMainHand(heldItem);
                     }
 
+                    // Store the item in the book's NBT
+                    player.sendMessage(attachedItem.serialize().toString());
+
                     ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
                     String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
                     MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
-
                 }
                 return true;
                 // endregion

@@ -20,6 +20,7 @@ public class MailManager {
     public static final String MAIL_NUMBER_KEY = "mailNumberKey";
     public static final String MAIL_KEY_VALUE = "0b93641b-7e96-4c68-8154-a4e81144bc39";
     public static final String RECIPIENT_TAG = "recipientId";
+    public static final String ATTACHMENT_KEY = "attach";
 
     private static final HashMap<UUID, MailPlayerInfo> playerInfos = new HashMap<>();
 
@@ -72,4 +73,21 @@ public class MailManager {
         }
         return false;
     }
+
+    public static ItemStack attachItem(ItemStack mailBook, ItemStack attachment){
+        mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, attachment.serialize().toString());
+        return mailBook;
+    }
+
+    public static ItemStack getAttachedItem(ItemStack mailBook){
+        String attachmentString = Util.getNBTTagString(mailBook, ATTACHMENT_KEY);
+        if(Util.isNullOrEmpty(attachmentString)){
+            return null;
+        }
+
+        
+
+        return null;
+    }
+
 }
