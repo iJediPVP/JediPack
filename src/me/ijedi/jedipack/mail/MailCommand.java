@@ -194,7 +194,7 @@ public class MailCommand implements TabExecutor {
                 //endregion
 
             } else if(firstArg.equals(CANCEL)){
-
+                //region CANCEL
                 // See if the player is holding a mail book
                 ItemStack item = player.getInventory().getItemInMainHand();
                 if(item != null && MailManager.isMailBook(item)){
@@ -205,6 +205,8 @@ public class MailCommand implements TabExecutor {
                     MessageTypeEnum.MailMessage.sendMessage("You must be holding a mail item!", player, true);
                 }
                 return true;
+                //endregion
+
             }
 
         }

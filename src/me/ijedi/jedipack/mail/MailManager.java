@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -54,6 +55,9 @@ public class MailManager {
         ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta bookMeta = book.getItemMeta();
         bookMeta.setDisplayName(ChatColor.GREEN + "Right Click To Write Mail");
+        ArrayList<String> loreList = new ArrayList<>();
+        loreList.add(ChatColor.GREEN + "Addressed to: " + ChatColor.GOLD + recipientName);
+        bookMeta.setLore(loreList);
         book.setItemMeta(bookMeta);
         book = Util.setNBTTagString(book, RECIPIENT_TAG, recipientName);
         book = Util.setNBTTagString(book, MAIL_KEY, MAIL_KEY_VALUE);
