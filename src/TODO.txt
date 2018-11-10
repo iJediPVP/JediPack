@@ -13,10 +13,15 @@ TODO LIST:
     - Allow players to send "mail" to other players
     - This could include items..
 
-    - Item attachments. Require items to be in the player's inventory.
+    - /mail attach:
+        - Require book to be in the player's hotbar
+        - Item attachments. Require items to be on the player's hotbar.
     - /mail block <playerName> - block someone from sending you a message
     - /mail block list - list blocked players
     - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)
         - player sounds when updating config options
     - /mail info - UI:
         - Sounds when reading or deleting
+    - /mail cancel
+        - Handle giving back attachments
+    - Format subject and sender in the books..
