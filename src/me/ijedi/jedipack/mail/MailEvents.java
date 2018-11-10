@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -88,17 +87,18 @@ public class MailEvents implements Listener {
             String invName = event.getClickedInventory().getTitle();
             if(!Util.isNullOrEmpty(invName) && event.getCurrentItem() != null){
 
-                // Make sure the item meta isn't null
                 ItemStack currentItem = event.getCurrentItem();
-                if(currentItem.getItemMeta() == null){
-                    return;
-                }
-                String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
                 String invPrefix = invName.split(":")[0];
 
-
+                // Handle different inventories
                 if(invPrefix.equals(MailPlayerInfo.SETTINGS_PREFIX)){
                     // region Handle clicks in a settings inventory
+
+                    if(currentItem.getItemMeta() == null){
+                        return;
+                    }
+                    String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+
                     if(itemName.equals(MailPlayerInfo.ALERTS_NAME)){
                         // Alerts
                         MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
@@ -114,12 +114,13 @@ public class MailEvents implements Listener {
                         player.closeInventory();
 
                     }
+                    event.setCancelled(true);
+                    return;
                     //endregion
 
                 } else if(invPrefix.equals(MailPlayerInfo.MAILBOX_PREFIX)){
 
                     // region Handle clicks in the mail box
-
                     // Check the item NBT for a mail number
                     String mailNumberStr = Util.getNBTTagString(currentItem, MailManager.MAIL_NUMBER_KEY);
                     if(Util.isNullOrEmpty(mailNumberStr) || !Util.isInteger(mailNumberStr)){
@@ -146,34 +147,33 @@ public class MailEvents implements Listener {
                             player.openInventory(info.getMailBoxInventory(player));
                         }
                     }
-
+                    event.setCancelled(true);
+                    return;
                     // endregion
 
+                } else {
+                    //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
+                    ItemStack item = event.getCurrentItem();
+                    int hotbarButton = event.getHotbarButton();
+                    if(hotbarButton > -1){
+                        item = event.getClickedInventory().getItem(hotbarButton);
+                    }
+                    if(hotbarButton > -1 && !event.getClickedInventory().equals(player.getInventory())){
+                        item = player.getInventory().getItem(hotbarButton);
+                    }
+                    ItemStack slotItem = event.getClickedInventory().getItem(event.getSlot());
+
+                    // Check for a "mail" book
+                    if((item != null && MailManager.isMailBook(item)) || (slotItem != null && MailManager.isMailBook(slotItem))){
+                        MessageTypeEnum.MailMessage.sendMessage("You cannot move this item!", player, true);
+                        player.closeInventory();
+                        player.updateInventory();
+                        event.setCancelled(true);
+                    }
+                    //endregion
+
                 }
-
-                event.setCancelled(true);
-                return;
             }
-
-            //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
-            ItemStack item = event.getCurrentItem();
-            int hotbarButton = event.getHotbarButton();
-            if(hotbarButton > -1){
-                item = event.getClickedInventory().getItem(hotbarButton);
-            }
-            if(hotbarButton > -1 && !event.getClickedInventory().equals(player.getInventory())){
-                item = player.getInventory().getItem(hotbarButton);
-            }
-
-            // Check for a "mail" book
-            if(item != null && MailManager.isMailBook(item)){
-
-                MessageTypeEnum.MailMessage.sendMessage("You cannot move this item!", player, true);
-                player.closeInventory();
-                player.updateInventory();
-                event.setCancelled(true);
-            }
-            //endregion
         }
 
     }
