@@ -3,15 +3,37 @@ package me.ijedi.jedipack.common;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.NBTTagString;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Util {
+
+    public static ArrayList<Material> SHULKER_BOXES = new ArrayList<Material>(){{
+        add(Material.SHULKER_BOX);
+        add(Material.BLACK_SHULKER_BOX);
+        add(Material.BLUE_SHULKER_BOX);
+        add(Material.BROWN_SHULKER_BOX);
+        add(Material.CYAN_SHULKER_BOX);
+        add(Material.GRAY_SHULKER_BOX);
+        add(Material.GREEN_SHULKER_BOX);
+        add(Material.LIGHT_BLUE_SHULKER_BOX);
+        add(Material.LIGHT_GRAY_SHULKER_BOX);
+        add(Material.LIME_SHULKER_BOX);
+        add(Material.MAGENTA_SHULKER_BOX);
+        add(Material.ORANGE_SHULKER_BOX);
+        add(Material.PINK_SHULKER_BOX);
+        add(Material.PURPLE_SHULKER_BOX);
+        add(Material.RED_SHULKER_BOX);
+        add(Material.WHITE_SHULKER_BOX);
+        add(Material.YELLOW_SHULKER_BOX);
+    }};
 
     // I need some of these because C# has spoiled me.
 
@@ -177,5 +199,10 @@ public class Util {
         }
 
         return str;
+    }
+
+    public static String getRealItemName(ItemStack item){
+        net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        return nmsItem.getName().getText();
     }
 }

@@ -5,6 +5,7 @@ import me.ijedi.jedipack.common.Util;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,7 @@ public class MailCommand implements TabExecutor {
     public static final String DELETE = "delete";
     public static final String CANCEL = "cancel";
     public static final String SETTINGS = "settings";
+    public static final String ATTACH = "attach";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -206,6 +208,63 @@ public class MailCommand implements TabExecutor {
                 }
                 return true;
                 //endregion
+
+            } else if(firstArg.equals(ATTACH)){
+                // region ATTACH
+
+                // Check for mail in inventory
+                boolean hasMail = false;
+                for(ItemStack item : player.getInventory().getStorageContents()){
+                    if(item != null && MailManager.isMailBook(item)){
+                        hasMail = true;
+                    }
+                }
+                if(!hasMail){
+                    MessageTypeEnum.MailMessage.sendMessage("You must have a mail book in your inventory!", player, true);
+
+                } else{
+
+                    // Verify the item that the player is holding. Don't allow nulls, shulkerboxes, or mail books.
+                    ItemStack heldItem = player.getInventory().getItemInMainHand();
+                    if(heldItem == null || heldItem.getType().equals(Material.AIR) || Util.SHULKER_BOXES.contains(heldItem.getType()) || MailManager.isMailBook(heldItem)){
+                        MessageTypeEnum.MailMessage.sendMessage("Invalid attachment!", player, true);
+                        return true;
+                    }
+
+                    // Check for an amount. Default to 1
+                    int amount = 1;
+                    if(args.length > 1){
+                        String secondArg = args[1];
+                        if(Util.isInteger(secondArg)){
+                            amount = Integer.parseInt(secondArg);
+                        }
+                    }
+
+                    // Verify amount
+                    player.sendMessage(Integer.toString(heldItem.getAmount()));
+                    if(amount > heldItem.getAmount()){
+                        MessageTypeEnum.MailMessage.sendMessage("You don't have " + amount + " of this item!", player, true);
+                        return true;
+                    }
+
+                    // Build the attached item and subtract from the player's held item
+                    ItemStack attachedItem = heldItem.clone();
+                    attachedItem.setAmount(amount);
+                    int newPlayerAmount = heldItem.getAmount() - amount;
+                    if(newPlayerAmount == 0){
+                        player.getInventory().setItemInMainHand(null);
+                    } else {
+                        heldItem.setAmount(newPlayerAmount);
+                        player.getInventory().setItemInMainHand(heldItem);
+                    }
+
+                    ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
+                    String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
+                    MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
+
+                }
+                return true;
+                // endregion
 
             }
 

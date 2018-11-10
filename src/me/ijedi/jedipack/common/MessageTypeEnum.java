@@ -42,6 +42,10 @@ public enum MessageTypeEnum {
         return listHeader;
     }
 
+    public ChatColor getMessageColor() {
+        return messageColor;
+    }
+
     // Sends a message to the given sender.
     public void sendMessage(String msg, CommandSender sender, boolean isError){
         boolean useColors = false;
