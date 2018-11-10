@@ -64,14 +64,21 @@ public class MailCommand implements TabExecutor {
                     boolean hasFreeSlot = false;
                     for(int x = 0; x < 9; x++){
                         ItemStack item = player.getInventory().getItem(x);
-                        if(item == null){
+                        if(item == null && !hasFreeSlot){
                             openSlot = x;
                             hasFreeSlot = true;
-                            break;
+                            //break;
+                        } else {
+                            // Don't let this player have more than one mail book.. Creative player's can get a second book if they move the item off their hot bar.
+                            String nbtData = Util.getNBTTagString(item, MailManager.MAIL_KEY);
+                            if(!Util.isNullOrEmpty(nbtData)){
+                                MessageTypeEnum.MailMessage.sendMessage("You already have an unsent mail item!", player, true);
+                                return true;
+                            }
                         }
                     }
                     if(!hasFreeSlot){
-                        MessageTypeEnum.MailMessage.sendMessage("You must have an open spot on your hotbat!", player, true);
+                        MessageTypeEnum.MailMessage.sendMessage("You must have an open spot on your hot bar!", player, true);
                         return true;
                     }
 
@@ -178,10 +185,13 @@ public class MailCommand implements TabExecutor {
                 //endregion
 
             } else if(firstArg.equals(SETTINGS)){
-
+                //region SETTINGS
                 MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
                 Inventory configInv = info.getConfigInventory(player);
                 player.openInventory(configInv);
+                return true;
+                //endregion
+
             }
 
         }
