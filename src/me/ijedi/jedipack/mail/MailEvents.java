@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -201,5 +202,15 @@ public class MailEvents implements Listener {
             }
         }
         event.getDrops().removeAll(itemsToRemove);
+    }
+
+    @EventHandler
+    public void onHandSwitch(PlayerSwapHandItemsEvent event){
+        // Check for mail items
+        if((event.getMainHandItem() != null && MailManager.isMailBook(event.getMainHandItem()))
+                || (event.getOffHandItem() != null && MailManager.isMailBook(event.getOffHandItem()))){
+            MessageTypeEnum.MailMessage.sendMessage("You cannot move this item!", event.getPlayer(), true);
+            event.setCancelled(true);
+        }
     }
 }
