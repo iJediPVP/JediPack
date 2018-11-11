@@ -109,7 +109,7 @@ public class TabMessageManager {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(JediPackMain.getThisPlugin(), 0l, 1 * 20l);
+        }.runTaskTimerAsynchronously(JediPackMain.getThisPlugin(), 0l, 1 * 20l);
 
     }
 
