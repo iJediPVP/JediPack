@@ -60,14 +60,6 @@ public class MailManager {
     // Returns a new book to write mail in
     public ItemStack getNewWritableBook(String recipientName){
         ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
-        /*ItemMeta bookMeta = book.getItemMeta();
-        bookMeta.setDisplayName(ChatColor.GREEN + "Right Click To Write Mail");
-        book.setItemMeta(bookMeta);*/
-        /*ArrayList<String> loreList = new ArrayList<>();
-        loreList.add(ChatColor.GREEN + "Addressed to: " + ChatColor.GOLD + address);
-        loreList.add(ChatColor.GREEN + "Attachment: " + ChatColor.YELLOW + "None");
-        bookMeta.setLore(loreList);
-        book.setItemMeta(bookMeta);*/
         book = updateMailAttachmentLore(book, recipientName);
         book = Util.setNBTTagString(book, RECIPIENT_TAG, recipientName);
         book = Util.setNBTTagString(book, MAIL_KEY, MAIL_KEY_VALUE);
@@ -83,30 +75,20 @@ public class MailManager {
         return false;
     }
 
+    // Add attachment to the mail book
     public static ItemStack attachItem(ItemStack mailBook, ItemStack attachment){
         mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, attachment.serialize().toString());
-        //mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, new Gson().toJson(attachment));
-        /*ItemMeta mailMeta = mailBook.getItemMeta();
-        List<String> loreList = mailMeta.getLore();
-        loreList.remove(ATTACHMENT_NO);
-        loreList.add(ATTACHMENT_YES);
-        mailMeta.setLore(loreList);
-        mailBook.setItemMeta(mailMeta);*/
         mailBook = updateMailAttachmentLore(mailBook, null);
         return mailBook;
     }
 
+    // Remove attachment from the mail book
     public static void removeAttachment(ItemStack mailBook){
         mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, null);
-        /*ItemMeta mailMeta = mailBook.getItemMeta();
-        List<String> loreList = mailMeta.getLore();
-        loreList.remove(ATTACHMENT_YES);
-        loreList.add(ATTACHMENT_NO);
-        mailMeta.setLore(loreList);
-        mailBook.setItemMeta(mailMeta);*/
         mailBook = updateMailAttachmentLore(mailBook, null);
     }
 
+    // Get the attached item from the mail book.
     public static ItemStack getAttachedItem(ItemStack mailBook){
         String attachmentString = Util.getNBTTagString(mailBook, ATTACHMENT_KEY);
         if(Util.isNullOrEmpty(attachmentString)){
@@ -117,6 +99,7 @@ public class MailManager {
         return attachment;
     }
 
+    // Update the lore on the given mail book to reflect the attachment
     private static ItemStack updateMailAttachmentLore(ItemStack mailBook, String address){
 
         ArrayList<String> loreList = new ArrayList<>();

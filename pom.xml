@@ -26,13 +26,14 @@
                 <version>1.2.1</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <configuration>
-                            <executable>powershell</executable>
+                            <executable>cmd</executable>
                             <workingDirectory></workingDirectory>
                             <arguments>
-                                <argument>${project.basedir}/util/DevDeploy.ps1 "${project.build.outputDirectory}/${project.build.finalName}"</argument>
-                                <argument>"${project.basedir}/test.bat"</argument>
+                                <argument>/c</argument>
+                                <argument>copy "${project.build.directory}\${project.build.finalName}.jar" "C:\Servers\Spigot 1.13.2\plugins\JediPack-Dev.jar" /y</argument>
+                                <!--<argument>echo "${project.build.directory}\${project.build.finalName}.jar" </argument>-->
                             </arguments>
                         </configuration>
                         <goals>
