@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.common;
 
+import me.ijedi.jedipack.JediPackMain;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.NBTTagString;
 import org.bukkit.Location;
@@ -203,6 +204,8 @@ public class Util {
 
     public static String getRealItemName(ItemStack item){
         net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        JediPackMain.getThisPlugin().getLogger().info(nmsItem.getName().getString());
+        JediPackMain.getThisPlugin().getLogger().info(nmsItem.toString());
         return nmsItem.getName().getText();
     }
 }

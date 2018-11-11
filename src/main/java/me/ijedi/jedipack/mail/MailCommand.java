@@ -268,6 +268,9 @@ public class MailCommand implements TabExecutor {
                     ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
                     String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
                     MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
+
+                    ItemStack test = MailManager.getAttachedItem(bookItem);
+                    player.getInventory().setItem(8, test);
                 }
                 return true;
                 // endregion
