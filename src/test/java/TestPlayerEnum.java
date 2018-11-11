@@ -1,5 +1,3 @@
-package me.ijedi.jedipack.unittest;
-
 import org.bukkit.entity.Player;
 import org.powermock.api.mockito.PowerMockito;
 

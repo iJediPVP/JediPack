@@ -1,5 +1,3 @@
-package me.ijedi.jedipack.unittest;
-
 import org.bukkit.entity.Player;
 import org.junit.Test;
 import org.junit.runner.RunWith;
