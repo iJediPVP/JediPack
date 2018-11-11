@@ -3,3 +3,4 @@ out/
 .idea/vcs.xml
 .idea/uiDesigner.xml
 target/
+logs/latest.log
