@@ -19,6 +19,28 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <executable>powershell</executable>
+                            <workingDirectory></workingDirectory>
+                            <arguments>
+                                <argument>${project.basedir}/util/DevDeploy.ps1 "${project.build.outputDirectory}/${project.build.finalName}"</argument>
+                                <argument>"${project.basedir}/test.bat"</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -43,4 +65,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
 </project>
