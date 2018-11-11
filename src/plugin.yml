@@ -89,3 +89,6 @@ permissions:
     description: "Access /home limit <newLimit>"
   jp.home.list:
     description: "Access /home list"
+
+  jp.sleep:
+    description: "Allows a single player to sleep."
