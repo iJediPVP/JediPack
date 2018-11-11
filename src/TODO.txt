@@ -4,11 +4,6 @@ TODO LIST:
     - Tab Complete for: TP, Mail
     - Add sound effects to actions
 
-- TP?:
-    - /teleport (tp) player - send request to player
-    - /teleport accept - accept a tp request
-    - perms and help text
-
 - Mailbox:
     - Allow players to send "mail" to other players
     - This could include items..
@@ -26,3 +21,6 @@ TODO LIST:
     - /mail cancel
         - Handle giving back attachments
     - Format subject and sender in the books..
+
+- Home:
+    - add bypass permission
