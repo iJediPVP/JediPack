@@ -14,7 +14,7 @@ import me.ijedi.jedipack.tabmessage.TabMessageCommand;
 import me.ijedi.jedipack.tabmessage.TabMessageManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
+ 
 public class JediPackMain extends JavaPlugin {
 
     private static JavaPlugin thisPlugin;
