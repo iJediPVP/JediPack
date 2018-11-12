@@ -50,7 +50,6 @@ public class TabMessageManager {
 
     private static FileConfiguration tabMessageConfiguration;
     private static File tabMessageFile;
-    private static PacketPlayOutPlayerListHeaderFooter tabListPacket;
 
     private static final HashMap<String, SimpleDateFormat> TAB_DATE_ARGS = new HashMap<String, SimpleDateFormat>(){{
         put("<d1>", new SimpleDateFormat("MM/dd/yyyy"));
@@ -72,6 +71,7 @@ public class TabMessageManager {
     // Current values
     private static int currentHeaderInt;
     private static int currentFooterInt;
+    private static String headerStr, footerStr;
 
 
 
@@ -102,7 +102,7 @@ public class TabMessageManager {
                     // Set the tab message and send to all players
                     setNextTableList();
                     for(Player player : Bukkit.getOnlinePlayers()){
-                        sendTabList(player);
+                        player.setPlayerListHeaderFooter(headerStr, footerStr);
                     }
 
                 } else {
@@ -251,27 +251,13 @@ public class TabMessageManager {
     public static void setNextTableList(){
         // Get the header
         currentHeaderInt = getNextHeaderInt();
-        String headerStr = headerMap.get((currentHeaderInt));
+        headerStr = headerMap.get((currentHeaderInt));
         headerStr = formatTabMessage(headerStr);
 
         // Get the footer
         currentFooterInt = getNextFooterInt();
-        String footerStr = footerMap.get(currentFooterInt);
+        footerStr = footerMap.get(currentFooterInt);
         footerStr = formatTabMessage(footerStr);
-
-        // Set up the packet
-        ByteBuf byteBuffer = ByteBufAllocator.DEFAULT.buffer();
-        PacketDataSerializer packetDataSerializer = new PacketDataSerializer(byteBuffer);
-        tabListPacket = new PacketPlayOutPlayerListHeaderFooter();
-
-        try {
-            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + headerStr + "\"}"));
-            packetDataSerializer.a(IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footerStr + "\"}"));
-            tabListPacket.a(packetDataSerializer);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // Return the int key for the next header.
@@ -294,12 +280,5 @@ public class TabMessageManager {
             nextInt = 0;
         }
         return nextInt;
-    }
-
-    // Send packets to the player
-    public static void sendTabList(Player player){
-        if(tabListPacket != null){
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(tabListPacket);
-        }
     }
 }
