@@ -32,7 +32,7 @@
                             <workingDirectory></workingDirectory>
                             <arguments>
                                 <argument>/c</argument>
-                                <argument>copy "${project.build.directory}\${project.build.finalName}.jar" "C:\Servers\Spigot 1.13.2\plugins\JediPack-Dev.jar" /y</argument>
+                                <argument>copy "${project.build.directory}\${project.build.finalName}.jar" "C:\Servers\PaperMC 1.13.2\plugins\JediPack-Dev.jar" /y</argument>
                                 <!--<argument>echo "${project.build.directory}\${project.build.finalName}.jar" </argument>-->
                             </arguments>
                         </configuration>
@@ -50,18 +50,28 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
