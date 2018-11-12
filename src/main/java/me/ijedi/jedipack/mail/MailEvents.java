@@ -79,101 +79,103 @@ public class MailEvents implements Listener {
     @EventHandler
     public void onInvClick(InventoryClickEvent event){
 
-        // Allow creative to do what they want. The code below dupes items in creative mode..
-        if(!event.getWhoClicked().getGameMode().equals(GameMode.CREATIVE)){
+        JediPackMain.getThisPlugin().getLogger().info("inv click");
 
-            if(event.getClickedInventory() != null){
 
-                Player player = (Player) event.getWhoClicked();
-                String invName = event.getClickedInventory().getTitle();
-                if(!Util.isNullOrEmpty(invName) && event.getCurrentItem() != null){
 
-                    ItemStack currentItem = event.getCurrentItem();
-                    String invPrefix = invName.split(":")[0];
+        if(event.getClickedInventory() != null){
 
-                    // Handle different inventories
-                    if(invPrefix.equals(MailPlayerInfo.SETTINGS_PREFIX)){
-                        // region Handle clicks in a settings inventory
+            Player player = (Player) event.getWhoClicked();
+            String invName = event.getClickedInventory().getTitle();
+            if(!Util.isNullOrEmpty(invName) && event.getCurrentItem() != null){
 
-                        if(currentItem.getItemMeta() == null){
-                            return;
-                        }
-                        String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+                ItemStack currentItem = event.getCurrentItem();
+                String invPrefix = invName.split(":")[0];
 
-                        if(itemName.equals(MailPlayerInfo.ALERTS_NAME)){
-                            // Alerts
-                            MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
-                            info.toggleAlertsEnabled();
-                            MessageTypeEnum.MailMessage.sendMessage("Alerts were toggled!", player, false);
-                            player.closeInventory();
+                // Handle different inventories
+                if(invPrefix.equals(MailPlayerInfo.SETTINGS_PREFIX)){
+                    // region Handle clicks in a settings inventory
 
-                        } else if(itemName.equals(MailPlayerInfo.UI_NAME)){
-                            // UI
-                            MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
-                            info.toggleUIEnabled();
-                            MessageTypeEnum.MailMessage.sendMessage("UI was toggled!", player, false);
-                            player.closeInventory();
-
-                        }
-                        event.setCancelled(true);
+                    if(currentItem.getItemMeta() == null){
                         return;
-                        //endregion
+                    }
+                    String itemName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
 
-                    } else if(invPrefix.equals(MailPlayerInfo.MAILBOX_PREFIX)){
-
-                        // region Handle clicks in the mail box
-                        // Check the item NBT for a mail number
-                        String mailNumberStr = Util.getNBTTagString(currentItem, MailManager.MAIL_NUMBER_KEY);
-                        if(Util.isNullOrEmpty(mailNumberStr) || !Util.isInteger(mailNumberStr)){
-                            return;
-                        }
-
-                        // Get the mail info
-                        int mailNumber = Integer.parseInt(mailNumberStr);
+                    if(itemName.equals(MailPlayerInfo.ALERTS_NAME)){
+                        // Alerts
                         MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
-                        MailInfo mailInfo = info.getMailInfo(mailNumber);
+                        info.toggleAlertsEnabled();
+                        MessageTypeEnum.MailMessage.sendMessage("Alerts were toggled!", player, false);
+                        player.closeInventory();
 
-                        if(event.isLeftClick()){
-                            // Left click opens
-                            info.openMail(player, mailInfo);
-
-                        } else if(event.isRightClick() && event.isShiftClick()){
-                            // Shift + Right Click deletes
-                            info.deleteMail(mailInfo);
-                            MessageTypeEnum.MailMessage.sendMessage("Mail has been deleted!", player, false);
-                            if(!info.hasAnyMail()){
-                                MessageTypeEnum.MailMessage.sendMessage("Your mail box is empty!", player, false);
-                                player.closeInventory();
-                            } else {
-                                player.openInventory(info.getMailBoxInventory(player));
-                            }
-                        }
-                        event.setCancelled(true);
-                        return;
-                        // endregion
-
-                    } else {
-                        //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
-                        ItemStack item = event.getCurrentItem();
-                        int hotbarButton = event.getHotbarButton();
-                        if(hotbarButton > -1){
-                            item = event.getClickedInventory().getItem(hotbarButton);
-                        }
-                        if(hotbarButton > -1 && !event.getClickedInventory().equals(player.getInventory())){
-                            item = player.getInventory().getItem(hotbarButton);
-                        }
-                        ItemStack slotItem = event.getClickedInventory().getItem(event.getSlot());
-
-                        // Check for a "mail" book
-                        if((item != null && MailManager.isMailBook(item)) || (slotItem != null && MailManager.isMailBook(slotItem))){
-                            MessageTypeEnum.MailMessage.sendMessage("You cannot move this item!", player, true);
-                            player.closeInventory();
-                            player.updateInventory();
-                            event.setCancelled(true);
-                        }
-                        //endregion
+                    } else if(itemName.equals(MailPlayerInfo.UI_NAME)){
+                        // UI
+                        MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                        info.toggleUIEnabled();
+                        MessageTypeEnum.MailMessage.sendMessage("UI was toggled!", player, false);
+                        player.closeInventory();
 
                     }
+                    event.setCancelled(true);
+                    return;
+                    //endregion
+
+                } else if(invPrefix.equals(MailPlayerInfo.MAILBOX_PREFIX)){
+
+                    // region Handle clicks in the mail box
+                    // Check the item NBT for a mail number
+                    String mailNumberStr = Util.getNBTTagString(currentItem, MailManager.MAIL_NUMBER_KEY);
+                    if(Util.isNullOrEmpty(mailNumberStr) || !Util.isInteger(mailNumberStr)){
+                        return;
+                    }
+
+                    // Get the mail info
+                    int mailNumber = Integer.parseInt(mailNumberStr);
+                    MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
+                    MailInfo mailInfo = info.getMailInfo(mailNumber);
+
+                    if(event.isLeftClick()){
+                        // Left click opens
+                        info.openMail(player, mailInfo);
+
+                    } else if(event.isRightClick() && event.isShiftClick()){
+                        // Shift + Right Click deletes
+                        info.deleteMail(mailInfo);
+                        MessageTypeEnum.MailMessage.sendMessage("Mail has been deleted!", player, false);
+                        if(!info.hasAnyMail()){
+                            MessageTypeEnum.MailMessage.sendMessage("Your mail box is empty!", player, false);
+                            player.closeInventory();
+                        } else {
+                            player.openInventory(info.getMailBoxInventory(player));
+                        }
+                    }
+                    event.setCancelled(true);
+                    return;
+                    // endregion
+
+                } else if(!event.getWhoClicked().getGameMode().equals(GameMode.CREATIVE)){
+                    // Allow creative to do what they want. The code below dupes items in creative mode..
+
+                    //region Handle hot bar buttons in the player's inventory and other inventories (like chests, anvils)
+                    ItemStack item = event.getCurrentItem();
+                    int hotbarButton = event.getHotbarButton();
+                    if(hotbarButton > -1){
+                        item = event.getClickedInventory().getItem(hotbarButton);
+                    }
+                    if(hotbarButton > -1 && !event.getClickedInventory().equals(player.getInventory())){
+                        item = player.getInventory().getItem(hotbarButton);
+                    }
+                    ItemStack slotItem = event.getClickedInventory().getItem(event.getSlot());
+
+                    // Check for a "mail" book
+                    if((item != null && MailManager.isMailBook(item)) || (slotItem != null && MailManager.isMailBook(slotItem))){
+                        MessageTypeEnum.MailMessage.sendMessage("You cannot move this item!", player, true);
+                        player.closeInventory();
+                        player.updateInventory();
+                        event.setCancelled(true);
+                    }
+                    //endregion
+
                 }
             }
         }
