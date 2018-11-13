@@ -2,8 +2,10 @@ package me.ijedi.jedipack.common;
 
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.parkour.ParkourManager;
+import me.ijedi.jedipack.signlock.SignLockEvents;
 import me.ijedi.jedipack.signlock.SignLockManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,9 +41,11 @@ public class CommonEvents implements Listener {
         ArrayList<Block> blocksToRemove = new ArrayList<>();
         for(Block block : explodingBlocks){
 
-            Location blockLoc = block.getLocation();
-            if(shouldCancelOnBlockLocation(blockLoc)){
-                blocksToRemove.add(block);
+            if(!isSignLockMaterial(block.getType())){
+                Location blockLoc = block.getLocation();
+                if(shouldCancelOnBlockLocation(blockLoc)){
+                    blocksToRemove.add(block);
+                }
             }
         }
 
@@ -69,5 +73,8 @@ public class CommonEvents implements Listener {
         return false;
     }
 
+    public static boolean isSignLockMaterial(Material material){
+        return material.equals(Material.WALL_SIGN) || SignLockEvents.LOCKABLE_CONTAINERS.contains(material) || SignLockEvents.LOCKABLE_DOORS.contains(material);
+    }
 
 }

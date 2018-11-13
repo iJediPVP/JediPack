@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.signlock;
 
 import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.CommonEvents;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.ChatColor;
@@ -47,8 +48,11 @@ public class SignLockEvents implements Listener {
     public void onSignLockBreak(BlockBreakEvent event){
 
         Block block = event.getBlock();
-
+        /*
         if(!block.getType().equals(Material.WALL_SIGN) && !LOCKABLE_CONTAINERS.contains(block.getType()) && !LOCKABLE_DOORS.contains(block.getType())){
+            return;
+        }*/
+        if(!CommonEvents.isSignLockMaterial(block.getType())){
             return;
         }
 
