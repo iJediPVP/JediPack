@@ -58,7 +58,7 @@ public class SleepEvent implements Listener {
                         triggerPlayer = null;
                     }
                 }
-            }.runTaskLater(JediPackMain.getThisPlugin(), 3 * 20L); // 3 seconds
+            }.runTaskLaterAsynchronously(JediPackMain.getThisPlugin(), 3 * 20L); // 3 seconds
         }
 
     }
