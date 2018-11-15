@@ -158,6 +158,7 @@ public class SignLockEvents implements Listener {
                     int lockNum = newLock.getLockNumber();
                     event.setLine(0, ChatColor.GREEN + SIGNLOCK);
                     event.setLine(1, ChatColor.GREEN + "#" + Integer.toString(lockNum));
+                    event.setLine(2, ChatColor.BLACK + player.getName());
 
                     MessageTypeEnum.SignLockMessage.sendMessage("Lock created!", player, false);
                 }
