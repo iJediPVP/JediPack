@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.mail;
 
 import me.ijedi.jedipack.common.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -98,10 +99,6 @@ public class MailInfo {
         return attachmentString;
     }
 
-    public ItemStack getAttachment(){
-        return Util.deseializeItem(attachmentString);
-    }
-
     public long getMailDateLong() {
         return mailDateLong;
     }
@@ -125,9 +122,12 @@ public class MailInfo {
         if(messages != null){
 
             // Add the first page with the subject and sender
-            String centeredSubject = Util.centerString(subject, 27);
-            String centeredSender = Util.centerString(senderName, 27);
-            String header = String.format("%s\n%s", centeredSubject, centeredSender);
+            // Formatting done by Dtron!
+            String header = String.format("%s\n%s\n\n%s\n%s",
+                    ChatColor.RED + "" + ChatColor.BOLD + "Sender:",
+                    ChatColor.BLACK + senderName,
+                    ChatColor.GREEN + "" + ChatColor.BOLD + "Subject:",
+                    ChatColor.BLACK + subject);
             bookMeta.addPage(header);
 
             for(int x = 0; x < messages.length; x++){

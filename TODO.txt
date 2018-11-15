@@ -5,14 +5,12 @@ TODO LIST:
     - Add sound effects to actions
 
 - Mailbox:
-    - /mail block <playerName> - block someone from sending you a message
     - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)
         - player sounds when updating config options
     - /mail info - UI:
         - Sounds when reading or deleting
     - /mail cancel
         - Handle giving back attachments
-    - Format subject and sender in the books..
 
 SignLock:
     - add owner name on the third line
