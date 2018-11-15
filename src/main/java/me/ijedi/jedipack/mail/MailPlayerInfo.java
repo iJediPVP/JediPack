@@ -109,6 +109,8 @@ public class MailPlayerInfo {
         // Load config
         if(!playerConfig.contains(ALERTS_ENABLED)){
             // Defaults
+            isAlertsEnabled = true;
+            isUIEnabled = true;
             updatePlayerConfig();
         } else {
             isAlertsEnabled = playerConfig.getBoolean(ALERTS_ENABLED);
