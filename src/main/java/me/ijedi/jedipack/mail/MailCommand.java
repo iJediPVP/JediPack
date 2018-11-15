@@ -204,9 +204,15 @@ public class MailCommand implements TabExecutor {
                 // See if the player is holding a mail book
                 ItemStack item = player.getInventory().getItemInMainHand();
                 if(item != null && MailManager.isMailBook(item)){
-                    // TODO: How do we handle attachments here? We don't want to lose the items. Spawn the items at the player's feet?
-                    player.getInventory().setItemInMainHand(null);
-                    MessageTypeEnum.MailMessage.sendMessage("Your mail has been canceled!", player, false);
+
+                    ItemStack attachment = MailManager.getAttachedItem(item);
+                    if(attachment != null){
+                        player.getInventory().setItemInMainHand(attachment);
+                    } else {
+                        player.getInventory().setItemInMainHand(null);
+                    }
+
+                    MessageTypeEnum.MailMessage.sendMessage("Your mail has been canceled and attachments returned!", player, false);
                 } else {
                     MessageTypeEnum.MailMessage.sendMessage("You must be holding a mail item!", player, true);
                 }

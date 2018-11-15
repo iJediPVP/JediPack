@@ -9,9 +9,6 @@ TODO LIST:
         - player sounds when updating config options
     - /mail info - UI:
         - Sounds when reading or deleting
-    - /mail cancel
-        - Handle giving back attachments
-
 - Home:
     - add bypass permission
     - limit not being updated from /home limit <num> command..
