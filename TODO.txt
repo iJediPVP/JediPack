@@ -12,9 +12,6 @@ TODO LIST:
     - /mail cancel
         - Handle giving back attachments
 
-SignLock:
-    - add owner name on the third line
-
 - Home:
     - add bypass permission
     - limit not being updated from /home limit <num> command..
