@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,9 @@ public class HomeCommand implements TabExecutor {
     private static final String HOMEPERM_UNSET = "jp.home.unset";
     private static final String HOMEPERM_LIMIT = "jp.home.limit";
     private static final String HOMEPERM_LIST = "jp.home.list";
+
+    // jp.home.limitBypass.x - x can by any integer
+    private static final String HOMEPERM_LIMIT_BYPASS = "jp.home.limitBypass.";
 
     private final ArrayList<String> HELP_LIST = new ArrayList<String>(){{
         add(ChatColor.GREEN + "" + ChatColor.BOLD + "======= " + ChatColor.AQUA + "JediPack Homes" + ChatColor.GREEN + "" + ChatColor.BOLD + " =======");
@@ -72,7 +76,7 @@ public class HomeCommand implements TabExecutor {
                     }
 
                     // See if the player is over the home limit
-                    if(playerInfo.getHomeCount() >= JediPackMain.homesLimit){
+                    if(playerInfo.getHomeCount() >= JediPackMain.homesLimit && !hasLimitBypass(player, playerInfo.getHomeCount() + 1)){
                         MessageTypeEnum.HomeMessage.sendMessage("You cannot set any more homes!", player, true);
                         return true;
                     }
@@ -258,5 +262,26 @@ public class HomeCommand implements TabExecutor {
         } else {
             info.teleportHome(player, homeName);
         }
+    }
+
+    // Check if this player has permission to bypass the max number of homes.
+    private boolean hasLimitBypass(Player player, int homeNumber){
+
+        if(player.isOp()){
+            return true;
+        }
+
+        for(PermissionAttachmentInfo info : player.getEffectivePermissions()){
+            if(info.getPermission().toLowerCase().startsWith(HOMEPERM_LIMIT_BYPASS.toLowerCase())){
+                String[] splitPerm = info.getPermission().split("\\.");
+                if(Util.isInteger(splitPerm[splitPerm.length - 1])){
+                    int permInt = Integer.parseInt(splitPerm[splitPerm.length - 1]);
+                    if(permInt >= homeNumber){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

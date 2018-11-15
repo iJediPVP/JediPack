@@ -9,4 +9,4 @@ TODO LIST:
         - player sounds when updating config options
 
 - Home:
-    - add bypass permission
+    - / back command
