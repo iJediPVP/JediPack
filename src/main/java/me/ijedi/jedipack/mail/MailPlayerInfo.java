@@ -343,6 +343,16 @@ public class MailPlayerInfo {
         return mailInfos.size() > 0;
     }
 
+    // Returns true if the player has any unread mail.
+    public boolean hasUnreadMail(){
+        for(MailInfo info : mailInfos.values()){
+            if(!info.isRead()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     //endregion
 
 
@@ -477,7 +487,7 @@ public class MailPlayerInfo {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 5, 0.900f);
                     this.cancel();
                 }
-            }.runTaskLater(JediPackMain.getThisPlugin(), 2L);
+            }.runTaskLaterAsynchronously(JediPackMain.getThisPlugin(), 2L);
         }
     }
 

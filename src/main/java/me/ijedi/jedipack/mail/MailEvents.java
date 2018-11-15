@@ -11,6 +11,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -225,4 +226,14 @@ public class MailEvents implements Listener {
         }
     }
 
+    // Alert players of any mail when they log on to the server
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event){
+
+        MailPlayerInfo info = MailManager.getMailPlayerInfo(event.getPlayer().getUniqueId());
+        if(info.hasUnreadMail()){
+            info.alertPlayer();
+        }
+
+    }
 }
