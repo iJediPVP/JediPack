@@ -140,6 +140,7 @@ public class MailEvents implements Listener {
                             player.getWorld().dropItemNaturally(player.getLocation(), attachment);
                             mailInfo.setAttachmentRead(true);
                             info.updateMail(mailInfo);
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 5, 10);
                             player.openInventory(info.getMailBoxInventory(player));
                         }
 
@@ -151,6 +152,7 @@ public class MailEvents implements Listener {
                         // Shift + Right Click deletes
                         info.deleteMail(mailInfo);
                         MessageTypeEnum.MailMessage.sendMessage("Mail has been deleted!", player, false);
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 2, 1);
                         if(!info.hasAnyMail()){
                             MessageTypeEnum.MailMessage.sendMessage("Your mail box is empty!", player, false);
                             player.closeInventory();

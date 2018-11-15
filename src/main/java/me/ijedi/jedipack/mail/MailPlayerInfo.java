@@ -335,6 +335,7 @@ public class MailPlayerInfo {
 
         // Set to read
         if(!mailInfo.isRead()){
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 5, 10);
             mailInfo.setRead(true);
             updateMail(mailInfo);
         }

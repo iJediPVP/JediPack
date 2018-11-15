@@ -7,8 +7,7 @@ TODO LIST:
 - Mailbox:
     - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)
         - player sounds when updating config options
-    - /mail info - UI:
-        - Sounds when reading or deleting
+        
 - Home:
     - add bypass permission
     - limit not being updated from /home limit <num> command..
