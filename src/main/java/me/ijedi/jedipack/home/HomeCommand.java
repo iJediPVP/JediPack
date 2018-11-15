@@ -138,7 +138,9 @@ public class HomeCommand implements TabExecutor {
                     }
 
                     int newLimit = Integer.parseInt(limitStr);
+                    JediPackMain.homesLimit = newLimit;
                     JediPackMain.getThisPlugin().getConfig().set(JediPackMain.HOMES_LIMIT, newLimit);
+                    JediPackMain.getThisPlugin().saveConfig();
                     MessageTypeEnum.HomeMessage.sendMessage("The homes limit has been updated!", player, false);
                     return true;
                 }
