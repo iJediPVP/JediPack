@@ -2,6 +2,9 @@ package me.ijedi.jedipack.mail;
 
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,6 +30,7 @@ public class MailCommand implements TabExecutor {
     public static final String CANCEL = "cancel";
     public static final String SETTINGS = "settings";
     public static final String ATTACH = "attach";
+    public static final String REMOVE = "remove";
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -225,53 +229,96 @@ public class MailCommand implements TabExecutor {
                 }
                 if(bookItem == null){
                     MessageTypeEnum.MailMessage.sendMessage("You must have a mail book in your inventory!", player, true);
-
-                } else{
-
-                    // Verify the item that the player is holding. Don't allow nulls, shulkerboxes, or mail books.
-                    ItemStack heldItem = player.getInventory().getItemInMainHand();
-                    if(heldItem == null || heldItem.getType().equals(Material.AIR) || Util.SHULKER_BOXES.contains(heldItem.getType()) || MailManager.isMailBook(heldItem)){
-                        MessageTypeEnum.MailMessage.sendMessage("Invalid attachment!", player, true);
-                        return true;
-                    }
-
-                    // Check for an amount. Default to 1
-                    int amount = 1;
-                    if(args.length > 1){
-                        String secondArg = args[1];
-                        if(Util.isInteger(secondArg)){
-                            amount = Integer.parseInt(secondArg);
-                        }
-                    }
-
-                    // Verify amount
-                    player.sendMessage(Integer.toString(heldItem.getAmount()));
-                    if(amount > heldItem.getAmount()){
-                        MessageTypeEnum.MailMessage.sendMessage("You don't have " + amount + " of this item!", player, true);
-                        return true;
-                    }
-
-                    // Build the attached item and subtract from the player's held item
-                    ItemStack attachedItem = heldItem.clone();
-                    attachedItem.setAmount(amount);
-                    int newPlayerAmount = heldItem.getAmount() - amount;
-                    if(newPlayerAmount == 0){
-                        player.getInventory().setItemInMainHand(null);
-                    } else {
-                        heldItem.setAmount(newPlayerAmount);
-                        player.getInventory().setItemInMainHand(heldItem);
-                    }
-
-                    // Store the item in the book's NBT
-                    bookItem = MailManager.attachItem(bookItem, attachedItem);
-                    player.getInventory().setItem(bookSlot, bookItem);
-                    ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
-                    String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
-                    MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
-
-                    ItemStack test = MailManager.getAttachedItem(bookItem);
-                    player.getInventory().setItem(8, test);
+                    return true;
                 }
+
+                // region Check for REMOVE in the second arg
+                if(args.length > 1){
+                    String secondArg = args[1].toLowerCase();
+                    if(secondArg.equals(REMOVE)){
+
+                        // Check for attachment
+                        ItemStack attachment = MailManager.getAttachedItem(bookItem);
+                        if(attachment != null){
+                            // Remove from the book and spawn at the player's feet
+                            bookItem = MailManager.removeAttachment(bookItem);
+                            player.getInventory().setItem(bookSlot, bookItem);
+                            player.getWorld().dropItemNaturally(player.getLocation(), attachment);
+                            MessageTypeEnum.MailMessage.sendMessage("The attachment has been removed!", player, false);
+                        } else {
+                            MessageTypeEnum.MailMessage.sendMessage("There are no attachments!", player, true);
+                        }
+
+                        return true;
+                    }
+                } // ELSE attach an item!
+                // endregion
+
+                //region Verify and add the attachment
+
+                // Make sure there isn't already an attachment
+                ItemStack existingAttachment = MailManager.getAttachedItem(bookItem);
+                if(existingAttachment != null){
+
+                    MessageTypeEnum.MailMessage.sendMessage("There is already an attachment!", player, false);
+
+                    // Remove command
+                    ComponentBuilder removeBuilder = new ComponentBuilder(ChatColor.RED + "" + ChatColor.BOLD + "[CLICK HERE]");
+                    removeBuilder.event(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder( ChatColor.GREEN + "Click to remove the attahcment!" ).create() ));
+                    String removeCommand = String.format("/%s %s %s", MailCommand.BASE_COMMAND, MailCommand.ATTACH, MailCommand.REMOVE);
+                    removeBuilder.event(new ClickEvent( ClickEvent.Action.RUN_COMMAND, removeCommand));
+
+                    TextComponent msg = new TextComponent("");
+                    msg.addExtra(removeBuilder.create()[0]);
+                    msg.addExtra(new TextComponent(ChatColor.GREEN + " to remove it!"));
+
+                    MessageTypeEnum.MailMessage.sendMessage(msg, player);
+                    return true;
+                }
+
+                // Verify the item that the player is holding. Don't allow nulls, shulkerboxes, or mail books.
+                ItemStack heldItem = player.getInventory().getItemInMainHand();
+                if(heldItem == null || heldItem.getType().equals(Material.AIR) || Util.SHULKER_BOXES.contains(heldItem.getType()) || MailManager.isMailBook(heldItem)){
+                    MessageTypeEnum.MailMessage.sendMessage("Invalid attachment!", player, true);
+                    return true;
+                }
+
+                // Check for an amount. Default to 1
+                int amount = 1;
+                if(args.length > 1){
+                    String secondArg = args[1];
+                    if(Util.isInteger(secondArg)){
+                        amount = Integer.parseInt(secondArg);
+                    }
+                }
+
+                // Verify amount
+                if(amount > heldItem.getAmount()){
+                    MessageTypeEnum.MailMessage.sendMessage("You don't have " + amount + " of this item!", player, true);
+                    return true;
+                }
+
+                // Build the attached item and subtract from the player's held item
+                ItemStack attachedItem = heldItem.clone();
+                attachedItem.setAmount(amount);
+                int newPlayerAmount = heldItem.getAmount() - amount;
+                if(newPlayerAmount == 0){
+                    player.getInventory().setItemInMainHand(null);
+                } else {
+                    heldItem.setAmount(newPlayerAmount);
+                    player.getInventory().setItemInMainHand(heldItem);
+                }
+
+                // Store the item in the book's NBT
+                bookItem = MailManager.attachItem(bookItem, attachedItem);
+                player.getInventory().setItem(bookSlot, bookItem);
+                ChatColor msgColor = MessageTypeEnum.MailMessage.getMessageColor();
+                String msg = msgColor + "Attached " + ChatColor.YELLOW + amount + " x " + Util.getRealItemName(attachedItem) + "(s)" + msgColor + "!";
+                MessageTypeEnum.MailMessage.sendMessage(msg, player, false);
+                //endregion
+
+                //ItemStack test = MailManager.getAttachedItem(bookItem);
+                //player.getInventory().setItem(8, test);
                 return true;
                 // endregion
 
@@ -286,15 +333,5 @@ public class MailCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         return new ArrayList<>();
     }
-
-    /*private void openBook(Player player){
-        // Works to open a written book
-        final int slot = player.getInventory().getHeldItemSlot();
-        final ItemStack old = player.getInventory().getItem(slot);
-        player.getInventory().setItem(slot, old);
-        final PacketPlayOutCustomPayload packet = new PacketPlayOutCustomPayload(MinecraftKey.a("minecraft:book_open"), new PacketDataSerializer(Unpooled.buffer()).a(EnumHand.MAIN_HAND));
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-        player.getInventory().setItem(slot, old);
-    }*/
 
 }

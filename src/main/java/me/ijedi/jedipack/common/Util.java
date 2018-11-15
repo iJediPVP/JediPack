@@ -1,18 +1,25 @@
 package me.ijedi.jedipack.common;
 
-import me.ijedi.jedipack.JediPackMain;
 import net.minecraft.server.v1_13_R2.NBTTagCompound;
 import net.minecraft.server.v1_13_R2.NBTTagString;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sign;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Util {
 
@@ -186,6 +193,14 @@ public class Util {
         return item;
     }
 
+    public static ItemStack removeNBTTag(ItemStack item, String tagName){
+        net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound nbtCompound = nmsItem.getOrCreateTag();
+        nbtCompound.remove(tagName);
+        item = CraftItemStack.asBukkitCopy(nmsItem);
+        return item;
+    }
+
     public static String centerString(String str, int width){
 
         int diff = width - str.length();
@@ -204,8 +219,95 @@ public class Util {
 
     public static String getRealItemName(ItemStack item){
         net.minecraft.server.v1_13_R2.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-        JediPackMain.getThisPlugin().getLogger().info(nmsItem.getName().getString());
-        JediPackMain.getThisPlugin().getLogger().info(nmsItem.toString());
         return nmsItem.getName().getText();
     }
+
+
+
+    //region Item Serialization
+
+    /* Thanks to this guy for doing most of the leg work.
+     * https://www.spigotmc.org/threads/serializing-deserializing-itemstacks-removes-itemmeta.147763/
+     * @author ElDzi
+     */
+    public static String serializeItem(ItemStack item) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(serializeItemStack(item));
+            oos.flush();
+            return DatatypeConverter.printBase64Binary(bos.toByteArray());
+        }
+        catch (Exception e) {
+            MessageTypeEnum.GeneralMessage.logMessage("Error serializing item");
+            MessageTypeEnum.GeneralMessage.logMessage(e.toString());
+        }
+        return "";
+    }
+
+    public static ItemStack deseializeItem(String itemString) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(
+                    DatatypeConverter.parseBase64Binary(itemString));
+            ObjectInputStream ois = new ObjectInputStream(bis);
+            return deserializeItemStack(
+                    (Map<String, Object>[]) ois.readObject());
+        }
+        catch (Exception e) {
+            MessageTypeEnum.GeneralMessage.logMessage("Error deserializing item");
+            MessageTypeEnum.GeneralMessage.logMessage(e.toString());
+        }
+        return new ItemStack(Material.AIR);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object>[] serializeItemStack(ItemStack item) {
+
+        Map<String, Object>[] result = new Map[1];
+
+        if (item == null) {
+            result[0] = new HashMap<>();
+        }
+        else {
+            result[0] = item.serialize();
+            if (item.hasItemMeta()) {
+                result[0].put("meta", item.getItemMeta().serialize());
+            }
+        }
+
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ItemStack deserializeItemStack(Map<String, Object>[] map) {
+
+        Map<String, Object> s = map[0];
+        if (s.size() == 0) {
+            return null;
+        }
+        else {
+            try {
+                if (s.containsKey("meta")) {
+                    Map<String, Object> im = new HashMap<>(
+                            (Map<String, Object>) s.remove("meta"));
+                    im.put("==", "ItemMeta");
+                    ItemStack is = ItemStack.deserialize(s);
+                    is.setItemMeta((ItemMeta) ConfigurationSerialization
+                            .deserializeObject(im));
+                    return is;
+                }
+                else {
+                    return ItemStack.deserialize(s);
+                }
+            }
+            catch (Exception e) {
+                MessageTypeEnum.GeneralMessage.logMessage("Error serializing item");
+                MessageTypeEnum.GeneralMessage.logMessage(e.toString());
+                return null;
+            }
+        }
+    }
+
+    //endregion
+
 }

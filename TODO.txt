@@ -5,15 +5,7 @@ TODO LIST:
     - Add sound effects to actions
 
 - Mailbox:
-    - Allow players to send "mail" to other players
-    - This could include items..
-
-    - /mail attach:
-        - Show attachment amount and name on the book
-        - /mail attach remove: remove the attached item. Error if player doesn't have inventory space
-
     - /mail block <playerName> - block someone from sending you a message
-    - /mail block list - list blocked players
     - /mail settings - open a menu lib UI to allow the player to toggle settings (alerts, alert sounds, interact with chat or menu lib UI other..?)
         - player sounds when updating config options
     - /mail info - UI:
@@ -21,6 +13,9 @@ TODO LIST:
     - /mail cancel
         - Handle giving back attachments
     - Format subject and sender in the books..
+
+SignLock:
+    - add owner name on the third line
 
 - Home:
     - add bypass permission

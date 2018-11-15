@@ -79,10 +79,6 @@ public class MailEvents implements Listener {
     @EventHandler
     public void onInvClick(InventoryClickEvent event){
 
-        JediPackMain.getThisPlugin().getLogger().info("inv click");
-
-
-
         if(event.getClickedInventory() != null){
 
             Player player = (Player) event.getWhoClicked();

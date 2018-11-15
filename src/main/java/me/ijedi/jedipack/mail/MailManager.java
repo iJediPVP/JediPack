@@ -1,6 +1,7 @@
 package me.ijedi.jedipack.mail;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import me.ijedi.jedipack.JediPackMain;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
@@ -11,10 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MailManager {
 
@@ -24,9 +22,6 @@ public class MailManager {
     public static final String MAIL_KEY_VALUE = "0b93641b-7e96-4c68-8154-a4e81144bc39";
     public static final String RECIPIENT_TAG = "recipientId";
     public static final String ATTACHMENT_KEY = "attach";
-
-    private static final String ATTACHMENT_YES = ChatColor.GREEN + "Attachment: " + ChatColor.BOLD + ChatColor.GREEN + "Yes";
-    private static final String ATTACHMENT_NO = ChatColor.GREEN + "Attachment: " + ChatColor.BOLD + ChatColor.RED + "No";
 
     private static final HashMap<UUID, MailPlayerInfo> playerInfos = new HashMap<>();
 
@@ -77,15 +72,17 @@ public class MailManager {
 
     // Add attachment to the mail book
     public static ItemStack attachItem(ItemStack mailBook, ItemStack attachment){
-        mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, attachment.serialize().toString());
+        String itemString = Util.serializeItem(attachment);
+        mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, itemString);
         mailBook = updateMailAttachmentLore(mailBook, null);
         return mailBook;
     }
 
     // Remove attachment from the mail book
-    public static void removeAttachment(ItemStack mailBook){
-        mailBook = Util.setNBTTagString(mailBook, ATTACHMENT_KEY, null);
+    public static ItemStack removeAttachment(ItemStack mailBook){
+        mailBook = Util.removeNBTTag(mailBook, ATTACHMENT_KEY);
         mailBook = updateMailAttachmentLore(mailBook, null);
+        return mailBook;
     }
 
     // Get the attached item from the mail book.
@@ -95,7 +92,7 @@ public class MailManager {
             return null;
         }
 
-        ItemStack attachment = new Gson().fromJson(attachmentString, ItemStack.class);
+        ItemStack attachment = Util.deseializeItem(attachmentString);
         return attachment;
     }
 
@@ -120,6 +117,7 @@ public class MailManager {
                 }
             }
         }
+        address = address.trim();
         loreList.add(ChatColor.GREEN + "Addressed to: " + ChatColor.GOLD + address);
 
 
