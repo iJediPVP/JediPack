@@ -87,12 +87,13 @@ public class MailPlayerInfo {
                 List<String> messages = config.getStringList(mailStr + "." + MESSAGE);
                 String subject = config.getString(mailStr + "." + SUBJECT);
                 long mailDateLong = config.getLong(mailStr + "." + MAILDATE);
+                String attachmentString = config.getString(mailStr + "." + ATTACHMENT);
 
                 MailInfo info = new MailInfo(senderName, playerId, mailNum);
                 info.setMessage(messages.toArray(new String[messages.size()]));
                 info.setRead(config.getBoolean(mailStr + "." + IS_READ));
                 info.setAttachmentRead(config.getBoolean(mailStr + "." + IS_ATTACH_READ));
-                info.setItem(null); // TODO: rehydrate this
+                info.setAttachmentString(attachmentString);
                 info.setSubject(subject);
                 info.setMailDate(mailDateLong);
                 mailInfos.put(mailNum, info);
@@ -140,6 +141,7 @@ public class MailPlayerInfo {
         config.set(mailNumStr + "." + IS_ATTACH_READ, info.isAttachmentRead());
         config.set(mailNumStr + "." + SUBJECT, info.getSubject());
         config.set(mailNumStr + "." + MAILDATE, info.getMailDateLong());
+        config.set(mailNumStr + "." + ATTACHMENT, info.getAttachmentString());
         ConfigHelper.saveFile(file, config);
 
         if(!mailInfos.containsKey(info.getMailNumber())){
@@ -153,25 +155,6 @@ public class MailPlayerInfo {
     // Returns true if this player already has mail with the given number.
     public boolean hasMailNumber(int mailNumber){
         return mailInfos.containsKey(mailNumber);
-    }
-
-    // Get the message for the given mail number
-    public String[] readMailMessage(int mailNumber){
-        MailInfo info = mailInfos.get(mailNumber);
-        info.setRead(true);
-        updateMail(info);
-        return info.getMessage();
-    }
-
-    // Get the attached item for the given mail number
-    public ItemStack getMailAttachment(int mailNumber){
-        MailInfo info = mailInfos.get(mailNumber);
-        if(info.hasAttachment()){
-            info.setAttachmentRead(true);
-            updateMail(info);
-            return info.getItem();
-        }
-        return null;
     }
 
     // Delete the given mail object.
@@ -365,10 +348,6 @@ public class MailPlayerInfo {
 
     //region Player methods
 
-    public boolean isAlertsEnabled() {
-        return isAlertsEnabled;
-    }
-
     public boolean isUIEnabled() {
         return isUIEnabled;
     }
@@ -535,22 +514,28 @@ public class MailPlayerInfo {
         ArrayList<Integer> mailNumbers = getSortedMailNumbers();
         for(int x : mailNumbers){
             MailInfo info = mailInfos.get(x);
-            ItemStack item = new ItemStack(info.isRead() ? Material.BOOK : Material.ENCHANTED_BOOK);
+            ItemStack item = new ItemStack(!info.isRead() || !info.isAttachmentRead() ? Material.ENCHANTED_BOOK: Material.BOOK );
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(ChatColor.GOLD + info.getSubject());
 
             ArrayList<String> loreList = new ArrayList<>();
             loreList.add(ChatColor.GREEN + "From: " + ChatColor.GOLD + info.getSenderName());
             loreList.add(ChatColor.GREEN + "Date: " + ChatColor.AQUA + info.getMailDateString());
-            loreList.add(ChatColor.GREEN + "Attachment: " + ChatColor.LIGHT_PURPLE + (info.hasAttachment() ? "Yes": "No"));
+            String attach = info.hasAttachment() ? "Yes": "No";
+            if(info.isAttachmentRead()){
+                attach = "Read";
+            }
+            loreList.add(ChatColor.GREEN + "Attachment: " + ChatColor.LIGHT_PURPLE + attach);
             loreList.add("");
             loreList.add(ChatColor.GREEN + "" + ChatColor.BOLD + "Left Click to read.");
+            if(info.hasAttachment() && !info.isAttachmentRead()){
+                loreList.add(ChatColor.GREEN + "" + ChatColor.BOLD + "Shift + Left Click to open attachment.");
+            }
             loreList.add(ChatColor.RED + "" + ChatColor.BOLD + "Shift + Right Click to delete.");
             itemMeta.setLore(loreList);
             item.setItemMeta(itemMeta);
 
             // Tack on some NBT we'll use later
-            //item = Util.setNBTTagString(item, MailManager.MAIL_KEY, MailManager.MAIL_KEY_VALUE);
             item = Util.setNBTTagString(item, MailManager.MAIL_NUMBER_KEY, Integer.toString(info.getMailNumber()));
             menuItems.add(item);
         }

@@ -59,6 +59,7 @@ public class MailEvents implements Listener {
         info.setMessage(bookLines);
         info.setSenderName(senderName);
         info.setMailDate(new Date());
+        info.setAttachmentString(Util.getNBTTagString(heldItem, MailManager.ATTACHMENT_KEY));
         recipientInfo.updateMail(info);
 
         // Alert the player and cancel the event
@@ -72,7 +73,7 @@ public class MailEvents implements Listener {
                 player.getInventory().setItem(bookSlot, new ItemStack(Material.AIR));
                 this.cancel();
             }
-        }.runTaskLater(JediPackMain.getThisPlugin(), 1L);
+        }.runTaskLaterAsynchronously(JediPackMain.getThisPlugin(), 1L);
     }
 
     // Prevent players from moving a mail book
@@ -130,7 +131,18 @@ public class MailEvents implements Listener {
                     MailPlayerInfo info = MailManager.getMailPlayerInfo(player.getUniqueId());
                     MailInfo mailInfo = info.getMailInfo(mailNumber);
 
-                    if(event.isLeftClick()){
+                    if(event.isLeftClick() && event.isShiftClick()){
+
+                        // Get the attachment
+                        if(mailInfo.hasAttachment() && !mailInfo.isAttachmentRead()){
+                            ItemStack attachment = Util.deseializeItem(mailInfo.getAttachmentString());
+                            player.getWorld().dropItemNaturally(player.getLocation(), attachment);
+                            mailInfo.setAttachmentRead(true);
+                            info.updateMail(mailInfo);
+                            player.openInventory(info.getMailBoxInventory(player));
+                        }
+
+                    } else if(event.isLeftClick()){
                         // Left click opens
                         info.openMail(player, mailInfo);
 

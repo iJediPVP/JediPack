@@ -15,7 +15,7 @@ public class MailInfo {
     private int mailNumber;
     private UUID receiverId;
     private String[] messages;
-    private ItemStack item;
+    private String attachmentString;
     private boolean isRead;
     private boolean isAttachmentRead;
     private String subject;
@@ -32,16 +32,8 @@ public class MailInfo {
 
     //region Getters and setters for fields
 
-    public UUID getReceiverId() {
-        return receiverId;
-    }
-
     public String[] getMessage(){
         return messages;
-    }
-
-    public ItemStack getItem(){
-        return item;
     }
 
     public int getMailNumber() {
@@ -49,7 +41,7 @@ public class MailInfo {
     }
 
     public boolean hasAttachment(){
-        return item != null;
+        return !Util.isNullOrEmpty(attachmentString);
     }
 
     public boolean isRead() {
@@ -62,10 +54,6 @@ public class MailInfo {
 
     public void setMessage(String[] messages){
         this.messages = messages;
-    }
-
-    public void setItem(ItemStack item){
-        this.item = item;
     }
 
     public void setRead(boolean isRead){
@@ -100,6 +88,18 @@ public class MailInfo {
     public void setMailDate(long mailDateLong){
         this.mailDateLong = mailDateLong;
         this.mailDate = new Date(mailDateLong);
+    }
+
+    public void setAttachmentString(String attachmentString){
+        this.attachmentString = attachmentString;
+    }
+
+    public String getAttachmentString(){
+        return attachmentString;
+    }
+
+    public ItemStack getAttachment(){
+        return Util.deseializeItem(attachmentString);
     }
 
     public long getMailDateLong() {
