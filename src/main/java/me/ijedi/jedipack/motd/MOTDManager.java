@@ -63,9 +63,7 @@ public class MOTDManager {
         loadConfiguration(config, file, reload);
     }
 
-    // Get the FileConfiguration object for the MOTDManager
-    // Returns the formatted MOTD string.
-
+    // Load the MOTD configuration
     private static void loadConfiguration(FileConfiguration configuration, File file, boolean reload){
 
         // Clear out values for reload
