@@ -1,6 +1,6 @@
 package me.ijedi.jedipack.signlock;
 
-import me.ijedi.jedipack.JediPackMain;
+import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,10 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class SignLockPlayerInfo {
@@ -38,10 +36,10 @@ public class SignLockPlayerInfo {
     public static final String SHARED = "shared";
     public static final String HOPPERS = "hoppersEnabled";
 
+    private static final String DIRECTORY = "signLocks";
+
     private UUID playerId;
     private HashMap<UUID, SignLock> signLocks = new HashMap<>();
-    private File file;
-    private FileConfiguration fileConfiguration;
 
     public SignLockPlayerInfo(UUID playerId){
         this.playerId = playerId;
@@ -51,59 +49,42 @@ public class SignLockPlayerInfo {
     // Load player file
     public void loadPlayerFile(){
 
-        file = new File(getPlayerFileName());
+        // Get the player file
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
 
-        // Create file and set defaults if it doesn't exist
-        if(!file.exists()){
-            file.getParentFile().mkdirs();
-            fileConfiguration = YamlConfiguration.loadConfiguration(file);
+        ConfigurationSection lockSection = config.getConfigurationSection(LOCKS);
+        if(lockSection != null){
+            for(String lockKey : lockSection.getKeys(false)){
 
-            fileConfiguration.set(LOCKS, new String[0]);
+                ConfigurationSection lockInfoSection = lockSection.getConfigurationSection(lockKey);
+                if(lockInfoSection != null){
 
-            try{
-                fileConfiguration.save(file);
-            } catch (IOException e){
-                MessageTypeEnum.SignLockMessage.logMessage("Error saving configuration file for player: " + playerId.toString());
-                MessageTypeEnum.SignLockMessage.logMessage(e.toString());
-            }
-        } else {
+                    UUID lockId = UUID.fromString(lockKey);
+                    double x = lockInfoSection.getDouble(X);
+                    double y = lockInfoSection.getDouble(Y);
+                    double z = lockInfoSection.getDouble(Z);
+                    String worldIdStr = lockInfoSection.getString(WORLDID);
+                    UUID worldId = UUID.fromString(worldIdStr);
+                    World world = Bukkit.getServer().getWorld(worldId);
+                    Location lockLocation = new Location(world, x, y, z);
 
-            // Load lock info from the file
-            fileConfiguration = YamlConfiguration.loadConfiguration(file);
+                    int lockNumber = lockInfoSection.getInt(LOCK_NUM);
+                    List<String> shared = lockInfoSection.getStringList(SHARED);
+                    boolean hoppersEnabled = lockInfoSection.getBoolean(HOPPERS);
 
-            ConfigurationSection lockSection = fileConfiguration.getConfigurationSection(LOCKS);
-            if(lockSection != null){
-                for(String lockKey : lockSection.getKeys(false)){
-
-                    ConfigurationSection lockInfoSection = lockSection.getConfigurationSection(lockKey);
-                    if(lockInfoSection != null){
-
-                        UUID lockId = UUID.fromString(lockKey);
-                        double x = lockInfoSection.getDouble(X);
-                        double y = lockInfoSection.getDouble(Y);
-                        double z = lockInfoSection.getDouble(Z);
-                        String worldIdStr = lockInfoSection.getString(WORLDID);
-                        UUID worldId = UUID.fromString(worldIdStr);
-                        World world = Bukkit.getServer().getWorld(worldId);
-                        Location lockLocation = new Location(world, x, y, z);
-
-                        int lockNumber = lockInfoSection.getInt(LOCK_NUM);
-                        List<String> shared = lockInfoSection.getStringList(SHARED);
-                        boolean hoppersEnabled = lockInfoSection.getBoolean(HOPPERS);
-
-                        SignLock newLock = addNewLock(lockId, lockNumber, lockLocation, hoppersEnabled, false);
-                        newLock.setSharedIds(shared);
-                    }
-
+                    SignLock newLock = addNewLock(lockId, lockNumber, lockLocation, hoppersEnabled, false);
+                    newLock.setSharedIds(shared);
                 }
-            }
 
+            }
         }
     }
 
     // Returns the file name for this player's file.
     private String getPlayerFileName(){
-        return String.format("%s/%s/%s.yml", JediPackMain.getThisPlugin().getDataFolder(), "signLocks", playerId);
+        return String.format("%s.yml", playerId);
     }
 
 
@@ -123,7 +104,11 @@ public class SignLockPlayerInfo {
 
         // Write lock to config
         if(save){
-            newLock.writeToConfig(fileConfiguration, file);
+            // Get the player file
+            String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+            File file = ConfigHelper.getFile(fileName);
+            FileConfiguration config = ConfigHelper.getFileConfiguration(file);
+            newLock.writeToConfig(config, file);
         }
 
         return newLock;
@@ -202,20 +187,17 @@ public class SignLockPlayerInfo {
 
         signLocks.remove(lockToRemove.getLockId());
 
+        // Get the player file
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
+
         // Update the config file
-        fileConfiguration.set(LOCKS, new String[0]);
+        config.set(LOCKS, new String[0]);
         for(SignLock lock : signLocks.values()){
-            lock.writeToConfig(fileConfiguration, file);
+            lock.writeToConfig(config, file);
         }
-
-        try{
-            fileConfiguration.save(file);
-        } catch (IOException e) {
-            String message = String.format("Error saving configuration file for player $s.", playerId.toString());
-            MessageTypeEnum.SignLockMessage.logMessage(message);
-            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
-        }
-
+        ConfigHelper.saveFile(file, config);
     }
 
     // Return the sign lock with he specified lock number
@@ -230,17 +212,29 @@ public class SignLockPlayerInfo {
 
     // Add a player to the sign lock
     public void addSharedPlayedToLock(SignLock lock, UUID playerId){
-        lock.addSharedPlayer(playerId, fileConfiguration, file);
+        // Get the player file
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
+        lock.addSharedPlayer(playerId, config, file);
     }
 
     // Remove access from a player for the given sign lock
     public void removeSharedPlayerFromLock(SignLock lock, UUID playerId){
-        lock.removeSharedPlayer(playerId, fileConfiguration, file);
+        // Get the player file
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
+        lock.removeSharedPlayer(playerId, config, file);
     }
 
     // Toggle if hoppers are enabled for the given lock
     public boolean toggleHoppersForLock(SignLock lock){
-        return lock.toggleHoppers(fileConfiguration, file);
+        // Get the player file
+        String fileName = ConfigHelper.getFullFilePath(DIRECTORY, getPlayerFileName());
+        File file = ConfigHelper.getFile(fileName);
+        FileConfiguration config = ConfigHelper.getFileConfiguration(file);
+        return lock.toggleHoppers(config, file);
     }
 
     // Return info for the player's sign locks

@@ -1,5 +1,6 @@
 package me.ijedi.jedipack.signlock;
 
+import me.ijedi.jedipack.common.ConfigHelper;
 import me.ijedi.jedipack.common.MessageTypeEnum;
 import me.ijedi.jedipack.common.Util;
 import org.bukkit.Location;
@@ -79,7 +80,7 @@ public class SignLock {
         configuration.set(lockPath + SignLockPlayerInfo.LOCK_NUM, lockNumber);
         configuration.set(lockPath + SignLockPlayerInfo.SHARED, new String[0]);
         configuration.set(lockPath + SignLockPlayerInfo.HOPPERS, false);
-        save(configuration, file);
+        ConfigHelper.saveFile(file, configuration);
     }
 
     // Returns the config path to this lock
@@ -87,17 +88,6 @@ public class SignLock {
         String lockKey = lockId.toString();
         String lockPath = SignLockPlayerInfo.LOCKS + "." + lockKey + ".";
         return lockPath;
-    }
-
-    // Save this lock to a file
-    private void save(FileConfiguration configuration, File file){
-        try{
-            configuration.save(file);
-        } catch (IOException e) {
-            String message = String.format("Error saving configuration file for lock $s.", lockId.toString());
-            MessageTypeEnum.SignLockMessage.logMessage(message);
-            MessageTypeEnum.SignLockMessage.logMessage(e.toString());
-        }
     }
 
     // Return true if the location of this lock matches the given location.
@@ -166,7 +156,7 @@ public class SignLock {
 
         String lockPath = getLockPath();
         configuration.set(lockPath + SignLockPlayerInfo.SHARED, sharedIds.toArray(new String[sharedIds.size()]));
-        save(configuration, file);
+        ConfigHelper.saveFile(file, configuration);
     }
 
     // Remove access from this lock for the given player id.
@@ -202,7 +192,7 @@ public class SignLock {
         String lockPath = getLockPath();
         configuration.set(lockPath + SignLockPlayerInfo.HOPPERS, hoppersEnabled);
 
-        save(configuration, file);
+        ConfigHelper.saveFile(file, configuration);
 
         return hoppersEnabled;
     }
