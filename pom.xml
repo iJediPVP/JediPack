@@ -32,7 +32,7 @@
                             <workingDirectory></workingDirectory>
                             <arguments>
                                 <argument>/c</argument>
-                                <argument>copy "${project.build.directory}\${project.build.finalName}.jar" "C:\Servers\PaperMC 1.13.2\plugins\JediPack-Dev.jar" /y</argument>
+                                <argument>copy "${project.build.directory}\${project.build.finalName}.jar" "C:\Servers\Spigot 1.13.2\plugins\JediPack-Dev.jar" /y</argument>
                                 <!--<argument>echo "${project.build.directory}\${project.build.finalName}.jar" </argument>-->
                             </arguments>
                         </configuration>
