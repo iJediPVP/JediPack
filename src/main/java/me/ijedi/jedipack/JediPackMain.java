@@ -1,5 +1,6 @@
 package me.ijedi.jedipack;
 
+import me.ijedi.jedipack.back.BackManager;
 import me.ijedi.jedipack.common.CommonEvents;
 import me.ijedi.jedipack.home.HomeManager;
 import me.ijedi.jedipack.mail.MailManager;
@@ -29,9 +30,11 @@ public class JediPackMain extends JavaPlugin {
     public static final String HOMES_LIMIT = "homesLimit";
     private static final String SLEEPSKIP_ENABLED = "sleepSkipEnabled";
     private static final String MAIL_ENABLED = "mailEnabled";
+    private static final String BACK_ENABLED = "backEnabled";
 
     // Config values
-    public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled, isHomesEnabled, isSleepSkipEnabled, isMailEnabled;
+    public static boolean isParkourEnabled, isMotdEnabled, isTabMessageEnabled, isSignLocksEnabled, isHomesEnabled,
+            isSleepSkipEnabled, isMailEnabled, isBackEnabled;
     public static int playerSignLockLimit, homesLimit;
 
 
@@ -74,6 +77,8 @@ public class JediPackMain extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new SleepEvent(), this);
         }
 
+        BackManager.intialize();
+
         this.getLogger().info("JediPack is enabled!");
     }
 
@@ -104,6 +109,7 @@ public class JediPackMain extends JavaPlugin {
         homesLimit = config.getInt(HOMES_LIMIT);
         isSleepSkipEnabled = config.getBoolean(SLEEPSKIP_ENABLED);
         isMailEnabled = config.getBoolean(MAIL_ENABLED);
+        isBackEnabled = config.getBoolean(BACK_ENABLED);
     }
 
 }

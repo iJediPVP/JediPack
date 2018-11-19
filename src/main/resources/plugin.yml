@@ -10,9 +10,11 @@ commands:
   parkour:
     description: "Interact with parkour courses. Use '/parkour help' for more information."
     usage: /parkour
+    aliases: [p]
   tabmessage:
     description: "Reloads the configuration for Tab Messages."
     usage: /tabmessage reload
+    aliases: [tm]
   motd:
     description: "Reloads the configuration for MOTD."
     usage: /motd reload
@@ -22,11 +24,17 @@ commands:
   signlock:
     description: "Interact with Sign Locks."
     usage: /signlock
+    aliases: [sl]
   home:
     description: "Interact with Homes."
     usage: /home
+    aliases: [h]
   mail:
     usage: /mail
+    aliases: [m]
+  back:
+    usage: /back
+    aliases: [b]
 
 
 permissions:
