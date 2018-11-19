@@ -39,4 +39,8 @@ public class BackManager {
         backLocations.put(playerId, location);
     }
 
+    public static void removeBackLocation(UUID playerId){
+        backLocations.remove(playerId);
+    }
+
 }
