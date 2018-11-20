@@ -12,7 +12,10 @@ public class BackEvents implements Listener {
     // Set the player back's location upon teleportation
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event){
-        BackManager.setBackLocation(event.getPlayer().getUniqueId(), event.getFrom());
+        PlayerTeleportEvent.TeleportCause cause = event.getCause();
+        if(cause.equals(PlayerTeleportEvent.TeleportCause.COMMAND) || cause.equals(PlayerTeleportEvent.TeleportCause.PLUGIN)){
+            BackManager.setBackLocation(event.getPlayer().getUniqueId(), event.getFrom());
+        }
     }
 
     // Set the player back's location upon death
