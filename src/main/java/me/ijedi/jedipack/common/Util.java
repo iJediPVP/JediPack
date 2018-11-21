@@ -163,6 +163,12 @@ public class Util {
         return newLoc;
     }
 
+    public static Block getBlockAbove(Block block){
+        Location location = block.getLocation();
+        location.setY(location.getY() + 1);
+        return location.getBlock();
+    }
+
 
     public static boolean hasNoPerms(Player player, String permission, MessageTypeEnum messageTypeEnum){
         if(!player.hasPermission(permission)){

@@ -98,9 +98,13 @@ public class SignLock {
 
         // Handle doors
         Block testBlock = testLocation.getBlock();
+        Block aboveBlock = Util.getBlockAbove(testBlock);
         if(SignLockEvents.LOCKABLE_DOORS.contains(testBlock.getType())
                 && (Util.doLocationsEqual(testLocation, lockedLocation, false, true)
                     || Util.doLocationsEqual(testLocation, lockedLocation, true, false))) {
+            return true;
+
+        } else if (SignLockEvents.LOCKABLE_DOORS.contains(aboveBlock.getType()) && isLocationUnderLockedDoor(testLocation, lockedLocation)){
             return true;
 
         } else if(Util.doLocationsEqual(testLocation, lockLocation, false, false)
@@ -130,6 +134,24 @@ public class SignLock {
             }
         }
 
+        return false;
+    }
+
+    // Returns true if the test location is underneath a locked door
+    private boolean isLocationUnderLockedDoor(Location testLocation, Location lockedLocation){
+        // Take the locked door location, go down 1 block until we reach the block under the door.
+        Block block = lockedLocation.getBlock();
+        while(SignLockEvents.LOCKABLE_DOORS.contains(block.getType())){
+            Location nextLoc = block.getLocation().clone();
+            nextLoc.setY(nextLoc.getY() - 1);
+            block = nextLoc.getBlock();
+        }
+
+        // See if this block location under the door matches the test location
+        Location blockLoc = Util.getCenteredBlockLocation(block.getLocation());
+        if(Util.doLocationsEqual(testLocation, blockLoc, false, false)){
+            return true;
+        }
         return false;
     }
 

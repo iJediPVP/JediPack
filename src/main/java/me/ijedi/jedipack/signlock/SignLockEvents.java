@@ -47,12 +47,10 @@ public class SignLockEvents implements Listener {
     @EventHandler
     public void onSignLockBreak(BlockBreakEvent event){
 
+        // We need to check the broken block and the block above (in case it's under a door)
         Block block = event.getBlock();
-        /*
-        if(!block.getType().equals(Material.WALL_SIGN) && !LOCKABLE_CONTAINERS.contains(block.getType()) && !LOCKABLE_DOORS.contains(block.getType())){
-            return;
-        }*/
-        if(!CommonEvents.isSignLockMaterial(block.getType())){
+        Block aboveBlock = Util.getBlockAbove(block);
+        if(!CommonEvents.isSignLockMaterial(block.getType()) && !SignLockEvents.LOCKABLE_DOORS.contains(aboveBlock.getType())){
             return;
         }
 
