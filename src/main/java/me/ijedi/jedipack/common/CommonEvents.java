@@ -41,7 +41,7 @@ public class CommonEvents implements Listener {
         ArrayList<Block> blocksToRemove = new ArrayList<>();
         for(Block block : explodingBlocks){
 
-            if(!isSignLockMaterial(block.getType())){
+            if(isSignLockMaterial(block.getType())){
                 Location blockLoc = block.getLocation();
                 if(shouldCancelOnBlockLocation(blockLoc)){
                     blocksToRemove.add(block);
